@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CandyShopModel/CandyShopModel.iml" filepath="$PROJECT_DIR$/CandyShopModel/CandyShopModel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CandyShopPersistence/CandyShopPersistence.iml" filepath="$PROJECT_DIR$/CandyShopPersistence/CandyShopPersistence.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CandyShopService/CandyShopService.iml" filepath="$PROJECT_DIR$/CandyShopService/CandyShopService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CandyShopUI/CandyShopUI.iml" filepath="$PROJECT_DIR$/CandyShopUI/CandyShopUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/JavaSummerPractice2022.iml" filepath="$PROJECT_DIR$/.idea/JavaSummerPractice2022.iml" />
+    </modules>
+  </component>
+</project>
