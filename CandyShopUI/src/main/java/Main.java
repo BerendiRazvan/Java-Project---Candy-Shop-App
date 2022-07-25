@@ -14,6 +14,7 @@ import repository.ordersRepository.OrdersInMemoryRepository;
 import repository.ordersRepository.OrdersRepository;
 import repository.sweetsRepository.SweetsInMemoryRepository;
 import repository.sweetsRepository.SweetsRepository;
+import service.Service;
 import service.ServiceImpl;
 
 import java.util.*;
@@ -25,7 +26,7 @@ public class Main {
     }
 
     public static void startApp() {
-        System.out.println("\nWELCOME MY FRIEND :)\n");
+        System.out.println("\nWELCOME TO THE CANDY MY FRIEND :)\n");
 
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
@@ -37,7 +38,7 @@ public class Main {
         // +++ UseCase2-RepoIngredients +++
 
         //Service
-        ServiceImpl service = new ServiceImpl(myShop, sweetsRepository, customersRepository, ordersRepository);
+        Service service = new ServiceImpl(myShop, sweetsRepository, customersRepository, ordersRepository);
 
         //UI
         UI appUI = new UI(service);

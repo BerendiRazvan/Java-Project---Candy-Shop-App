@@ -3,6 +3,7 @@ import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderTypes;
 import domain.sweet.Ingredient;
+import service.Service;
 import service.ServiceImpl;
 import service.ServiceException;
 import java.text.DecimalFormat;
@@ -12,11 +13,11 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class UI {
-    private ServiceImpl service;
+    private Service service;
     private final String menu;
     private final String menuOpt1;
 
-    public UI(ServiceImpl service) {
+    public UI(Service service) {
         this.service = service;
 
         menu = "\nOptions:\n" +
