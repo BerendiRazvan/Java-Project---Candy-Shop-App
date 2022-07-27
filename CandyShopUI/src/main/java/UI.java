@@ -4,7 +4,6 @@ import domain.order.Order;
 import domain.order.OrderTypes;
 import domain.sweet.Ingredient;
 import service.Service;
-import service.ServiceImpl;
 import service.ServiceException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -29,6 +28,7 @@ public class UI {
         menuOpt1 = "\nOptions:\n" +
                 "1 - Add sweet\n" +
                 "2 - Finish order\n" +
+                "3 - Your order details\n" +
                 "X - Cancel and exit";
     }
 
@@ -114,6 +114,9 @@ public class UI {
                     case "2":
                         System.out.println(service.getOrderDetails(order.getIdOrder()));
                         break label;
+                    case "3":
+                        System.out.println(service.getOrderDetails(order.getIdOrder()));
+                        break;
                     case "X":
                         service.removeOrder(order.getIdOrder());
                         System.out.println("Order deleted!\n");

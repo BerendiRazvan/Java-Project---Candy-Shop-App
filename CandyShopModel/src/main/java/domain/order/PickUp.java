@@ -9,16 +9,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class PickUp extends Order {
-    private final int MINIMUM_PREPARING_TIME_MINUTES = 30;
+    private final int MINIMUM_PICKUP_TIME_MINUTES = 30;
     private LocalDateTime preparingTime;
 
     public PickUp(long idOrder, Map<Sweet, Integer> orderedSweets, Customer customer, Shop shop) {
         super(idOrder, orderedSweets, customer, shop);
-        this.preparingTime = super.getOrderDateTime().plusMinutes(MINIMUM_PREPARING_TIME_MINUTES);
+        this.preparingTime = super.getOrderDateTime().plusMinutes(MINIMUM_PICKUP_TIME_MINUTES);
     }
 
-    public int getMINIMUM_DELIVERY_TIME_MINUTES() {
-        return MINIMUM_PREPARING_TIME_MINUTES;
+    public int getMINIMUM_PICKUP_TIME_MINUTES() {
+        return MINIMUM_PICKUP_TIME_MINUTES;
     }
 
     public LocalDateTime getDeliveryTime() {
