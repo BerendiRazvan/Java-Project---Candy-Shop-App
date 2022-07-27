@@ -3,7 +3,7 @@ package service;
 import domain.Customer;
 import domain.location.Location;
 import domain.order.Order;
-import domain.order.OrderTypes;
+import domain.order.OrderType;
 import domain.sweet.Sweet;
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface Service {
 
     Iterable<Sweet> getAvailableSweets();
 
-    Order createOrder(Customer customer, OrderTypes orderType) throws ServiceException;
+    Order createOrder(Customer customer, OrderType orderType) throws ServiceException;
 
     void addToOrder(Order order, String sweetId) throws ServiceException;
 

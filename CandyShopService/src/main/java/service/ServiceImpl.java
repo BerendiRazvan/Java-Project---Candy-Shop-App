@@ -5,7 +5,7 @@ import domain.Shop;
 import domain.location.Location;
 import domain.order.Delivery;
 import domain.order.Order;
-import domain.order.OrderTypes;
+import domain.order.OrderType;
 import domain.order.PickUp;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
@@ -45,7 +45,7 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public Order createOrder(Customer customer, OrderTypes orderType) throws ServiceException {
+    public Order createOrder(Customer customer, OrderType orderType) throws ServiceException {
         int id = 1;
         while (true) {
             boolean ok = true;
@@ -62,7 +62,7 @@ public class ServiceImpl implements Service {
         try {
             Order order;
 
-            if (orderType == OrderTypes.PickUp)
+            if (orderType == OrderType.PICK_UP)
                 order = new PickUp(id, new HashMap<>(), customer, shop);
             else
                 order = new Delivery(id, new HashMap<>(), customer, shop);

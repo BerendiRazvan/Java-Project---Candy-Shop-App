@@ -1,7 +1,7 @@
 import domain.Customer;
 import domain.location.Location;
 import domain.order.Order;
-import domain.order.OrderTypes;
+import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import service.Service;
 import service.ServiceException;
@@ -81,13 +81,13 @@ public class UI {
         System.out.println("\nYour account is:\n");
         System.out.println(customer);
 
-        OrderTypes orderType = OrderTypes.Delivery;
+        OrderType orderType = OrderType.DELIVERY;
         System.out.println("\nYour order will be delivered to you, do you want delivery with pickup?\nAnswer (Yes/No):");
 
         String deliveryOpt = scanner.nextLine().toUpperCase();
 
         if (deliveryOpt.matches("YES"))
-            orderType = OrderTypes.PickUp;
+            orderType = OrderType.PICK_UP;
 
 
         try {

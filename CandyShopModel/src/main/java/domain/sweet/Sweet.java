@@ -4,10 +4,10 @@ package domain.sweet;
 public class Sweet {
     private long idSweet;
     private Recipe sweetRecipe;
-    private final SweetTypes sweetType;
+    private final SweetType sweetType;
     private double price;
 
-    public Sweet(long idSweet, Recipe sweetRecipe, SweetTypes sweetType, double price) {
+    public Sweet(long idSweet, Recipe sweetRecipe, SweetType sweetType, double price) {
         this.idSweet = idSweet;
         this.sweetRecipe = sweetRecipe;
         this.sweetType = sweetType;
@@ -30,7 +30,7 @@ public class Sweet {
         this.sweetRecipe = sweetRecipe;
     }
 
-    public SweetTypes getSweetType() {
+    public SweetType getSweetType() {
         return sweetType;
     }
 
