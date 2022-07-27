@@ -1,13 +1,13 @@
 package domain.location;
 
 public class Location {
-    private long idLocation;
+    private long id;
     private String country;
     private String city;
     private String address;
 
-    public Location(long idLocation, String country, String city, String address) {
-        this.idLocation = idLocation;
+    public Location(long id, String country, String city, String address) {
+        this.id = id;
         this.country = country;
         this.city = city;
         this.address = address;
@@ -19,12 +19,12 @@ public class Location {
         this.address = address;
     }
 
-    public long getIdLocation() {
-        return idLocation;
+    public long getId() {
+        return id;
     }
 
-    public void setIdLocation(long idLocation) {
-        this.idLocation = idLocation;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCountry() {
