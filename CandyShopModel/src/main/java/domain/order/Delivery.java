@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Delivery extends Order {
 
-    private final int MINIMUM_DELIVERY_TIME_MINUTES = 60;
+    private static final int MINIMUM_DELIVERY_TIME_MINUTES = 60;
     private LocalDateTime deliveryTime;
 
     public Delivery(long idOrder, Map<Sweet, Integer> orderedSweets, Customer customer, Shop shop) {

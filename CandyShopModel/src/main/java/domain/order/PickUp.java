@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class PickUp extends Order {
-    private final int MINIMUM_PICKUP_TIME_MINUTES = 30;
+    private static final int MINIMUM_PICKUP_TIME_MINUTES = 30;
     private LocalDateTime preparingTime;
 
     public PickUp(long idOrder, Map<Sweet, Integer> orderedSweets, Customer customer, Shop shop) {
