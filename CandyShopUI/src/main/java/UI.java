@@ -1,10 +1,14 @@
 import domain.Customer;
+import domain.Shop;
 import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
-import service.Service;
-import service.ServiceException;
+import service.customerService.CustomerService;
+import service.exception.ServiceException;
+import service.orderService.OrderService;
+import service.sweetService.SweetService;
+
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,12 +16,19 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class UI {
-    private Service service;
+    private final Shop shop;
+    private CustomerService customerService;
+    private SweetService sweetService;
+    private OrderService orderService;
+
     private final String menu;
     private final String menuOpt1;
 
-    public UI(Service service) {
-        this.service = service;
+    public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService) {
+        this.shop = shop;
+        this.customerService = customerService;
+        this.sweetService = sweetService;
+        this.orderService = orderService;
 
         menu = "\nOptions:\n" +
                 "1 - Order sweets\n" +
@@ -87,12 +98,12 @@ public class UI {
         String deliveryOpt = scanner.nextLine().toUpperCase();
 
         if (deliveryOpt.matches("YES"))
-            orderType = OrderType.PICK_UP;
+            orderType = OrderType.PICKUP;
 
 
         try {
             //init order
-            Order order = service.createOrder(customer, orderType);
+            Order order = orderService.createOrder(customer, orderType, shop);
             label:
             while (true) {
                 System.out.println(menuOpt1);
@@ -105,20 +116,20 @@ public class UI {
                         System.out.print("Choose a sweet (enter sweet id): ");
                         String sweetId = scanner.nextLine().toUpperCase();
                         try {
-                            service.addToOrder(order, sweetId);
+                            orderService.addToOrder(order, sweetService.findSweet(sweetId));
                             System.out.println("Sweet added, yummy :)");
                         } catch (ServiceException e) {
                             System.out.println("Oh no, we failed to add your sweet :(");
                         }
                         break;
                     case "2":
-                        System.out.println(service.getOrderDetails(order.getIdOrder()));
+                        System.out.println(orderService.getOrderDetails(order.getIdOrder()));
                         break label;
                     case "3":
-                        System.out.println(service.getOrderDetails(order.getIdOrder()));
+                        System.out.println(orderService.getOrderDetails(order.getIdOrder()));
                         break;
                     case "X":
-                        service.removeOrder(order.getIdOrder());
+                        orderService.removeOrder(order.getIdOrder());
                         System.out.println("Order deleted!\n");
                         break label;
                     default:
@@ -138,11 +149,11 @@ public class UI {
         System.out.print("Mail = ");
         String mail = scanner.nextLine();
 
-        if (service.findMail(mail)) {
+        if (customerService.findMail(mail)) {
             System.out.print("Password = ");
             String password = scanner.nextLine();
             try {
-                return service.login(mail, password);
+                return customerService.login(mail, password);
             } catch (ServiceException e) {
                 System.out.println(e.getMessage());
                 return null;
@@ -160,7 +171,7 @@ public class UI {
             String address = scanner.nextLine();
 
             try {
-                return service.createAccount(firstName, lastName, mail, password, phone,
+                return customerService.createAccount(firstName, lastName, mail, password, phone,
                         new Location("Romania", "Cluj-Napoca", address));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -176,7 +187,7 @@ public class UI {
         String orderNumber = scanner.nextLine();
 
         try {
-            System.out.println(service.printOrderDetails(orderNumber));
+            System.out.println(orderService.printOrderDetails(orderNumber));
             System.out.println("Order details printed\n");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
@@ -189,24 +200,24 @@ public class UI {
     private void option3() {
         //  •	Print all the orders and the profit for the day (the profit is the total sum of the orders)
         System.out.println("\nToday's orders:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy")));
-        service.getAllOrdersInADay()
+        orderService.getAllOrdersInADay()
                 .stream()
                 .map(order -> new String("Order no. " + order.getIdOrder() + " | "
                         + df.format(order.getFinalOrderPrice()) + "$ | Hour: " +
                         order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm"))))
                 .collect(Collectors.toList())
                 .forEach(System.out::println);
-        System.out.print("Money made today: " + df.format(service.getMoneyMadeToday()) + "$\n" +
-                "Actual profit made today: " + df.format(service.getProfitMadeToday()) + "$\n");
+        System.out.print("Money made today: " + df.format(orderService.getMoneyMadeToday()) + "$\n" +
+                "Actual profit made today: " + df.format(orderService.getProfitMadeToday()) + "$\n");
     }
 
     private void printShopInfo() {
         System.out.println("\n\n" + "-".repeat(100) + "\n" +
-                "\t".repeat(10) + service.getShopName() +
+                "\t".repeat(10) + shop.getShopName() +
                 "\n" + "-".repeat(100) + "\n");
 
         System.out.println("Available sweets: \n");
-        for (var sweet : service.getAvailableSweets()) {
+        for (var sweet : sweetService.getAvailableSweets()) {
             System.out.println(sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$");
 //            System.out.print("\n" + sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
@@ -220,7 +231,7 @@ public class UI {
     private void printShopSweets() {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
-        for (var sweet : service.getAvailableSweets()) {
+        for (var sweet : sweetService.getAvailableSweets()) {
             System.out.print("\n\n" + sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$\nRecipe: ");
             sweet.getSweetRecipe().getIngredientsList().stream()

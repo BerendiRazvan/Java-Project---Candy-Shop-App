@@ -71,10 +71,10 @@ public class OrderInMemoryRepository implements OrderRepository {
     public static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) {
         List<Order> orderList = new ArrayList<>();
         orderList.add(new Order(1,
-                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
+                randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                 randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Order(2,
-                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
+                randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                 randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Order(3,
                 randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
@@ -83,13 +83,13 @@ public class OrderInMemoryRepository implements OrderRepository {
                 randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
                 randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Order(5,
-                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
+                randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                 randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Order(6,
                 randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
                 randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Order(7,
-                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
+                randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                 randomCustomer(customerRepository.findAll()), shop));
         return orderList;
 

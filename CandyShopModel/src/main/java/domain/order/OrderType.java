@@ -1,7 +1,7 @@
 package domain.order;
 
 public enum OrderType {
-    DELIVERY(60), PICK_UP(30);
+    DELIVERY(60), PICKUP(30);
 
     private int minimumWaitingTime;
 

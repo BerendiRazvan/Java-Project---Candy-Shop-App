@@ -28,7 +28,7 @@ public class Order {
         this.shop = shop;
         this.orderDateTime = LocalDateTime.now();
         this.orderType = orderType;
-        if (orderType == OrderType.PICK_UP)
+        if (orderType == OrderType.PICKUP)
             this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
         else
             this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
@@ -131,9 +131,8 @@ public class Order {
                 "\n" + "-".repeat(100) + "\n" +
                 "TOTAL TO PAY: " + df.format(getFinalOrderPrice()) + "$" +
                 "\n" + "-".repeat(100) + "\n" +
-                "YOUR ORDER WILL BE FINISHED AT:\t" +
+                "YOUR ORDER WILL READY FOR " + orderType.toString() + " AT: " +
                 waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +
-                "\t(" + orderType.toString() + ")" +
                 "\n" + "-".repeat(100) + "\n";
     }
 }

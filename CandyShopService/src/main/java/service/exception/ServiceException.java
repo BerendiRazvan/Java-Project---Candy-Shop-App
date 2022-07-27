@@ -1,4 +1,4 @@
-package service;
+package service.exception;
 
 public class ServiceException extends Exception {
     public ServiceException() {

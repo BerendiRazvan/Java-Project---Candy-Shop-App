@@ -7,10 +7,12 @@ import repository.ordersRepository.OrderInMemoryRepository;
 import repository.ordersRepository.OrderRepository;
 import repository.sweetsRepository.SweetInMemoryRepository;
 import repository.sweetsRepository.SweetRepository;
-import service.Service;
-import service.ServiceImpl;
-
-import java.util.*;
+import service.customerService.CustomerService;
+import service.customerService.CustomerServiceImpl;
+import service.orderService.OrderService;
+import service.orderService.OrderServiceImpl;
+import service.sweetService.SweetService;
+import service.sweetService.SweetServiceImpl;
 
 public class Main {
 
@@ -32,10 +34,12 @@ public class Main {
         // +++ UseCase2-RepoIngredients +++
 
         //Service
-        Service service = new ServiceImpl(myShop, sweetRepository, customerRepository, orderRepository);
+        CustomerService customerService = new CustomerServiceImpl(customerRepository);
+        OrderService orderService = new OrderServiceImpl(orderRepository);
+        SweetService sweetService = new SweetServiceImpl(sweetRepository);
 
         //UI
-        UI appUI = new UI(service);
+        UI appUI = new UI(myShop, customerService, sweetService, orderService);
         appUI.show();
 
 
