@@ -95,19 +95,6 @@ public class Order {
         this.orderDateTime = orderDateTime;
     }
 
-    public void addToSweetToOrder(Sweet sweet) {
-        orderedSweets.merge(sweet, 1, Integer::sum);
-    }
-
-    public void addToSweetToOrder(Sweet sweet, int quantity) {
-        orderedSweets.merge(sweet, quantity, Integer::sum);
-    }
-
-    public void removeToSweetToOrder(Sweet sweet) {
-        orderedSweets.merge(sweet, -1, Integer::sum);
-        if (orderedSweets.get(sweet) == 0)
-            orderedSweets.remove(sweet);
-    }
 
     public double getFinalOrderPrice() {
         double totalToPay = 0;

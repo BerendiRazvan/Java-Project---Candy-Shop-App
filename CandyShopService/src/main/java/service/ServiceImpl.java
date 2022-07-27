@@ -80,7 +80,7 @@ public class ServiceImpl implements Service {
             throw new ServiceException("Invalid sweet id!");
         else {
             Order updateOrder = orderRepository.findOneOrder(order.getIdOrder());
-            updateOrder.addToSweetToOrder(newSweet);
+            addSweetToOrder(updateOrder, newSweet);
             try {
                 orderRepository.update(order.getIdOrder(), updateOrder);
             } catch (RepositoryException e) {
@@ -233,4 +233,19 @@ public class ServiceImpl implements Service {
             return yourOrder.toString();
         }
     }
+
+    private void addSweetToOrder(Order order, Sweet sweet) {
+        order.getOrderedSweets().merge(sweet, 1, Integer::sum);
+    }
+
+    private void addSweetToOrder(Order order, Sweet sweet, int quantity) {
+        order.getOrderedSweets().merge(sweet, quantity, Integer::sum);
+    }
+
+    private void removeSweetToOrder(Order order, Sweet sweet) {
+        order.getOrderedSweets().merge(sweet, -1, Integer::sum);
+        if (order.getOrderedSweets().get(sweet) == 0)
+            order.getOrderedSweets().remove(sweet);
+    }
+
 }
