@@ -17,6 +17,7 @@ public class Order {
     private Customer customer;
     private Shop shop;
     private LocalDateTime orderDateTime;
+    private OrderType orderType;
 
 
     public Order(long idOrder, Map<Sweet, Integer> orderedSweets, Customer customer, Shop shop) {
@@ -25,8 +26,16 @@ public class Order {
         this.customer = customer;
         this.shop = shop;
         this.orderDateTime = LocalDateTime.now();
+        this.orderType = OrderType.DELIVERY;
     }
 
+    public OrderType getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
+    }
 
     public long getIdOrder() {
         return idOrder;
