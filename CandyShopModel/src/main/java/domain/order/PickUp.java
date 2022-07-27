@@ -17,10 +17,6 @@ public class PickUp extends Order {
         this.preparingTime = super.getOrderDateTime().plusMinutes(MINIMUM_PICKUP_TIME_MINUTES);
     }
 
-    public int getMINIMUM_PICKUP_TIME_MINUTES() {
-        return MINIMUM_PICKUP_TIME_MINUTES;
-    }
-
     public LocalDateTime getDeliveryTime() {
         return preparingTime;
     }

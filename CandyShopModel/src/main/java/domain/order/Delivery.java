@@ -18,10 +18,6 @@ public class Delivery extends Order {
         this.deliveryTime = super.getOrderDateTime().plusMinutes(MINIMUM_DELIVERY_TIME_MINUTES);
     }
 
-    public int getMINIMUM_DELIVERY_TIME_MINUTES() {
-        return MINIMUM_DELIVERY_TIME_MINUTES;
-    }
-
     public LocalDateTime getDeliveryTime() {
         return deliveryTime;
     }
