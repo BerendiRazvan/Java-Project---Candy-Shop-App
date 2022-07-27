@@ -1,9 +1,8 @@
 import domain.Customer;
 import domain.Shop;
 import domain.location.Location;
-import domain.order.Delivery;
 import domain.order.Order;
-import domain.order.PickUp;
+import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Recipe;
 import domain.sweet.Sweet;
@@ -195,26 +194,26 @@ public class Main {
     private static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) {
         List<Order> orderList = new ArrayList<>();
 
-        orderList.add(new PickUp(1,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(1,
+                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
                 randomCustomer(customerRepository.findAll()), shop));
-        orderList.add(new PickUp(2,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(2,
+                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
                 randomCustomer(customerRepository.findAll()), shop));
-        orderList.add(new Delivery(3,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(3,
+                randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
                 randomCustomer(customerRepository.findAll()), shop));
-        orderList.add(new Delivery(4,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(4,
+                randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
                 randomCustomer(customerRepository.findAll()), shop));
-        orderList.add(new PickUp(5,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(5,
+                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
                 randomCustomer(customerRepository.findAll()), shop));
-        orderList.add(new Delivery(6,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(6,
+                randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
                 randomCustomer(customerRepository.findAll()), shop));
-        orderList.add(new PickUp(7,
-                randomOrder(sweetRepository.findAll()),
+        orderList.add(new Order(7,
+                randomOrder(sweetRepository.findAll()), OrderType.PICK_UP,
                 randomCustomer(customerRepository.findAll()), shop));
 
 

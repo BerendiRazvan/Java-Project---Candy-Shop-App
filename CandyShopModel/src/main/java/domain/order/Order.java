@@ -19,14 +19,32 @@ public class Order {
     private LocalDateTime orderDateTime;
     private OrderType orderType;
 
+    private LocalDateTime waitingTime;
 
-    public Order(long idOrder, Map<Sweet, Integer> orderedSweets, Customer customer, Shop shop) {
+    public Order(long idOrder, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {
         this.idOrder = idOrder;
         this.orderedSweets = orderedSweets;
         this.customer = customer;
         this.shop = shop;
         this.orderDateTime = LocalDateTime.now();
-        this.orderType = OrderType.DELIVERY;
+        this.orderType = orderType;
+        if (orderType == OrderType.PICK_UP)
+            this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
+        else
+            this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
+    }
+
+    public LocalDateTime getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(LocalDateTime preparingTime) throws Exception {
+        if (preparingTime.isAfter(this.waitingTime))
+            this.waitingTime = preparingTime;
+        else
+            throw new Exception("We are sorry. " +
+                    "Minimum waiting time is 60 minutes - for delivery and 30 minutes - for pick up, " +
+                    "for every order!");
     }
 
     public OrderType getOrderType() {
@@ -125,6 +143,10 @@ public class Order {
                 "Ordered:\n" + ordered +
                 "\n" + "-".repeat(100) + "\n" +
                 "TOTAL TO PAY: " + df.format(getFinalOrderPrice()) + "$" +
+                "\n" + "-".repeat(100) + "\n" +
+                "YOUR ORDER WILL BE FINISHED AT:\t" +
+                waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +
+                "\t(" + orderType.toString() + ")" +
                 "\n" + "-".repeat(100) + "\n";
     }
 }

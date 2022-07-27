@@ -3,10 +3,8 @@ package service;
 import domain.Customer;
 import domain.Shop;
 import domain.location.Location;
-import domain.order.Delivery;
 import domain.order.Order;
 import domain.order.OrderType;
-import domain.order.PickUp;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import repository.customersRepository.CustomerRepository;
@@ -60,13 +58,7 @@ public class ServiceImpl implements Service {
         }
 
         try {
-            Order order;
-
-            if (orderType == OrderType.PICK_UP)
-                order = new PickUp(id, new HashMap<>(), customer, shop);
-            else
-                order = new Delivery(id, new HashMap<>(), customer, shop);
-
+            Order order = new Order(id, new HashMap<>(),orderType, customer, shop);
             orderRepository.add(order);
             return order;
         } catch (RepositoryException e) {
