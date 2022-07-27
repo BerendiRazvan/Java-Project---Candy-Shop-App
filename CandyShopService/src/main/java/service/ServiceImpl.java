@@ -9,10 +9,10 @@ import domain.order.OrderType;
 import domain.order.PickUp;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
-import repository.customersRepository.CustomersRepository;
+import repository.customersRepository.CustomerRepository;
 import repository.exception.RepositoryException;
-import repository.ordersRepository.OrdersRepository;
-import repository.sweetsRepository.SweetsRepository;
+import repository.ordersRepository.OrderRepository;
+import repository.sweetsRepository.SweetRepository;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -22,15 +22,15 @@ import java.util.stream.Collectors;
 
 public class ServiceImpl implements Service {
     private final Shop shop;
-    private SweetsRepository sweetsRepository;
-    private CustomersRepository customersRepository;
-    private OrdersRepository ordersRepository;
+    private SweetRepository sweetRepository;
+    private CustomerRepository customerRepository;
+    private OrderRepository orderRepository;
 
-    public ServiceImpl(Shop shop, SweetsRepository sweetsRepository, CustomersRepository customersRepository, OrdersRepository ordersRepository) {
+    public ServiceImpl(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository, OrderRepository orderRepository) {
         this.shop = shop;
-        this.sweetsRepository = sweetsRepository;
-        this.customersRepository = customersRepository;
-        this.ordersRepository = ordersRepository;
+        this.sweetRepository = sweetRepository;
+        this.customerRepository = customerRepository;
+        this.orderRepository = orderRepository;
     }
 
 
@@ -41,7 +41,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public Iterable<Sweet> getAvailableSweets() {
-        return sweetsRepository.findAll();
+        return sweetRepository.findAll();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ServiceImpl implements Service {
         int id = 1;
         while (true) {
             boolean ok = true;
-            for (var o : ordersRepository.findAll())
+            for (var o : orderRepository.findAll())
                 if (o.getIdOrder() == id) {
                     ok = false;
                     break;
@@ -67,7 +67,7 @@ public class ServiceImpl implements Service {
             else
                 order = new Delivery(id, new HashMap<>(), customer, shop);
 
-            ordersRepository.add(order);
+            orderRepository.add(order);
             return order;
         } catch (RepositoryException e) {
             throw new ServiceException(e.getMessage());
@@ -83,14 +83,14 @@ public class ServiceImpl implements Service {
             throw new ServiceException("Invalid sweet id!");
         }
 
-        Sweet newSweet = sweetsRepository.findOneSweet(id);
+        Sweet newSweet = sweetRepository.findOneSweet(id);
         if (newSweet == null)
             throw new ServiceException("Invalid sweet id!");
         else {
-            Order updateOrder = ordersRepository.findOneOrder(order.getIdOrder());
+            Order updateOrder = orderRepository.findOneOrder(order.getIdOrder());
             updateOrder.addToSweetToOrder(newSweet);
             try {
-                ordersRepository.update(order.getIdOrder(), updateOrder);
+                orderRepository.update(order.getIdOrder(), updateOrder);
             } catch (RepositoryException e) {
                 throw new ServiceException(e.getMessage());
             }
@@ -99,13 +99,13 @@ public class ServiceImpl implements Service {
 
     @Override
     public String getOrderDetails(long orderId) {
-        return ordersRepository.findOneOrder(orderId).toString();
+        return orderRepository.findOneOrder(orderId).toString();
     }
 
     @Override
     public void removeOrder(long idOrder) throws ServiceException {
         try {
-            ordersRepository.delete(idOrder);
+            orderRepository.delete(idOrder);
         } catch (RepositoryException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -113,7 +113,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public List<Order> getAllOrdersInADay() {
-        return ordersRepository.findAll()
+        return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
                 .collect(Collectors.toList());
@@ -121,7 +121,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public double getMoneyMadeToday() {
-        return ordersRepository.findAll()
+        return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
                 .mapToDouble(Order::getFinalOrderPrice)
@@ -130,7 +130,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public double getProfitMadeToday() {
-        return ordersRepository.findAll()
+        return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
                 .mapToDouble(order -> getProfit(order.getOrderedSweets()))
@@ -151,7 +151,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public Customer login(String mail, String password) throws ServiceException {
-        Customer customerTry = customersRepository.findOneCustomer(mail);
+        Customer customerTry = customerRepository.findOneCustomer(mail);
         if (customerTry != null) {
             if (password.equals(customerTry.getPassword())) {
                 return customerTry;
@@ -169,7 +169,7 @@ public class ServiceImpl implements Service {
         int id = 1;
         while (true) {
             boolean ok = true;
-            for (var o : ordersRepository.findAll())
+            for (var o : orderRepository.findAll())
                 if (o.getIdOrder() == id) {
                     ok = false;
                     break;
@@ -186,7 +186,7 @@ public class ServiceImpl implements Service {
 
         Customer customer = new Customer(id, firstName, lastName, email, password, phoneNumber, customerLocation);
         try {
-            customersRepository.add(customer);
+            customerRepository.add(customer);
         } catch (RepositoryException e) {
             throw new Exception(e.getMessage());
         }
@@ -221,7 +221,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public boolean findMail(String mail) {
-        return customersRepository.findOneCustomer(mail) != null;
+        return customerRepository.findOneCustomer(mail) != null;
     }
 
     @Override
@@ -234,7 +234,7 @@ public class ServiceImpl implements Service {
             throw new ServiceException("Invalid order number/id!");
         }
 
-        Order yourOrder = ordersRepository.findOneOrder(id);
+        Order yourOrder = orderRepository.findOneOrder(id);
         if (yourOrder == null)
             throw new ServiceException("Invalid order number/id!");
         else {

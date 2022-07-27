@@ -8,12 +8,12 @@ import domain.sweet.Ingredient;
 import domain.sweet.Recipe;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
-import repository.customersRepository.CustomersInMemoryRepository;
-import repository.customersRepository.CustomersRepository;
-import repository.ordersRepository.OrdersInMemoryRepository;
-import repository.ordersRepository.OrdersRepository;
-import repository.sweetsRepository.SweetsInMemoryRepository;
-import repository.sweetsRepository.SweetsRepository;
+import repository.customersRepository.CustomerInMemoryRepository;
+import repository.customersRepository.CustomerRepository;
+import repository.ordersRepository.OrderInMemoryRepository;
+import repository.ordersRepository.OrderRepository;
+import repository.sweetsRepository.SweetInMemoryRepository;
+import repository.sweetsRepository.SweetRepository;
 import service.Service;
 import service.ServiceImpl;
 
@@ -32,13 +32,13 @@ public class Main {
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
 
         //Repository
-        SweetsRepository sweetsRepository = new SweetsInMemoryRepository(generateSweets());
-        CustomersRepository customersRepository = new CustomersInMemoryRepository(generateCustomers());
-        OrdersRepository ordersRepository = new OrdersInMemoryRepository(generateOrders(myShop, sweetsRepository, customersRepository));
+        SweetRepository sweetRepository = new SweetInMemoryRepository(generateSweets());
+        CustomerRepository customerRepository = new CustomerInMemoryRepository(generateCustomers());
+        OrderRepository orderRepository = new OrderInMemoryRepository(generateOrders(myShop, sweetRepository, customerRepository));
         // +++ UseCase2-RepoIngredients +++
 
         //Service
-        Service service = new ServiceImpl(myShop, sweetsRepository, customersRepository, ordersRepository);
+        Service service = new ServiceImpl(myShop, sweetRepository, customerRepository, orderRepository);
 
         //UI
         UI appUI = new UI(service);
@@ -192,30 +192,30 @@ public class Main {
     }
 
 
-    private static List<Order> generateOrders(Shop shop, SweetsRepository sweetsRepository, CustomersRepository customersRepository) {
+    private static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) {
         List<Order> orderList = new ArrayList<>();
 
         orderList.add(new PickUp(1,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new PickUp(2,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Delivery(3,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Delivery(4,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new PickUp(5,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new Delivery(6,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
         orderList.add(new PickUp(7,
-                randomOrder(sweetsRepository.findAll()),
-                randomCustomer(customersRepository.findAll()), shop));
+                randomOrder(sweetRepository.findAll()),
+                randomCustomer(customerRepository.findAll()), shop));
 
 
         return orderList;

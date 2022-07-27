@@ -6,18 +6,18 @@ import repository.exception.RepositoryException;
 
 import java.util.List;
 
-public class OrdersInMemoryRepository implements OrdersRepository {
+public class OrderInMemoryRepository implements OrderRepository {
 
-    private List<Order> ordersMemoryList;
+    private List<Order> orderList;
 
-    public OrdersInMemoryRepository(List<Order> ordersMemoryList) {
-        this.ordersMemoryList = ordersMemoryList;
+    public OrderInMemoryRepository(List<Order> orderList) {
+        this.orderList = orderList;
     }
 
     @Override
     public void add(Order elem) throws RepositoryException {
-        if (!ordersMemoryList.contains(elem))
-            ordersMemoryList.add(elem);
+        if (!orderList.contains(elem))
+            orderList.add(elem);
         else
             throw new RepositoryException("This element already exists!");
     }
@@ -25,9 +25,9 @@ public class OrdersInMemoryRepository implements OrdersRepository {
     @Override
     public void update(Long aLong, Order elem) throws RepositoryException {
         boolean exists = false;
-        for (Order order : ordersMemoryList) {
+        for (Order order : orderList) {
             if (order.getIdOrder() == elem.getIdOrder()) {
-                ordersMemoryList.set(ordersMemoryList.indexOf(order), elem);
+                orderList.set(orderList.indexOf(order), elem);
                 exists = true;
                 break;
             }
@@ -39,9 +39,9 @@ public class OrdersInMemoryRepository implements OrdersRepository {
     @Override
     public void delete(Long aLong) throws RepositoryException {
         boolean exists = false;
-        for (Order order : ordersMemoryList) {
+        for (Order order : orderList) {
             if (order.getIdOrder() == aLong) {
-                ordersMemoryList.remove(order);
+                orderList.remove(order);
                 exists = true;
                 break;
             }
@@ -52,12 +52,12 @@ public class OrdersInMemoryRepository implements OrdersRepository {
 
     @Override
     public List<Order> findAll() {
-        return ordersMemoryList;
+        return orderList;
     }
 
     @Override
     public Order findOneOrder(Long id) {
-        for (Order order : ordersMemoryList)
+        for (Order order : orderList)
             if (order.getIdOrder() == id) return order;
         return null;
     }

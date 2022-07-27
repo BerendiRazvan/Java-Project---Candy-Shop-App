@@ -1,23 +1,22 @@
 package repository.sweetsRepository;
 
-import domain.Shop;
 import domain.sweet.Sweet;
 import repository.exception.RepositoryException;
 
 import java.util.List;
 
-public class SweetsInMemoryRepository implements SweetsRepository {
+public class SweetInMemoryRepository implements SweetRepository {
 
-    private List<Sweet> sweetsMemoryList;
+    private List<Sweet> sweetList;
 
-    public SweetsInMemoryRepository(List<Sweet> sweetsMemoryList) {
-        this.sweetsMemoryList = sweetsMemoryList;
+    public SweetInMemoryRepository(List<Sweet> sweetList) {
+        this.sweetList = sweetList;
     }
 
     @Override
     public void add(Sweet elem) throws RepositoryException {
-        if (!sweetsMemoryList.contains(elem))
-            sweetsMemoryList.add(elem);
+        if (!sweetList.contains(elem))
+            sweetList.add(elem);
         else
             throw new RepositoryException("This element already exists!");
     }
@@ -25,9 +24,9 @@ public class SweetsInMemoryRepository implements SweetsRepository {
     @Override
     public void update(Long aLong, Sweet elem) throws RepositoryException {
         boolean exists = false;
-        for (Sweet sweet : sweetsMemoryList) {
+        for (Sweet sweet : sweetList) {
             if (sweet.getIdSweet() == elem.getIdSweet()) {
-                sweetsMemoryList.set(sweetsMemoryList.indexOf(sweet), elem);
+                sweetList.set(sweetList.indexOf(sweet), elem);
                 exists = true;
                 break;
             }
@@ -39,9 +38,9 @@ public class SweetsInMemoryRepository implements SweetsRepository {
     @Override
     public void delete(Long aLong) throws RepositoryException {
         boolean exists = false;
-        for (Sweet sweet : sweetsMemoryList) {
+        for (Sweet sweet : sweetList) {
             if (sweet.getIdSweet() == aLong) {
-                sweetsMemoryList.remove(sweet);
+                sweetList.remove(sweet);
                 exists = true;
                 break;
             }
@@ -52,12 +51,12 @@ public class SweetsInMemoryRepository implements SweetsRepository {
 
     @Override
     public List<Sweet> findAll() {
-        return sweetsMemoryList;
+        return sweetList;
     }
 
     @Override
     public Sweet findOneSweet(Long id) {
-        for (Sweet sweet : sweetsMemoryList)
+        for (Sweet sweet : sweetList)
             if (id == sweet.getIdSweet()) return sweet;
         return null;
     }

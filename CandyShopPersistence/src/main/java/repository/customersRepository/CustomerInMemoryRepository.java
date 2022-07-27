@@ -5,18 +5,18 @@ import repository.exception.RepositoryException;
 
 import java.util.List;
 
-public class CustomersInMemoryRepository implements CustomersRepository {
+public class CustomerInMemoryRepository implements CustomerRepository {
 
-    private List<Customer> customersMemoryList;
+    private List<Customer> customerList;
 
-    public CustomersInMemoryRepository(List<Customer> customersMemoryList) {
-        this.customersMemoryList = customersMemoryList;
+    public CustomerInMemoryRepository(List<Customer> customerList) {
+        this.customerList = customerList;
     }
 
     @Override
     public void add(Customer elem) throws RepositoryException {
-        if (!customersMemoryList.contains(elem))
-            customersMemoryList.add(elem);
+        if (!customerList.contains(elem))
+            customerList.add(elem);
         else
             throw new RepositoryException("This element already exists!");
     }
@@ -24,9 +24,9 @@ public class CustomersInMemoryRepository implements CustomersRepository {
     @Override
     public void update(Long aLong, Customer elem) throws RepositoryException {
         boolean exists = false;
-        for (Customer customer : customersMemoryList) {
+        for (Customer customer : customerList) {
             if (customer.getIdCustomer() == elem.getIdCustomer()) {
-                customersMemoryList.set(customersMemoryList.indexOf(customer), elem);
+                customerList.set(customerList.indexOf(customer), elem);
                 exists = true;
                 break;
             }
@@ -38,9 +38,9 @@ public class CustomersInMemoryRepository implements CustomersRepository {
     @Override
     public void delete(Long aLong) throws RepositoryException {
         boolean exists = false;
-        for (Customer customer : customersMemoryList) {
+        for (Customer customer : customerList) {
             if (customer.getIdCustomer() == aLong) {
-                customersMemoryList.remove(customer);
+                customerList.remove(customer);
                 exists = true;
                 break;
             }
@@ -51,12 +51,12 @@ public class CustomersInMemoryRepository implements CustomersRepository {
 
     @Override
     public List<Customer> findAll() {
-        return customersMemoryList;
+        return customerList;
     }
 
     @Override
     public Customer findOneCustomer(String email) {
-        for (Customer customer : customersMemoryList)
+        for (Customer customer : customerList)
             if (email.equals(customer.getEmail())) return customer;
         return null;
     }
