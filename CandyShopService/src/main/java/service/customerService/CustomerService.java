@@ -7,10 +7,8 @@ import service.exception.ServiceException;
 public interface CustomerService {
     Customer login(String mail, String password) throws ServiceException;
 
-    //customer service
     Customer createAccount(String firstName, String lastName, String email, String password,
-                           String phoneNumber, Location customerLocation) throws Exception;
+                           String phoneNumber, Location customerLocation) throws ServiceException;
 
-    //customer service
     boolean findMail(String mail);
 }

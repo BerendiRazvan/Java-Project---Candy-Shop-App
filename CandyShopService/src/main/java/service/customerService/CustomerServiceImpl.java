@@ -31,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer createAccount(String firstName, String lastName, String email, String password,
-                                  String phoneNumber, Location customerLocation) throws Exception {
+                                  String phoneNumber, Location customerLocation) throws ServiceException {
 
         int id = 1;
         while (true) {
@@ -55,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             customerRepository.add(customer);
         } catch (RepositoryException e) {
-            throw new Exception(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
 
         return customer;
