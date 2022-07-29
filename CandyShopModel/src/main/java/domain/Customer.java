@@ -11,7 +11,8 @@ public class Customer {
     private String phoneNumber;
     private Location customerLocation;
 
-    public Customer(long idCustomer, String firstName, String lastName, String email, String password, String phoneNumber, Location customerLocation) {
+    public Customer(long idCustomer, String firstName, String lastName, String email, String password,
+                    String phoneNumber, Location customerLocation) {
         this.idCustomer = idCustomer;
         this.firstName = firstName;
         this.lastName = lastName;

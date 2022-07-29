@@ -25,9 +25,13 @@ public class Main {
         Shop myShop = new Shop("Candy Crush Shop", new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
 
         //Repository
-        SweetRepository sweetRepository = new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
-        CustomerRepository customerRepository = new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
-        OrderRepository orderRepository = new OrderInMemoryRepository(OrderInMemoryRepository.generateOrders(myShop, sweetRepository, customerRepository));
+        SweetRepository sweetRepository =
+                new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
+        CustomerRepository customerRepository =
+                new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
+        OrderRepository orderRepository =
+                new OrderInMemoryRepository(OrderInMemoryRepository
+                        .generateOrders(myShop, sweetRepository, customerRepository));
         // +++ UseCase2-RepoIngredients +++
 
         //Service

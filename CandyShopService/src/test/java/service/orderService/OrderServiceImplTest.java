@@ -6,7 +6,6 @@ import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
-import domain.sweet.Recipe;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
 import repository.exception.RepositoryException;
@@ -36,8 +35,8 @@ class OrderServiceImplTest {
     void setUp() {
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                "1234567890", "0751578787",
+        Customer customer = new Customer(1, "Razvan", "Berendi",
+                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
 
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
@@ -64,8 +63,8 @@ class OrderServiceImplTest {
     void createOrder() {
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                "1234567890", "0751578787",
+        Customer customer = new Customer(1, "Razvan", "Berendi",
+                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
 
         try {
@@ -86,14 +85,14 @@ class OrderServiceImplTest {
 
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                "1234567890", "0751578787",
+        Customer customer = new Customer(1, "Razvan", "Berendi",
+                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         Sweet sweet = new Sweet(1,
-                new Recipe(1, new ArrayList<>(List.of(
+                new ArrayList<>(List.of(
                         new Ingredient(1, "Sugar", 1.5),
                         new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75)))),
+                        new Ingredient(3, "Flour", 0.75))),
                 SweetType.DONUT, 5);
 
         try {
@@ -158,8 +157,8 @@ class OrderServiceImplTest {
     void getAllOrdersInADay() {
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                "1234567890", "0751578787",
+        Customer customer = new Customer(1, "Razvan", "Berendi",
+                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
 
 
@@ -186,10 +185,10 @@ class OrderServiceImplTest {
     void getMoneyMadeToday() {
         assertEquals(orderService.getMoneyMadeToday(), 0);
         Sweet sweet = new Sweet(1,
-                new Recipe(1, new ArrayList<>(List.of(
+                new ArrayList<>(List.of(
                         new Ingredient(1, "Sugar", 1.5),
                         new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75)))),
+                        new Ingredient(3, "Flour", 0.75))),
                 SweetType.DONUT, 5);
         try {
             orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
@@ -203,10 +202,10 @@ class OrderServiceImplTest {
     void getProfitMadeToday() {
         assertEquals(orderService.getProfitMadeToday(), 0);
         Sweet sweet = new Sweet(1,
-                new Recipe(1, new ArrayList<>(List.of(
+                new ArrayList<>(List.of(
                         new Ingredient(1, "Sugar", 1.5),
                         new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75)))),
+                        new Ingredient(3, "Flour", 0.75))),
                 SweetType.DONUT, 5);
         try {
             orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
@@ -256,10 +255,10 @@ class OrderServiceImplTest {
         assertEquals(result, 0);
 
         Sweet sweet = new Sweet(1,
-                new Recipe(1, new ArrayList<>(List.of(
+                new ArrayList<>(List.of(
                         new Ingredient(1, "Sugar", 1.5),
                         new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75)))),
+                        new Ingredient(3, "Flour", 0.75))),
                 SweetType.DONUT, 5);
         try {
             orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
@@ -290,10 +289,10 @@ class OrderServiceImplTest {
 
 
         Sweet sweet = new Sweet(1,
-                new Recipe(1, new ArrayList<>(List.of(
+                new ArrayList<>(List.of(
                         new Ingredient(1, "Sugar", 1.5),
                         new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75)))),
+                        new Ingredient(3, "Flour", 0.75))),
                 SweetType.DONUT, 5);
 
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().isEmpty());

@@ -75,8 +75,8 @@ class CustomerServiceImplTest {
     void createAccount() {
 
         try {
-            Customer customer = customerService.createAccount("Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                    "1234567890", "0751578787",
+            Customer customer = customerService.createAccount("Razvan", "Berendi",
+                    "berendi.rav2001@gmail.com", "1234567890", "0751578787",
                     new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
             assertEquals(customer.getIdCustomer(), 6);
             assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
@@ -90,7 +90,8 @@ class CustomerServiceImplTest {
         }
 
         try {
-            Customer customer = customerService.createAccount("Razvan", "Berendi", "berendi.rav2001@gmail.com",
+            Customer customer = customerService.createAccount(
+                    "Razvan", "Berendi", "berendi.rav2001@gmail.com",
                     "1234567890", "1234",
                     new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
             fail();

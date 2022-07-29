@@ -98,11 +98,19 @@ public class Order {
     public String toString() {
         StringBuilder ordered = new StringBuilder();
         for (Sweet sweet : orderedSweets.keySet()) {
-            ordered.append("\n").append(sweet.getSweetType()).append(" - quantity: ").append(orderedSweets.get(sweet)).append(" - price: ").append(orderedSweets.get(sweet)).append("*").append(df.format(sweet.getPrice())).append("$=").append(df.format(orderedSweets.get(sweet) * sweet.getPrice())).append("$").append("\nRecipe:").append(sweet.getSweetRecipe()
-                    .getIngredientsList()
-                    .stream()
-                    .map(Ingredient::getName)
-                    .collect(Collectors.toList())).append("\nExtra:").append(sweet.getSweetRecipe().getExtraIngredients()).append("\n");
+            ordered.append("\n").append(sweet.getSweetType()).append(" - quantity: ")
+                    .append(orderedSweets.get(sweet))
+                    .append(" - price: ")
+                    .append(orderedSweets.get(sweet)).append("*")
+                    .append(df.format(sweet.getPrice())).append("$=")
+                    .append(df.format(orderedSweets.get(sweet) * sweet.getPrice()))
+                    .append("$").append("\nRecipe:").append(sweet
+                            .getIngredientsList()
+                            .stream()
+                            .map(Ingredient::getName)
+                            .collect(Collectors.toList())).append("\nExtra:")
+                    .append(sweet.getExtraIngredients())
+                    .append("\n");
         }
         return "\n" + "-".repeat(100) + "\n" +
                 "\t".repeat(10) + "Order no." + idOrder + "\t" + orderDateTime.format(DateTimeFormatter

@@ -68,7 +68,8 @@ public class OrderInMemoryRepository implements OrderRepository {
         return null;
     }
 
-    public static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) {
+    public static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository,
+                                             CustomerRepository customerRepository) {
         List<Order> orderList = new ArrayList<>();
         orderList.add(new Order(1,
                 randomOrder(sweetRepository.findAll()), OrderType.PICKUP,

@@ -73,7 +73,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String getOrderDetails(long orderId) {
-        return orderRepository.findOrderById(orderId).toString() + "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOrderById(orderId))) + "$" + "\n" + "-".repeat(100) + "\n";
+        return orderRepository.findOrderById(orderId).toString() +
+                "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOrderById(orderId))) + "$" +
+                "\n" + "-".repeat(100) + "\n";
     }
 
 
@@ -108,7 +110,10 @@ public class OrderServiceImpl implements OrderService {
     private double getProfit(Map<Sweet, Integer> orderedSweets) {
         double profit = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
-            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getSweetRecipe().getIngredientsList().stream().mapToDouble(Ingredient::getPrice).sum();
+            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getIngredientsList()
+                    .stream()
+                    .mapToDouble(Ingredient::getPrice)
+                    .sum();
         }
 
         return profit;
@@ -127,7 +132,9 @@ public class OrderServiceImpl implements OrderService {
         Order yourOrder = orderRepository.findOrderById(id);
         if (yourOrder == null) throw new ServiceException("Invalid order number/id!");
         else {
-            return yourOrder.toString() + "TOTAL TO PAY: " + df.format(getFinalOrderPrice(yourOrder)) + "$" + "\n" + "-".repeat(100) + "\n";
+            return yourOrder.toString() +
+                    "TOTAL TO PAY: " + df.format(getFinalOrderPrice(yourOrder)) + "$" +
+                    "\n" + "-".repeat(100) + "\n";
         }
     }
 

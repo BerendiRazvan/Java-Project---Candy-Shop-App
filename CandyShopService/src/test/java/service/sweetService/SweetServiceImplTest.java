@@ -51,11 +51,11 @@ class SweetServiceImplTest {
             assertEquals(sweet.getIdSweet(), 1L);
             assertEquals(sweet.getSweetType(), SweetType.DONUT);
             assertEquals(sweet.getPrice(), 5);
-            assertEquals(sweet.getSweetRecipe().getIngredientsList().toString(), new ArrayList<>(List.of(
+            assertEquals(sweet.getIngredientsList().toString(), new ArrayList<>(List.of(
                     new Ingredient(1, "Sugar", 1.5),
                     new Ingredient(2, "Milk", 1),
                     new Ingredient(3, "Flour", 0.75))).toString());
-            assertEquals(sweet.getSweetRecipe().getExtraIngredients(), new ArrayList<>());
+            assertEquals(sweet.getExtraIngredients(), new ArrayList<>());
         } catch (ServiceException e) {
             fail();
         }

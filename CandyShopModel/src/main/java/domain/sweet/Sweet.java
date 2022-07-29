@@ -1,16 +1,23 @@
 package domain.sweet;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Sweet {
     private long idSweet;
-    private Recipe sweetRecipe;
     private final SweetType sweetType;
+
+    private List<Ingredient> ingredientsList;
+
+    private List<Ingredient> extraIngredients;
     private double price;
 
-    public Sweet(long idSweet, Recipe sweetRecipe, SweetType sweetType, double price) {
+    public Sweet(long idSweet, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
         this.idSweet = idSweet;
-        this.sweetRecipe = sweetRecipe;
         this.sweetType = sweetType;
+        this.ingredientsList = ingredientsList;
+        this.extraIngredients = new ArrayList<>();
         this.price = price;
     }
 
@@ -22,12 +29,20 @@ public class Sweet {
         this.idSweet = idSweet;
     }
 
-    public Recipe getSweetRecipe() {
-        return sweetRecipe;
+    public List<Ingredient> getIngredientsList() {
+        return ingredientsList;
     }
 
-    public void setSweetRecipe(Recipe sweetRecipe) {
-        this.sweetRecipe = sweetRecipe;
+    public List<Ingredient> getExtraIngredients() {
+        return extraIngredients;
+    }
+
+    public void setIngredientsList(List<Ingredient> ingredientsList) {
+        this.ingredientsList = ingredientsList;
+    }
+
+    public void setExtraIngredients(List<Ingredient> extraIngredients) {
+        this.extraIngredients = extraIngredients;
     }
 
     public SweetType getSweetType() {
@@ -43,7 +58,7 @@ public class Sweet {
     }
 
     public double getExtraPrice() {
-        return sweetRecipe.getExtraIngredients()
+        return getExtraIngredients()
                 .stream()
                 .mapToDouble(Ingredient::getPrice)
                 .sum();
@@ -53,10 +68,13 @@ public class Sweet {
         this.price = price;
     }
 
+
     @Override
     public String toString() {
         return "\n\n" + sweetType +
                 "\nPrice: " + price + "$ " +
-                "\n" + sweetRecipe;
+                "\n" + "Recipe:" +
+                "\nIngredients: " + ingredientsList +
+                "\nExtra ingredients to add: " + extraIngredients;
     }
 }

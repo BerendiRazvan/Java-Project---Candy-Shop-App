@@ -28,7 +28,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public Customer createAccount(String firstName, String lastName, String email, String password, String phoneNumber, Location customerLocation) throws ServiceException {
+    public Customer createAccount(String firstName, String lastName, String email, String password,
+                                  String phoneNumber, Location customerLocation) throws ServiceException {
 
         int id = generateCustomerId();
 
@@ -65,7 +66,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-    private String verifCustomer(String firstName, String lastName, String email, String password, String phoneNumber, Location location) {
+    private String verifCustomer(String firstName, String lastName, String email, String password,
+                                 String phoneNumber, Location location) {
         String error = "";
 
         if (firstName.equals("") || !firstName.matches("[a-zA-Z]+")) error += "Invalid first name!\n";
