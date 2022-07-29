@@ -1,5 +1,6 @@
 package service.sweetService;
 
+import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import repository.sweetsRepository.SweetRepository;
 import service.exception.ServiceException;
@@ -31,5 +32,38 @@ public class SweetServiceImpl implements SweetService {
         return sweetRepository.findOneSweet(id);
 
     }
+
+    private void addIngredientToRecipe(Sweet sweet, Ingredient newIngredient) throws Exception {
+        List<Ingredient> ingredientsList = sweet.getSweetRecipe().getIngredientsList();
+        if (!ingredientsList.contains(newIngredient))
+            ingredientsList.add(newIngredient);
+        else
+            throw new Exception("This ingredient exists!");
+    }
+
+    private void addExtraIngredient(Sweet sweet, Ingredient extraIngredient) throws Exception {
+        List<Ingredient> extraIngredients = sweet.getSweetRecipe().getExtraIngredients();
+        if (!extraIngredients.contains(extraIngredient))
+            extraIngredients.add(extraIngredient);
+        else
+            throw new Exception("This ingredient exists!");
+    }
+
+    private void removeIngredientFromRecipe(Sweet sweet, Ingredient ingredient) throws Exception {
+        List<Ingredient> ingredientsList = sweet.getSweetRecipe().getIngredientsList();
+        if (ingredientsList.contains(ingredient))
+            ingredientsList.remove(ingredient);
+        else
+            throw new Exception("This ingredient does not exist!");
+    }
+
+    private void removeExtraIngredient(Sweet sweet, Ingredient extraIngredient) throws Exception {
+        List<Ingredient> extraIngredients = sweet.getSweetRecipe().getExtraIngredients();
+        if (extraIngredients.contains(extraIngredient))
+            extraIngredients.remove(extraIngredient);
+        else
+            throw new Exception("This ingredient does not exist!");
+    }
+
 
 }
