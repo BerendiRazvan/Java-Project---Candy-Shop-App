@@ -7,17 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="CandyShopService" />
+        <module name="CandyShopStartApp" />
         <module name="CandyShopUI" />
         <module name="CandyShopModel" />
         <module name="CandyShopPersistence" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="CandyShopModel" target="11" />
-      <module name="CandyShopPersistence" target="11" />
-      <module name="CandyShopService" target="11" />
-      <module name="CandyShopUI" target="11" />
-      <module name="JavaSummerPractice2022" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

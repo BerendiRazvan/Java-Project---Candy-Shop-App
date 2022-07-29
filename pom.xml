@@ -13,6 +13,7 @@
         <module>CandyShopService</module>
         <module>CandyShopUI</module>
         <module>CandyShopPersistence</module>
+        <module>CandyShopStartApp</module>
     </modules>
 
     <properties>
