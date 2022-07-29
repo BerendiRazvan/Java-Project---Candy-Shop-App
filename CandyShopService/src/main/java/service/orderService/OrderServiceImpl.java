@@ -140,11 +140,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     private void addSweetToOrder(Order order, Sweet sweet) {
         order.getOrderedSweets().merge(sweet, 1, Integer::sum);
     }
-
 
 
     private void addSweetToOrder(Order order, Sweet sweet, int quantity) {

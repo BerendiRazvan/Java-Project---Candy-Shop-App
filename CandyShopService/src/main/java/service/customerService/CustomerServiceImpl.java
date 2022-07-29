@@ -1,7 +1,6 @@
 package service.customerService;
 
 import domain.Customer;
-import domain.Shop;
 import domain.location.Location;
 import repository.customersRepository.CustomerRepository;
 import repository.exception.RepositoryException;

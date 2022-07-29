@@ -1,6 +1,5 @@
 package service.sweetService;
 
-import domain.Shop;
 import domain.sweet.Sweet;
 import repository.sweetsRepository.SweetRepository;
 import service.exception.ServiceException;

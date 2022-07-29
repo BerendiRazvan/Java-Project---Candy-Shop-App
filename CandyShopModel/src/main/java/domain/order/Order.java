@@ -28,10 +28,7 @@ public class Order {
         this.shop = shop;
         this.orderDateTime = LocalDateTime.now();
         this.orderType = orderType;
-        if (orderType == OrderType.PICKUP)
-            this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
-        else
-            this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
+        this.waitingTime = orderDateTime.plusMinutes(orderType.getMinimumWaitingTime());
     }
 
     public LocalDateTime getWaitingTime() {
