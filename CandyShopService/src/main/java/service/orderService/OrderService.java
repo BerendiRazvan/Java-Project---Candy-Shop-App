@@ -26,4 +26,7 @@ public interface OrderService {
     double getProfitMadeToday();
 
     String printOrderDetails(String orderId) throws ServiceException;
+
+    double getFinalOrderPrice(Order order);
+
 }

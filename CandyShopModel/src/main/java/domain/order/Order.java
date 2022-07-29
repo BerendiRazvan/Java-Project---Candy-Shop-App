@@ -92,16 +92,6 @@ public class Order {
         this.orderDateTime = orderDateTime;
     }
 
-
-    public double getFinalOrderPrice() {
-        double totalToPay = 0;
-        for (Sweet sweet : orderedSweets.keySet()) {
-            totalToPay += orderedSweets.get(sweet) * sweet.getPrice();
-        }
-        return totalToPay;
-    }
-
-
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
@@ -125,8 +115,6 @@ public class Order {
                 "\n" + shop.getShopLocation() +
                 "\n" + "-".repeat(100) + "\n" +
                 "Ordered:\n" + ordered +
-                "\n" + "-".repeat(100) + "\n" +
-                "TOTAL TO PAY: " + df.format(getFinalOrderPrice()) + "$" +
                 "\n" + "-".repeat(100) + "\n" +
                 "YOUR ORDER WILL READY FOR " + orderType.toString() + " AT: " +
                 waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +

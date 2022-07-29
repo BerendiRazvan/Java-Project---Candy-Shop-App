@@ -10,6 +10,7 @@ import repository.exception.RepositoryException;
 import repository.ordersRepository.OrderRepository;
 import service.exception.ServiceException;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public OrderServiceImpl(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
@@ -66,7 +68,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String getOrderDetails(long orderId) {
-        return orderRepository.findOneOrder(orderId).toString();
+        return orderRepository.findOneOrder(orderId).toString() +
+                "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOneOrder(orderId))) + "$" +
+                "\n" + "-".repeat(100) + "\n";
     }
 
 
@@ -94,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
-                .mapToDouble(Order::getFinalOrderPrice)
+                .mapToDouble(this::getFinalOrderPrice)
                 .sum();
     }
 
@@ -135,8 +139,19 @@ public class OrderServiceImpl implements OrderService {
         if (yourOrder == null)
             throw new ServiceException("Invalid order number/id!");
         else {
-            return yourOrder.toString();
+            return yourOrder.toString() + "TOTAL TO PAY: " + df.format(getFinalOrderPrice(yourOrder)) + "$" +
+                    "\n" + "-".repeat(100) + "\n";
         }
+    }
+
+    @Override
+    public double getFinalOrderPrice(Order order) {
+        Map<Sweet, Integer> orderedSweets = order.getOrderedSweets();
+        double totalToPay = 0;
+        for (Sweet sweet : orderedSweets.keySet()) {
+            totalToPay += orderedSweets.get(sweet) * sweet.getPrice();
+        }
+        return totalToPay;
     }
 
 

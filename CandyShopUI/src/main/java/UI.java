@@ -203,7 +203,7 @@ public class UI {
         orderService.getAllOrdersInADay()
                 .stream()
                 .map(order -> new String("Order no. " + order.getIdOrder() + " | "
-                        + df.format(order.getFinalOrderPrice()) + "$ | Hour: " +
+                        + df.format(orderService.getFinalOrderPrice(order)) + "$ | Hour: " +
                         order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm"))))
                 .collect(Collectors.toList())
                 .forEach(System.out::println);
@@ -220,8 +220,6 @@ public class UI {
         for (var sweet : sweetService.getAvailableSweets()) {
             System.out.println(sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$");
-//            System.out.print("\n" + sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
-//                    + "$\nRecipe: " + sweet.getSweetRecipe().getIngredientsList() + "\n");
         }
 
         System.out.println("\n" + "-".repeat(100) + "\n");
