@@ -18,19 +18,19 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public void add(Sweet elem) throws RepositoryException {
-        if (!sweetList.contains(elem))
-            sweetList.add(elem);
+    public void add(Sweet sweet) throws RepositoryException {
+        if (!sweetList.contains(sweet))
+            sweetList.add(sweet);
         else
             throw new RepositoryException("This element already exists!");
     }
 
     @Override
-    public void update(Long aLong, Sweet elem) throws RepositoryException {
+    public void update(Long id, Sweet sweet) throws RepositoryException {
         boolean exists = false;
-        for (Sweet sweet : sweetList) {
-            if (sweet.getIdSweet() == elem.getIdSweet()) {
-                sweetList.set(sweetList.indexOf(sweet), elem);
+        for (Sweet s : sweetList) {
+            if (s.getIdSweet() == sweet.getIdSweet()) {
+                sweetList.set(sweetList.indexOf(s), sweet);
                 exists = true;
                 break;
             }
@@ -40,10 +40,10 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public void delete(Long aLong) throws RepositoryException {
+    public void delete(Long id) throws RepositoryException {
         boolean exists = false;
         for (Sweet sweet : sweetList) {
-            if (sweet.getIdSweet() == aLong) {
+            if (sweet.getIdSweet() == id) {
                 sweetList.remove(sweet);
                 exists = true;
                 break;
@@ -59,7 +59,7 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public Sweet findOneSweet(Long id) {
+    public Sweet findSweetById(Long id) {
         for (Sweet sweet : sweetList)
             if (id == sweet.getIdSweet()) return sweet;
         return null;

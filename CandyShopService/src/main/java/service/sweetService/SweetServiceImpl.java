@@ -29,7 +29,7 @@ public class SweetServiceImpl implements SweetService {
             throw new ServiceException("Invalid sweet id!");
         }
 
-        return sweetRepository.findOneSweet(id);
+        return sweetRepository.findSweetById(id);
 
     }
 

@@ -16,19 +16,19 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
-    public void add(Customer elem) throws RepositoryException {
-        if (!customerList.contains(elem))
-            customerList.add(elem);
+    public void add(Customer customer) throws RepositoryException {
+        if (!customerList.contains(customer))
+            customerList.add(customer);
         else
             throw new RepositoryException("This element already exists!");
     }
 
     @Override
-    public void update(Long aLong, Customer elem) throws RepositoryException {
+    public void update(Long id, Customer customer) throws RepositoryException {
         boolean exists = false;
-        for (Customer customer : customerList) {
-            if (customer.getIdCustomer() == elem.getIdCustomer()) {
-                customerList.set(customerList.indexOf(customer), elem);
+        for (Customer c : customerList) {
+            if (c.getIdCustomer() == customer.getIdCustomer()) {
+                customerList.set(customerList.indexOf(c), customer);
                 exists = true;
                 break;
             }
@@ -38,10 +38,10 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
-    public void delete(Long aLong) throws RepositoryException {
+    public void delete(Long id) throws RepositoryException {
         boolean exists = false;
         for (Customer customer : customerList) {
-            if (customer.getIdCustomer() == aLong) {
+            if (customer.getIdCustomer() == id) {
                 customerList.remove(customer);
                 exists = true;
                 break;

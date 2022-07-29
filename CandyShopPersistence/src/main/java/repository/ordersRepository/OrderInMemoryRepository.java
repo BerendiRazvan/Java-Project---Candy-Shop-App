@@ -21,19 +21,19 @@ public class OrderInMemoryRepository implements OrderRepository {
     }
 
     @Override
-    public void add(Order elem) throws RepositoryException {
-        if (!orderList.contains(elem))
-            orderList.add(elem);
+    public void add(Order order) throws RepositoryException {
+        if (!orderList.contains(order))
+            orderList.add(order);
         else
             throw new RepositoryException("This element already exists!");
     }
 
     @Override
-    public void update(Long aLong, Order elem) throws RepositoryException {
+    public void update(Long id, Order order) throws RepositoryException {
         boolean exists = false;
-        for (Order order : orderList) {
-            if (order.getIdOrder() == elem.getIdOrder()) {
-                orderList.set(orderList.indexOf(order), elem);
+        for (Order o : orderList) {
+            if (o.getIdOrder() == order.getIdOrder()) {
+                orderList.set(orderList.indexOf(o), order);
                 exists = true;
                 break;
             }
@@ -43,10 +43,10 @@ public class OrderInMemoryRepository implements OrderRepository {
     }
 
     @Override
-    public void delete(Long aLong) throws RepositoryException {
+    public void delete(Long id) throws RepositoryException {
         boolean exists = false;
         for (Order order : orderList) {
-            if (order.getIdOrder() == aLong) {
+            if (order.getIdOrder() == id) {
                 orderList.remove(order);
                 exists = true;
                 break;
@@ -62,7 +62,7 @@ public class OrderInMemoryRepository implements OrderRepository {
     }
 
     @Override
-    public Order findOneOrder(Long id) {
+    public Order findOrderById(Long id) {
         for (Order order : orderList)
             if (order.getIdOrder() == id) return order;
         return null;

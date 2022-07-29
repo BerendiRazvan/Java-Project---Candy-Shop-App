@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
         if (newSweet == null)
             throw new ServiceException("Invalid sweet id!");
         else {
-            Order updateOrder = orderRepository.findOneOrder(order.getIdOrder());
+            Order updateOrder = orderRepository.findOrderById(order.getIdOrder());
             addSweetToOrder(updateOrder, newSweet);
             try {
                 orderRepository.update(order.getIdOrder(), updateOrder);
@@ -68,8 +68,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String getOrderDetails(long orderId) {
-        return orderRepository.findOneOrder(orderId).toString() +
-                "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOneOrder(orderId))) + "$" +
+        return orderRepository.findOrderById(orderId).toString() +
+                "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOrderById(orderId))) + "$" +
                 "\n" + "-".repeat(100) + "\n";
     }
 
@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
             throw new ServiceException("Invalid order number/id!");
         }
 
-        Order yourOrder = orderRepository.findOneOrder(id);
+        Order yourOrder = orderRepository.findOrderById(id);
         if (yourOrder == null)
             throw new ServiceException("Invalid order number/id!");
         else {
