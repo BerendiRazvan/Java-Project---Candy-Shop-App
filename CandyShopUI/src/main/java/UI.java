@@ -116,7 +116,7 @@ public class UI {
                         System.out.print("Choose a sweet (enter sweet id): ");
                         String sweetId = scanner.nextLine().toUpperCase();
                         try {
-                            orderService.addToOrder(order, sweetService.findSweet(sweetId));
+                            orderService.addToOrder(order, sweetService.findSweetById(sweetId));
                             System.out.println("Sweet added, yummy :)");
                         } catch (ServiceException e) {
                             System.out.println("Oh no, we failed to add your sweet :(");

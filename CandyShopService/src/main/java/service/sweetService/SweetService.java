@@ -8,5 +8,5 @@ import java.util.List;
 public interface SweetService {
     List<Sweet> getAvailableSweets();
 
-    Sweet findSweet(String sweetId) throws ServiceException;
+    Sweet findSweetById(String sweetId) throws ServiceException;
 }

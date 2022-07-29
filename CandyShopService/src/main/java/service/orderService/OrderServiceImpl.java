@@ -91,19 +91,34 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllOrdersInADay() {
-        return orderRepository.findAll().stream().filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now())).collect(Collectors.toList());
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getOrderDateTime()
+                        .toLocalDate()
+                        .isEqual(LocalDate.now()))
+                .collect(Collectors.toList());
     }
 
 
     @Override
     public double getMoneyMadeToday() {
-        return orderRepository.findAll().stream().filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now())).mapToDouble(this::getFinalOrderPrice).sum();
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getOrderDateTime()
+                        .toLocalDate()
+                        .isEqual(LocalDate.now()))
+                .mapToDouble(this::getFinalOrderPrice).sum();
     }
 
 
     @Override
     public double getProfitMadeToday() {
-        return orderRepository.findAll().stream().filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now())).mapToDouble(order -> getProfit(order.getOrderedSweets())).sum();
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getOrderDateTime()
+                        .toLocalDate().isEqual(LocalDate.now()))
+                .mapToDouble(order -> getProfit(order.getOrderedSweets()))
+                .sum();
     }
 
 

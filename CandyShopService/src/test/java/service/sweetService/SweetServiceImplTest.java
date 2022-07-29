@@ -46,7 +46,7 @@ class SweetServiceImplTest {
     @org.junit.jupiter.api.Test
     void findSweet() {
         try {
-            Sweet sweet = sweetService.findSweet(String.valueOf(1L));
+            Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
 
             assertEquals(sweet.getIdSweet(), 1L);
             assertEquals(sweet.getSweetType(), SweetType.DONUT);
@@ -61,14 +61,14 @@ class SweetServiceImplTest {
         }
 
         try {
-            Sweet sweet = sweetService.findSweet("dasdasdasdada");
+            Sweet sweet = sweetService.findSweetById("dasdasdasdada");
             fail();
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid sweet id!");
         }
 
         try {
-            Sweet sweet = sweetService.findSweet("777");
+            Sweet sweet = sweetService.findSweetById("777");
             assertNull(sweet);
         } catch (ServiceException e) {
             fail();

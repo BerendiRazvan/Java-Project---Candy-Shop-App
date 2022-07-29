@@ -21,7 +21,7 @@ public class SweetServiceImpl implements SweetService {
     }
 
     @Override
-    public Sweet findSweet(String sweetId) throws ServiceException {
+    public Sweet findSweetById(String sweetId) throws ServiceException {
         long id;
         try {
             id = Long.parseLong(sweetId);
