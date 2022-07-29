@@ -28,18 +28,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
-        int id = 1;
-        while (true) {
-            boolean ok = true;
-            for (var o : orderRepository.findAll())
-                if (o.getIdOrder() == id) {
-                    ok = false;
-                    break;
-                }
-
-            if (ok) break;
-            id++;
-        }
+        int id = generateOrderId();
 
         try {
             Order order = new Order(id, new HashMap<>(), orderType, customer, shop);
@@ -50,10 +39,26 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    private int generateOrderId() {
+        //the temporary method
+        //it will no longer be needed after we add a db because the id will be automatically generated
+        int id = 1;
+        while (true) {
+            boolean ok = true;
+            for (var o : orderRepository.findAll())
+                if (o.getIdOrder() == id) {
+                    ok = false;
+                    break;
+                }
+            if (ok) return id;
+            ;
+            id++;
+        }
+    }
+
     @Override
     public void addToOrder(Order order, Sweet newSweet) throws ServiceException {
-        if (newSweet == null)
-            throw new ServiceException("Invalid sweet id!");
+        if (newSweet == null) throw new ServiceException("Invalid sweet id!");
         else {
             Order updateOrder = orderRepository.findOrderById(order.getIdOrder());
             addSweetToOrder(updateOrder, newSweet);
@@ -68,9 +73,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String getOrderDetails(long orderId) {
-        return orderRepository.findOrderById(orderId).toString() +
-                "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOrderById(orderId))) + "$" +
-                "\n" + "-".repeat(100) + "\n";
+        return orderRepository.findOrderById(orderId).toString() + "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderRepository.findOrderById(orderId))) + "$" + "\n" + "-".repeat(100) + "\n";
     }
 
 
@@ -86,40 +89,26 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllOrdersInADay() {
-        return orderRepository.findAll()
-                .stream()
-                .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
-                .collect(Collectors.toList());
+        return orderRepository.findAll().stream().filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now())).collect(Collectors.toList());
     }
 
 
     @Override
     public double getMoneyMadeToday() {
-        return orderRepository.findAll()
-                .stream()
-                .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
-                .mapToDouble(this::getFinalOrderPrice)
-                .sum();
+        return orderRepository.findAll().stream().filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now())).mapToDouble(this::getFinalOrderPrice).sum();
     }
 
 
     @Override
     public double getProfitMadeToday() {
-        return orderRepository.findAll()
-                .stream()
-                .filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now()))
-                .mapToDouble(order -> getProfit(order.getOrderedSweets()))
-                .sum();
+        return orderRepository.findAll().stream().filter(order -> order.getOrderDateTime().toLocalDate().isEqual(LocalDate.now())).mapToDouble(order -> getProfit(order.getOrderedSweets())).sum();
     }
 
 
     private double getProfit(Map<Sweet, Integer> orderedSweets) {
         double profit = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
-            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getSweetRecipe().getIngredientsList()
-                    .stream()
-                    .mapToDouble(Ingredient::getPrice)
-                    .sum();
+            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getSweetRecipe().getIngredientsList().stream().mapToDouble(Ingredient::getPrice).sum();
         }
 
         return profit;
@@ -136,11 +125,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order yourOrder = orderRepository.findOrderById(id);
-        if (yourOrder == null)
-            throw new ServiceException("Invalid order number/id!");
+        if (yourOrder == null) throw new ServiceException("Invalid order number/id!");
         else {
-            return yourOrder.toString() + "TOTAL TO PAY: " + df.format(getFinalOrderPrice(yourOrder)) + "$" +
-                    "\n" + "-".repeat(100) + "\n";
+            return yourOrder.toString() + "TOTAL TO PAY: " + df.format(getFinalOrderPrice(yourOrder)) + "$" + "\n" + "-".repeat(100) + "\n";
         }
     }
 
@@ -167,8 +154,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void removeSweetToOrder(Order order, Sweet sweet) {
         order.getOrderedSweets().merge(sweet, -1, Integer::sum);
-        if (order.getOrderedSweets().get(sweet) == 0)
-            order.getOrderedSweets().remove(sweet);
+        if (order.getOrderedSweets().get(sweet) == 0) order.getOrderedSweets().remove(sweet);
     }
 
 

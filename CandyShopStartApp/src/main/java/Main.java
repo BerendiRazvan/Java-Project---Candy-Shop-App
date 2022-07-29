@@ -1,4 +1,3 @@
-
 import domain.Shop;
 import domain.location.Location;
 import repository.customersRepository.CustomerInMemoryRepository;
@@ -23,14 +22,12 @@ public class Main {
     public static void startApp() {
         System.out.println("\nWELCOME TO THE CANDY MY FRIEND :)\n");
 
-        Shop myShop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
+        Shop myShop = new Shop("Candy Crush Shop", new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
 
         //Repository
         SweetRepository sweetRepository = new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
         CustomerRepository customerRepository = new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
-        OrderRepository orderRepository = new OrderInMemoryRepository(OrderInMemoryRepository
-                .generateOrders(myShop, sweetRepository, customerRepository));
+        OrderRepository orderRepository = new OrderInMemoryRepository(OrderInMemoryRepository.generateOrders(myShop, sweetRepository, customerRepository));
         // +++ UseCase2-RepoIngredients +++
 
         //Service

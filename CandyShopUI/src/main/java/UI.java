@@ -30,17 +30,9 @@ public class UI {
         this.sweetService = sweetService;
         this.orderService = orderService;
 
-        menu = "\nOptions:\n" +
-                "1 - Order sweets\n" +
-                "2 - Print order details\n" +
-                "3 - View orders and profit for a day\n" +
-                "X - Exit";
+        menu = "\nOptions:\n" + "1 - Order sweets\n" + "2 - Print order details\n" + "3 - View orders and profit for a day\n" + "X - Exit";
 
-        menuOpt1 = "\nOptions:\n" +
-                "1 - Add sweet\n" +
-                "2 - Finish order\n" +
-                "3 - Your order details\n" +
-                "X - Cancel and exit";
+        menuOpt1 = "\nOptions:\n" + "1 - Add sweet\n" + "2 - Finish order\n" + "3 - Your order details\n" + "X - Cancel and exit";
     }
 
 
@@ -97,8 +89,7 @@ public class UI {
 
         String deliveryOpt = scanner.nextLine().toUpperCase();
 
-        if (deliveryOpt.matches("YES"))
-            orderType = OrderType.PICKUP;
+        if (deliveryOpt.matches("YES")) orderType = OrderType.PICKUP;
 
 
         try {
@@ -171,8 +162,7 @@ public class UI {
             String address = scanner.nextLine();
 
             try {
-                return customerService.createAccount(firstName, lastName, mail, password, phone,
-                        new Location("Romania", "Cluj-Napoca", address));
+                return customerService.createAccount(firstName, lastName, mail, password, phone, new Location("Romania", "Cluj-Napoca", address));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return null;
@@ -200,26 +190,16 @@ public class UI {
     private void option3() {
         //  •	Print all the orders and the profit for the day (the profit is the total sum of the orders)
         System.out.println("\nToday's orders:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy")));
-        orderService.getAllOrdersInADay()
-                .stream()
-                .map(order -> new String("Order no. " + order.getIdOrder() + " | "
-                        + df.format(orderService.getFinalOrderPrice(order)) + "$ | Hour: " +
-                        order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm"))))
-                .collect(Collectors.toList())
-                .forEach(System.out::println);
-        System.out.print("Money made today: " + df.format(orderService.getMoneyMadeToday()) + "$\n" +
-                "Actual profit made today: " + df.format(orderService.getProfitMadeToday()) + "$\n");
+        orderService.getAllOrdersInADay().stream().map(order -> new String("Order no. " + order.getIdOrder() + " | " + df.format(orderService.getFinalOrderPrice(order)) + "$ | Hour: " + order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm")))).collect(Collectors.toList()).forEach(System.out::println);
+        System.out.print("Money made today: " + df.format(orderService.getMoneyMadeToday()) + "$\n" + "Actual profit made today: " + df.format(orderService.getProfitMadeToday()) + "$\n");
     }
 
     private void printShopInfo() {
-        System.out.println("\n\n" + "-".repeat(100) + "\n" +
-                "\t".repeat(10) + shop.getShopName() +
-                "\n" + "-".repeat(100) + "\n");
+        System.out.println("\n\n" + "-".repeat(100) + "\n" + "\t".repeat(10) + shop.getShopName() + "\n" + "-".repeat(100) + "\n");
 
         System.out.println("Available sweets: \n");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.println(sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
-                    + "$");
+            System.out.println(sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice() + "$");
         }
 
         System.out.println("\n" + "-".repeat(100) + "\n");
@@ -230,12 +210,8 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.print("\n\n" + sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
-                    + "$\nRecipe: ");
-            sweet.getSweetRecipe().getIngredientsList().stream()
-                    .map(Ingredient::getName)
-                    .collect(Collectors.toList())
-                    .forEach(System.out::print);
+            System.out.print("\n\n" + sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice() + "$\nRecipe: ");
+            sweet.getSweetRecipe().getIngredientsList().stream().map(Ingredient::getName).collect(Collectors.toList()).forEach(System.out::print);
         }
         System.out.println("\n" + "-".repeat(100) + "\n");
     }
