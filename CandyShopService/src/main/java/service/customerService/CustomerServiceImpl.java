@@ -16,7 +16,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer login(String mail, String password) throws ServiceException {
-        Customer customerTry = customerRepository.findOneCustomer(mail);
+        Customer customerTry = customerRepository.findCustomerByEmail(mail);
         if (customerTry != null) {
             if (password.equals(customerTry.getPassword())) {
                 return customerTry;
@@ -89,7 +89,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public boolean findMail(String mail) {
-        return customerRepository.findOneCustomer(mail) != null;
+        return customerRepository.findCustomerByEmail(mail) != null;
     }
 
 

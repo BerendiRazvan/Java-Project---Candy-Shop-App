@@ -5,5 +5,5 @@ import repository.Repository;
 
 
 public interface CustomerRepository extends Repository<Long, Customer> {
-    Customer findOneCustomer(String email);
+    Customer findCustomerByEmail(String email);
 }

@@ -57,7 +57,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
-    public Customer findOneCustomer(String email) {
+    public Customer findCustomerByEmail(String email) {
         for (Customer customer : customerList)
             if (email.equals(customer.getEmail())) return customer;
         return null;
