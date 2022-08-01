@@ -43,8 +43,7 @@ class SweetServiceImplTest {
         assertEquals(sweetService.getAvailableSweets().size(), 15);
     }
 
-    @org.junit.jupiter.api.Test
-    void findSweet() {
+    private void validTestsFindSweetById(){
         try {
             Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
 
@@ -59,6 +58,9 @@ class SweetServiceImplTest {
         } catch (ServiceException e) {
             fail();
         }
+    }
+
+    private void invalidTestsFindSweetById(){
 
         try {
             Sweet sweet = sweetService.findSweetById("dasdasdasdada");
@@ -73,6 +75,11 @@ class SweetServiceImplTest {
         } catch (ServiceException e) {
             fail();
         }
+    }
 
+    @org.junit.jupiter.api.Test
+    void findSweetById() {
+        validTestsFindSweetById();
+        invalidTestsFindSweetById();
     }
 }

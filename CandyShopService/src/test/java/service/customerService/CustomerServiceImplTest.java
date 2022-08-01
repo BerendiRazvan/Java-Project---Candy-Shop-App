@@ -37,10 +37,7 @@ class CustomerServiceImplTest {
         System.out.println("Tests passed");
     }
 
-
-    @org.junit.jupiter.api.Test
-    void login() {
-
+    private void validTestsLogin(){
         try {
             Customer customer = customerService.login("br@gmail.com", "12345678");
             assertEquals(customer.getIdCustomer(), 1);
@@ -53,7 +50,8 @@ class CustomerServiceImplTest {
         } catch (ServiceException e) {
             fail();
         }
-
+    }
+    private void invalidTestsLogin(){
         try {
             customerService.login("brazvan1234567890@gmail.com", "12345678");
             fail();
@@ -67,13 +65,16 @@ class CustomerServiceImplTest {
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid password!\n");
         }
-
-
     }
 
-    @org.junit.jupiter.api.Test
-    void createAccount() {
 
+    @org.junit.jupiter.api.Test
+    void login() {
+        validTestsLogin();
+        invalidTestsLogin();
+    }
+
+    private void validTestsCreateAccount(){
         try {
             Customer customer = customerService.createAccount("Razvan", "Berendi",
                     "berendi.rav2001@gmail.com", "1234567890", "0751578787",
@@ -88,7 +89,9 @@ class CustomerServiceImplTest {
         } catch (Exception e) {
             fail();
         }
+    }
 
+    private void invalidTestsCreateAccount(){
         try {
             Customer customer = customerService.createAccount(
                     "Razvan", "Berendi", "berendi.rav2001@gmail.com",
@@ -98,13 +101,15 @@ class CustomerServiceImplTest {
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid phone number!\n");
         }
-
-
     }
 
-
     @org.junit.jupiter.api.Test
-    void verifCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    void createAccount() {
+        validTestsCreateAccount();
+        invalidTestsCreateAccount();
+    }
+
+    private void verifCustomerFirstName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -115,11 +120,6 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-        assertEquals(errors, "");
-
         errors = (String) method.invoke(customerService, "", "Berendi", "br@gmail.com", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid first name!\n");
@@ -128,6 +128,18 @@ class CustomerServiceImplTest {
                 "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid first name!\n");
+    }
+
+    private void verifCustomerLastName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
 
         errors = (String) method.invoke(customerService, "Razvan", "", "br@gmail.com", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
@@ -137,6 +149,19 @@ class CustomerServiceImplTest {
                 "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid last name!\n");
+
+    }
+
+    private void verifCustomerMail() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
 
         errors = (String) method.invoke(customerService, "Razvan", "Berendi", "", "1234567890", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
@@ -156,6 +181,18 @@ class CustomerServiceImplTest {
                 "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid email!\n");
+    }
+
+    private void verifCustomerPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
 
         errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "", "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
@@ -165,6 +202,18 @@ class CustomerServiceImplTest {
                 "0751578787",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid password!\n");
+    }
+
+    private void verifCustomerPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
 
         errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890", "",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
@@ -184,11 +233,34 @@ class CustomerServiceImplTest {
                 "098123132372", new Location(1, "Romania", "Cluj",
                         "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid phone number!\n");
+    }
+
+    private void verifCustomerLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
 
         errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890",
                 "0751578787", new Location(1, "Romania", "Cluj", ""));
         assertEquals(errors, "Invalid address!\n");
+    }
 
+    private void verifCustomerMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
 
         errors = (String) method.invoke(customerService, "Razvan", "", "br@gmail.com", "", "",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
@@ -212,14 +284,45 @@ class CustomerServiceImplTest {
                 "Invalid address!\n");
     }
 
-    @org.junit.jupiter.api.Test
-    void findMail() {
+    private void verifValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
 
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        String errors;
+
+        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
+                "1234567890", "0751578787",
+                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        assertEquals(errors, "");
+    }
+
+
+    @org.junit.jupiter.api.Test
+    void verifCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        verifValidCustomer();
+        verifCustomerFirstName();
+        verifCustomerLastName();
+        verifCustomerMail();
+        verifCustomerPassword();
+        verifCustomerPhoneNumber();
+        verifCustomerLocation();
+        verifCustomerMultipleFields();
+    }
+
+    private void validTestsFindMail(){
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("asasr@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
+    }
 
+    private void invalidTestsFindMail(){
         assertFalse(customerService.findMail(""));
         assertFalse(customerService.findMail("berendirazvan@gmail.com"));
         assertFalse(customerService.findMail("@gmail.com"));
@@ -229,6 +332,11 @@ class CustomerServiceImplTest {
         assertFalse(customerService.findMail("1234br@gmail.com"));
         assertFalse(customerService.findMail(" "));
         assertFalse(customerService.findMail(" br@gmail.com "));
+    }
 
+    @org.junit.jupiter.api.Test
+    void findMail() {
+        validTestsFindMail();
+        invalidTestsFindMail();
     }
 }

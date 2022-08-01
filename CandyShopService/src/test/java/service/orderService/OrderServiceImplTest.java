@@ -80,21 +80,7 @@ class OrderServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
-    void addToOrder() {
-
-        Shop myShop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi",
-                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
-
+    private void validTestAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
         try {
             Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
@@ -111,17 +97,37 @@ class OrderServiceImplTest {
         } catch (ServiceException e) {
             fail();
         }
+    }
 
+    private void invalidTestAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
         try {
             Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
             orderService.addToOrder(order, null);
-
             fail();
+
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid sweet id!");
         }
+    }
 
+    @org.junit.jupiter.api.Test
+    void addToOrder() {
+
+        Shop myShop = new Shop("Candy Crush Shop",
+                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
+        Customer customer = new Customer(1, "Razvan", "Berendi",
+                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
+                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        Sweet sweet = new Sweet(1,
+                new ArrayList<>(List.of(
+                        new Ingredient(1, "Sugar", 1.5),
+                        new Ingredient(2, "Milk", 1),
+                        new Ingredient(3, "Flour", 0.75))),
+                SweetType.DONUT, 5);
+
+        validTestAddToOrder(customer, sweet, myShop);
+        invalidTestAddToOrder(customer, sweet, myShop);
     }
 
     @org.junit.jupiter.api.Test
@@ -143,7 +149,9 @@ class OrderServiceImplTest {
         } catch (ServiceException e) {
             fail();
         }
+
         assertEquals(orderService.getAllOrdersInADay().size(), 0);
+
         try {
             orderService.removeOrder(1L);
             fail();
@@ -215,14 +223,16 @@ class OrderServiceImplTest {
         assertEquals(orderService.getProfitMadeToday(), 1.75);
     }
 
-    @org.junit.jupiter.api.Test
-    void printOrderDetails() {
+    private void validTestsPrintOrderDetails() {
         try {
             String result = orderService.printOrderDetails("1");
             assertEquals(result, orderService.getOrderDetails(1));
         } catch (ServiceException e) {
             fail();
         }
+    }
+
+    private void invalidTestsPrintOrderDetails() {
 
         try {
             String result = orderService.printOrderDetails("1234567");
@@ -237,6 +247,12 @@ class OrderServiceImplTest {
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid order number/id!");
         }
+    }
+
+    @org.junit.jupiter.api.Test
+    void printOrderDetails() {
+        validTestsPrintOrderDetails();
+        invalidTestsPrintOrderDetails();
     }
 
     @org.junit.jupiter.api.Test
@@ -269,11 +285,11 @@ class OrderServiceImplTest {
         result = (double) method.invoke(orderService,
                 orderService.getAllOrdersInADay().get(0).getOrderedSweets());
 
-        assertEquals(result, 1, 75);
+        assertEquals(result, 1.75);
     }
 
-    @org.junit.jupiter.api.Test
-    void addSweetToOrder() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+
+    private void addOneSweetToOrder() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -282,11 +298,28 @@ class OrderServiceImplTest {
                 Order.class, Sweet.class);
         method1.setAccessible(true);
 
+        Sweet sweet = new Sweet(1,
+                new ArrayList<>(List.of(
+                        new Ingredient(1, "Sugar", 1.5),
+                        new Ingredient(2, "Milk", 1),
+                        new Ingredient(3, "Flour", 0.75))),
+                SweetType.DONUT, 5);
+
+        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet);
+
+        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 1);
+    }
+
+    @org.junit.jupiter.api.Test
+    private void addQuantityOfSweetToOrder() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        //private method - tested with reflection
+
         //args: Order order, Sweet sweet, int quantity
         Method method2 = OrderServiceImpl.class.getDeclaredMethod("addSweetToOrder",
                 Order.class, Sweet.class, int.class);
         method2.setAccessible(true);
-
 
         Sweet sweet = new Sweet(1,
                 new ArrayList<>(List.of(
@@ -295,19 +328,19 @@ class OrderServiceImplTest {
                         new Ingredient(3, "Flour", 0.75))),
                 SweetType.DONUT, 5);
 
-        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().isEmpty());
-
-        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet);
-
-        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 1);
-
-
         method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet, 5);
 
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 6);
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 5);
 
+    }
+
+    @org.junit.jupiter.api.Test
+    void addSweetToOrder() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+            IllegalAccessException {
+        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().isEmpty());
+        addOneSweetToOrder();
+        addQuantityOfSweetToOrder();
     }
 
 }
