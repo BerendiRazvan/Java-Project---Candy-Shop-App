@@ -7,9 +7,9 @@ import repository.customersRepository.CustomerInMemoryRepository;
 import repository.customersRepository.CustomerRepository;
 import service.exception.ServiceException;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +25,6 @@ class CustomerServiceImplTest {
     private static final String PASSWORD = "12345678";
     private static final Location LOCATION =
             new Location(1, "Romania", "Cluj", "Aleea Rucar nr. 9, Bloc D13, ap. 1");
-
 
     @BeforeAll
     static void setUpAll() {
@@ -49,72 +48,62 @@ class CustomerServiceImplTest {
         System.out.println("Tests passed");
     }
 
-    private void testValidLogin() {
-        try {
-            Customer customer = customerService.login(EMAIL, PASSWORD);
-            assertEquals(customer.getId(), ID);
-            assertEquals(customer.getEmail(), EMAIL);
-            assertEquals(customer.getFirstName(), FIRST_NAME);
-            assertEquals(customer.getLastName(), LAST_NAME);
-            assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
-            assertEquals(customer.getPassword(), PASSWORD);
-            assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
-        } catch (ServiceException e) {
-            fail();
-        }
+    private void testValidLogin() throws ServiceException {
+        Customer customer = customerService.login(EMAIL, PASSWORD);
+        assertEquals(customer.getId(), ID);
+        assertEquals(customer.getEmail(), EMAIL);
+        assertEquals(customer.getFirstName(), FIRST_NAME);
+        assertEquals(customer.getLastName(), LAST_NAME);
+        assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
+        assertEquals(customer.getPassword(), PASSWORD);
+        assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
     }
 
-    private void testInvalidLogin() {
-        try {
-            customerService.login("brazvan1234567890@gmail.com", PASSWORD);
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Authentication failed!");
-        }
 
-        try {
-            customerService.login(EMAIL, "1234dasdas678");
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Invalid password!\n");
-        }
+    private void testInvalidLogin() {
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    customerService.login("brazvan1234567890@gmail.com", PASSWORD);
+                },
+                "Authentication failed!");
+
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    customerService.login(EMAIL, "1234dasdas678");
+                },
+                "Invalid password!\n");
     }
 
 
     @Test
-    void login() {
+    void login() throws ServiceException {
         testValidLogin();
         testInvalidLogin();
     }
 
-    private void testValidCreateAccount() {
-        try {
-            Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                    PASSWORD, PHONE_NUMBER, LOCATION);
-            assertEquals(customer.getId(), 6);
-            assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
-            assertEquals(customer.getFirstName(), FIRST_NAME);
-            assertEquals(customer.getLastName(), LAST_NAME);
-            assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
-            assertEquals(customer.getPassword(), PASSWORD);
-            assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
-        } catch (ServiceException e) {
-            fail();
-        }
+    private void testValidCreateAccount() throws ServiceException {
+        Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+                PASSWORD, PHONE_NUMBER, LOCATION);
+        assertEquals(customer.getId(), 6);
+        assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
+        assertEquals(customer.getFirstName(), FIRST_NAME);
+        assertEquals(customer.getLastName(), LAST_NAME);
+        assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
+        assertEquals(customer.getPassword(), PASSWORD);
+        assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
     }
 
     private void testInvalidCreateAccount() {
-        try {
-            Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                    PASSWORD, "1234", LOCATION);
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Invalid phone number!\n");
-        }
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+                            PASSWORD, "1234", LOCATION);
+                },
+                "Invalid phone number!\n");
     }
 
     @Test
-    void createAccount() {
+    void createAccount() throws ServiceException {
         testValidCreateAccount();
         testInvalidCreateAccount();
     }

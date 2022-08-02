@@ -66,177 +66,131 @@ class OrderServiceImplTest {
 
 
     @Test
-    void createOrder() {
-        try {
-            Order order = orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+    void createOrder() throws ServiceException {
 
-            assertEquals(order.getCustomer(), CUSTOMER);
-            assertEquals(order.getShop(), MY_SHOP);
-            assertEquals(order.getOrderType(), OrderType.DELIVERY);
-            assertTrue(order.getOrderedSweets().isEmpty());
+        Order order = orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
 
-        } catch (ServiceException e) {
-            fail();
-        }
+        assertEquals(order.getCustomer(), CUSTOMER);
+        assertEquals(order.getShop(), MY_SHOP);
+        assertEquals(order.getOrderType(), OrderType.DELIVERY);
+        assertTrue(order.getOrderedSweets().isEmpty());
+
     }
 
-    private void testValidAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
-        try {
-            Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+    private void testValidAddToOrder(Customer customer, Sweet sweet, Shop myShop) throws ServiceException {
 
-            double moneyMade = orderService.getMoneyMadeToday();
-            orderService.addToOrder(order, sweet);
+        Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
-            assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
+        double moneyMade = orderService.getMoneyMadeToday();
+        orderService.addToOrder(order, sweet);
 
-            orderService.addToOrder(order, sweet);
-            orderService.addToOrder(order, sweet);
+        assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
 
-            assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+        orderService.addToOrder(order, sweet);
+        orderService.addToOrder(order, sweet);
 
-        } catch (ServiceException e) {
-            fail();
-        }
+        assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+
     }
 
     private void testInvalidAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
-        try {
-            Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-
-            orderService.addToOrder(order, null);
-            fail();
-
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Invalid sweet id!");
-        }
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+                    orderService.addToOrder(order, null);
+                },
+                "Invalid sweet id!");
     }
 
     @Test
-    void addToOrder() {
+    void addToOrder() throws ServiceException {
         testValidAddToOrder(CUSTOMER, SWEET, MY_SHOP);
         testInvalidAddToOrder(CUSTOMER, SWEET, MY_SHOP);
     }
 
     @Test
-    void getOrderDetails() {
+    void getOrderDetails() throws ServiceException {
         String result = orderService.getOrderDetails(1);
-        try {
-            assertEquals(result, orderService.printOrderDetails("1"));
-        } catch (ServiceException e) {
-            fail();
-        }
+        assertEquals(result, orderService.printOrderDetails("1"));
     }
 
-    @Test
-    void removeOrder() {
+
+    private void testValidRemoveOrder() throws ServiceException {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
-
-        try {
-            orderService.removeOrder(1L);
-        } catch (ServiceException e) {
-            fail();
-        }
-
+        orderService.removeOrder(1L);
         assertEquals(orderService.getAllOrdersInADay().size(), 0);
+    }
 
-        try {
-            orderService.removeOrder(1L);
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(orderService.getAllOrdersInADay().size(), 0);
-            assertEquals(e.getMessage(), "This element does not exist!");
-        }
+    private void testInvalidRemoveOrder() {
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    orderService.removeOrder(1L);
+                },
+                "This element does not exist!");
+        assertEquals(orderService.getAllOrdersInADay().size(), 0);
     }
 
     @Test
-    void getAllOrdersInADay() {
+    void removeOrder() throws ServiceException {
+        testValidRemoveOrder();
+        testInvalidRemoveOrder();
+    }
+
+    @Test
+    void getAllOrdersInADay() throws ServiceException {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
-        try {
-            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
-            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
-            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
-            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
 
-            assertEquals(orderService.getAllOrdersInADay().size(), 5);
-            for (int i = 0; i < orderService.getAllOrdersInADay().size(); i++)
-                assertEquals(orderService.getAllOrdersInADay().get(i).getId(), i + 1);
-
-
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
-
+        assertEquals(orderService.getAllOrdersInADay().size(), 5);
+        for (int i = 0; i < orderService.getAllOrdersInADay().size(); i++)
+            assertEquals(orderService.getAllOrdersInADay().get(i).getId(), i + 1);
     }
 
     @Test
-    void getMoneyMadeToday() {
+    void getMoneyMadeToday() throws ServiceException {
         assertEquals(orderService.getMoneyMadeToday(), 0);
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
-        try {
-            orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), SWEET);
         assertEquals(orderService.getMoneyMadeToday(), 5);
     }
 
     @Test
-    void getProfitMadeToday() {
+    void getProfitMadeToday() throws ServiceException {
         assertEquals(orderService.getProfitMadeToday(), 0);
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
-        try {
-            orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), SWEET);
         assertEquals(orderService.getProfitMadeToday(), 1.75);
     }
 
-    private void testValidPrintOrderDetails() {
-        try {
-            String result = orderService.printOrderDetails("1");
-            assertEquals(result, orderService.getOrderDetails(1));
-        } catch (ServiceException e) {
-            fail();
-        }
+    private void testValidPrintOrderDetails() throws ServiceException {
+        String result = orderService.printOrderDetails("1");
+        assertEquals(result, orderService.getOrderDetails(1));
     }
 
     private void testInvalidPrintOrderDetails() {
-        try {
-            String result = orderService.printOrderDetails("1234567");
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Invalid order number/id!");
-        }
-
-        try {
-            String result = orderService.printOrderDetails("adsasdads");
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Invalid order number/id!");
-        }
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    String result = orderService.printOrderDetails("1234567");
+                },
+                "Invalid order number/id!");
+        assertThrowsExactly(ServiceException.class,
+                () -> {
+                    String result = orderService.printOrderDetails("adsasdads");
+                },
+                "Invalid order number/id!");
     }
 
     @Test
-    void printOrderDetails() {
+    void printOrderDetails() throws ServiceException {
         testValidPrintOrderDetails();
         testInvalidPrintOrderDetails();
     }
 
     @Test
     void getProfit() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+            IllegalAccessException, ServiceException {
         //private method - tested with reflection
 
         //args: Map<Sweet, Integer> orderedSweets
@@ -246,24 +200,11 @@ class OrderServiceImplTest {
 
         double result = (double) method.invoke(orderService,
                 orderService.getAllOrdersInADay().get(0).getOrderedSweets());
-
         assertEquals(result, 0);
 
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
-        try {
-            orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
-
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), SWEET);
         result = (double) method.invoke(orderService,
                 orderService.getAllOrdersInADay().get(0).getOrderedSweets());
-
         assertEquals(result, 1.75);
     }
 
@@ -277,17 +218,10 @@ class OrderServiceImplTest {
                 Order.class, Sweet.class);
         method1.setAccessible(true);
 
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
+        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), SWEET);
 
-        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet);
-
-        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 1);
+        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(SWEET));
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(SWEET), 1);
     }
 
     @Test
@@ -300,17 +234,10 @@ class OrderServiceImplTest {
                 Order.class, Sweet.class, int.class);
         method2.setAccessible(true);
 
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
+        method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), SWEET, 5);
 
-        method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet, 5);
-
-        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 5);
+        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(SWEET));
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(SWEET), 5);
 
     }
 
