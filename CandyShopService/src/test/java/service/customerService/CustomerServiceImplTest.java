@@ -119,8 +119,9 @@ class CustomerServiceImplTest {
         testInvalidCreateAccount();
     }
 
-    private void testCustomerValidationForFirstName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+    private String getCustomerValidation(String firstName, String lastName, String email, String password,
+                                         String phoneNumber, Location location) throws NoSuchMethodException,
+            SecurityException, InvocationTargetException, IllegalAccessException {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
@@ -128,157 +129,106 @@ class CustomerServiceImplTest {
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
+        return (String) method.invoke(customerService, firstName, lastName, email, password, phoneNumber, location);
+    }
+
+    private void testCustomerValidationForFirstName() throws InvocationTargetException, NoSuchMethodException,
+            IllegalAccessException {
         String errors;
 
-        errors = (String) method.invoke(customerService, "", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation("", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid first name!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                LOCATION);
+        errors = getCustomerValidation("Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid first name!\n");
     }
 
-    private void testCustomerValidationForLastName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
+    private void testCustomerValidationForLastName() throws NoSuchMethodException, SecurityException,
+            InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid last name!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER,
-                LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid last name!\n");
-
     }
 
-    private void testCustomerValidationForEmail() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
+    private void testCustomerValidationForEmail() throws NoSuchMethodException, SecurityException,
+            InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER,
-                LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD,
-                PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD,
-                PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD,
-                PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
     }
 
     private void testCustomerValidationForPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER,
-                LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid password!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER,
-                LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid password!\n");
     }
 
     private void testCustomerValidationForPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
 
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "", LOCATION);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
-                "12e456789w", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "12e456789w", LOCATION);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
-                "09872", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "09872", LOCATION);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
-                "098123132372", LOCATION);
-
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "098123132372", LOCATION);
         assertEquals(errors, "Invalid phone number!\n");
     }
 
     private void testCustomerValidationForLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
                 new Location(1, "Romania", "Cluj", ""));
-
         assertEquals(errors, "Invalid address!\n");
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
                 new Location(1, "Romania", "Cluj", "aproape"));
-
         assertEquals(errors, "Invalid address!\n");
     }
 
     private void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
 
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, "", EMAIL, "", "", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, "", "", LOCATION);
         assertEquals(errors, "Invalid last name!\n" +
                 "Invalid password!\n" +
                 "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, "", "", EMAIL, PASSWORD, "", LOCATION);
+        errors = getCustomerValidation("", "", EMAIL, PASSWORD, "", LOCATION);
         assertEquals(errors, "Invalid first name!\n" +
                 "Invalid last name!\n" +
                 "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, "", "", "", "", "",
+        errors = getCustomerValidation("", "", "", "", "",
                 new Location(1, "Romania", "Cluj", ""));
         assertEquals(errors, "Invalid first name!\n" +
                 "Invalid last name!\n" +
@@ -290,16 +240,9 @@ class CustomerServiceImplTest {
 
     private void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
         String errors;
 
-        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                 PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "");
     }
