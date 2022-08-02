@@ -32,7 +32,7 @@ public class OrderInMemoryRepository implements OrderRepository {
     public void update(Long id, Order order) throws RepositoryException {
         boolean exists = false;
         for (Order o : orderList) {
-            if (o.getIdOrder() == order.getIdOrder()) {
+            if (o.getId() == order.getId()) {
                 orderList.set(orderList.indexOf(o), order);
                 exists = true;
                 break;
@@ -46,7 +46,7 @@ public class OrderInMemoryRepository implements OrderRepository {
     public void delete(Long id) throws RepositoryException {
         boolean exists = false;
         for (Order order : orderList) {
-            if (order.getIdOrder() == id) {
+            if (order.getId() == id) {
                 orderList.remove(order);
                 exists = true;
                 break;
@@ -64,7 +64,7 @@ public class OrderInMemoryRepository implements OrderRepository {
     @Override
     public Order findOrderById(Long id) {
         for (Order order : orderList)
-            if (order.getIdOrder() == id) return order;
+            if (order.getId() == id) return order;
         return null;
     }
 

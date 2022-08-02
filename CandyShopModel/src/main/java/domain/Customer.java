@@ -3,7 +3,7 @@ package domain;
 import domain.location.Location;
 
 public class Customer {
-    private long idCustomer;
+    private long id;
     private String firstName;
     private String lastName;
     private String email;
@@ -11,9 +11,9 @@ public class Customer {
     private String phoneNumber;
     private Location customerLocation;
 
-    public Customer(long idCustomer, String firstName, String lastName, String email, String password,
+    public Customer(long id, String firstName, String lastName, String email, String password,
                     String phoneNumber, Location customerLocation) {
-        this.idCustomer = idCustomer;
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -22,12 +22,12 @@ public class Customer {
         this.customerLocation = customerLocation;
     }
 
-    public long getIdCustomer() {
-        return idCustomer;
+    public long getId() {
+        return id;
     }
 
-    public void setIdCustomer(long idCustomer) {
-        this.idCustomer = idCustomer;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getFirstName() {

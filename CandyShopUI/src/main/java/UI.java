@@ -123,13 +123,13 @@ public class UI {
                         }
                         break;
                     case "2":
-                        System.out.println(orderService.getOrderDetails(order.getIdOrder()));
+                        System.out.println(orderService.getOrderDetails(order.getId()));
                         break label;
                     case "3":
-                        System.out.println(orderService.getOrderDetails(order.getIdOrder()));
+                        System.out.println(orderService.getOrderDetails(order.getId()));
                         break;
                     case "X":
-                        orderService.removeOrder(order.getIdOrder());
+                        orderService.removeOrder(order.getId());
                         System.out.println("Order deleted!\n");
                         break label;
                     default:
@@ -202,7 +202,7 @@ public class UI {
         System.out.println("\nToday's orders:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy")));
         orderService.getAllOrdersInADay()
                 .stream()
-                .map(order -> new String("Order no. " + order.getIdOrder() + " | "
+                .map(order -> new String("Order no. " + order.getId() + " | "
                         + df.format(orderService.getFinalOrderPrice(order)) + "$ | Hour: " +
                         order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm"))))
                 .collect(Collectors.toList())
@@ -218,7 +218,7 @@ public class UI {
 
         System.out.println("Available sweets: \n");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.println(sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
+            System.out.println(sweet.getId() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$");
         }
 
@@ -230,7 +230,7 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.print("\n\n" + sweet.getIdSweet() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
+            System.out.print("\n\n" + sweet.getId() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$\nRecipe: ");
             sweet.getIngredientsList().stream()
                     .map(Ingredient::getName)

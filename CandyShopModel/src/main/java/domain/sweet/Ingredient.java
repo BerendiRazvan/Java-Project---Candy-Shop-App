@@ -1,22 +1,22 @@
 package domain.sweet;
 
 public class Ingredient {
-    private long idIngredient;
+    private long id;
     private String name;
     private double price;
 
-    public Ingredient(long idIngredient, String name, double price) {
-        this.idIngredient = idIngredient;
+    public Ingredient(long id, String name, double price) {
+        this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public long getIdIngredient() {
-        return idIngredient;
+    public long getId() {
+        return id;
     }
 
-    public void setIdIngredient(long idIngredient) {
-        this.idIngredient = idIngredient;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -27,7 +27,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     public void update(Long id, Customer customer) throws RepositoryException {
         boolean exists = false;
         for (Customer c : customerList) {
-            if (c.getIdCustomer() == customer.getIdCustomer()) {
+            if (c.getId() == customer.getId()) {
                 customerList.set(customerList.indexOf(c), customer);
                 exists = true;
                 break;
@@ -41,7 +41,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     public void delete(Long id) throws RepositoryException {
         boolean exists = false;
         for (Customer customer : customerList) {
-            if (customer.getIdCustomer() == id) {
+            if (customer.getId() == id) {
                 customerList.remove(customer);
                 exists = true;
                 break;

@@ -40,7 +40,7 @@ class CustomerServiceImplTest {
     private void validTestsLogin(){
         try {
             Customer customer = customerService.login("br@gmail.com", "12345678");
-            assertEquals(customer.getIdCustomer(), 1);
+            assertEquals(customer.getId(), 1);
             assertEquals(customer.getEmail(), "br@gmail.com");
             assertEquals(customer.getFirstName(), "Razvan");
             assertEquals(customer.getLastName(), "Berendi");
@@ -79,7 +79,7 @@ class CustomerServiceImplTest {
             Customer customer = customerService.createAccount("Razvan", "Berendi",
                     "berendi.rav2001@gmail.com", "1234567890", "0751578787",
                     new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-            assertEquals(customer.getIdCustomer(), 6);
+            assertEquals(customer.getId(), 6);
             assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
             assertEquals(customer.getFirstName(), "Razvan");
             assertEquals(customer.getLastName(), "Berendi");

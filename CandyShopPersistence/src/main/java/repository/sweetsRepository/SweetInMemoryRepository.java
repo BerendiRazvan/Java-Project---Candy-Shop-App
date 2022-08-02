@@ -28,7 +28,7 @@ public class SweetInMemoryRepository implements SweetRepository {
     public void update(Long id, Sweet sweet) throws RepositoryException {
         boolean exists = false;
         for (Sweet s : sweetList) {
-            if (s.getIdSweet() == sweet.getIdSweet()) {
+            if (s.getId() == sweet.getId()) {
                 sweetList.set(sweetList.indexOf(s), sweet);
                 exists = true;
                 break;
@@ -42,7 +42,7 @@ public class SweetInMemoryRepository implements SweetRepository {
     public void delete(Long id) throws RepositoryException {
         boolean exists = false;
         for (Sweet sweet : sweetList) {
-            if (sweet.getIdSweet() == id) {
+            if (sweet.getId() == id) {
                 sweetList.remove(sweet);
                 exists = true;
                 break;
@@ -60,7 +60,7 @@ public class SweetInMemoryRepository implements SweetRepository {
     @Override
     public Sweet findSweetById(Long id) {
         for (Sweet sweet : sweetList)
-            if (id == sweet.getIdSweet()) return sweet;
+            if (id == sweet.getId()) return sweet;
         return null;
     }
 

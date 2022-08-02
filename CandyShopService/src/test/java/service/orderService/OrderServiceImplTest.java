@@ -180,7 +180,7 @@ class OrderServiceImplTest {
 
             assertEquals(orderService.getAllOrdersInADay().size(), 5);
             for (int i = 0; i < orderService.getAllOrdersInADay().size(); i++)
-                assertEquals(orderService.getAllOrdersInADay().get(i).getIdOrder(), i + 1);
+                assertEquals(orderService.getAllOrdersInADay().get(i).getId(), i + 1);
 
 
         } catch (ServiceException e) {

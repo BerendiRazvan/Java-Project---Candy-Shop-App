@@ -55,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
         while (true) {
             boolean ok = true;
             for (var c : customerRepository.findAll())
-                if (c.getIdCustomer() == id) {
+                if (c.getId() == id) {
                     ok = false;
                     break;
                 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sweet {
-    private long idSweet;
+    private long id;
     private final SweetType sweetType;
 
     private List<Ingredient> ingredientsList;
@@ -13,20 +13,20 @@ public class Sweet {
     private List<Ingredient> extraIngredients;
     private double price;
 
-    public Sweet(long idSweet, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
-        this.idSweet = idSweet;
+    public Sweet(long id, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
+        this.id = id;
         this.sweetType = sweetType;
         this.ingredientsList = ingredientsList;
         this.extraIngredients = new ArrayList<>();
         this.price = price;
     }
 
-    public long getIdSweet() {
-        return idSweet;
+    public long getId() {
+        return id;
     }
 
-    public void setIdSweet(long idSweet) {
-        this.idSweet = idSweet;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public List<Ingredient> getIngredientsList() {

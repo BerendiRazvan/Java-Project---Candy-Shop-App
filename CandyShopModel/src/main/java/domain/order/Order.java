@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Order {
-    private long idOrder;
+    private long id;
     private Map<Sweet, Integer> orderedSweets;
     private Customer customer;
     private Shop shop;
@@ -21,8 +21,8 @@ public class Order {
 
     private LocalDateTime waitingTime;
 
-    public Order(long idOrder, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {
-        this.idOrder = idOrder;
+    public Order(long id, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {
+        this.id = id;
         this.orderedSweets = orderedSweets;
         this.customer = customer;
         this.shop = shop;
@@ -52,12 +52,12 @@ public class Order {
         this.orderType = orderType;
     }
 
-    public long getIdOrder() {
-        return idOrder;
+    public long getId() {
+        return id;
     }
 
-    public void setIdOrder(long idOrder) {
-        this.idOrder = idOrder;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Map<Sweet, Integer> getOrderedSweets() {
@@ -113,7 +113,7 @@ public class Order {
                     .append("\n");
         }
         return "\n" + "-".repeat(100) + "\n" +
-                "\t".repeat(10) + "Order no." + idOrder + "\t" + orderDateTime.format(DateTimeFormatter
+                "\t".repeat(10) + "Order no." + id + "\t" + orderDateTime.format(DateTimeFormatter
                 .ofPattern("EEE dd.MM.yyyy HH:mm")) +
                 "\n" + "-".repeat(100) + "\n" +
                 "Customer: " + customer.getFirstName() + " " + customer.getLastName() + " | " +

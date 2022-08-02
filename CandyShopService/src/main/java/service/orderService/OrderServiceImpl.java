@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
         while (true) {
             boolean ok = true;
             for (var o : orderRepository.findAll())
-                if (o.getIdOrder() == id) {
+                if (o.getId() == id) {
                     ok = false;
                     break;
                 }
@@ -60,10 +60,10 @@ public class OrderServiceImpl implements OrderService {
     public void addToOrder(Order order, Sweet newSweet) throws ServiceException {
         if (newSweet == null) throw new ServiceException("Invalid sweet id!");
         else {
-            Order updateOrder = orderRepository.findOrderById(order.getIdOrder());
+            Order updateOrder = orderRepository.findOrderById(order.getId());
             addSweetToOrder(updateOrder, newSweet);
             try {
-                orderRepository.update(order.getIdOrder(), updateOrder);
+                orderRepository.update(order.getId(), updateOrder);
             } catch (RepositoryException e) {
                 throw new ServiceException(e.getMessage());
             }

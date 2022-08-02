@@ -47,7 +47,7 @@ class SweetServiceImplTest {
         try {
             Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
 
-            assertEquals(sweet.getIdSweet(), 1L);
+            assertEquals(sweet.getId(), 1L);
             assertEquals(sweet.getSweetType(), SweetType.DONUT);
             assertEquals(sweet.getPrice(), 5);
             assertEquals(sweet.getIngredientsList().toString(), new ArrayList<>(List.of(
