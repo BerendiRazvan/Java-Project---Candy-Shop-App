@@ -124,7 +124,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -143,7 +143,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -163,7 +163,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -191,7 +191,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -211,7 +211,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -240,7 +240,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -262,7 +262,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -293,7 +293,7 @@ class CustomerServiceImplTest {
         //private method - tested with reflection
 
         //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("verifCustomer",
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
                 String.class, String.class, String.class, String.class, String.class, Location.class);
         method.setAccessible(true);
 
@@ -306,7 +306,7 @@ class CustomerServiceImplTest {
 
 
     @Test
-    void verifCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    void customerValidation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         verifValidCustomer();
         verifCustomerFirstName();

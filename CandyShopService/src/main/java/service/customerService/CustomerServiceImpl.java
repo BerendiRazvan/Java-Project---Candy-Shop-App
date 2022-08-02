@@ -33,7 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         int id = generateCustomerId();
 
-        String errorsAfterVerification = verifCustomer(firstName, lastName, email, password, phoneNumber, customerLocation);
+        String errorsAfterVerification = customerValidation(firstName, lastName, email, password, phoneNumber, customerLocation);
         if (!errorsAfterVerification.matches("")) {
             throw new ServiceException(errorsAfterVerification);
         }
@@ -66,8 +66,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-    private String verifCustomer(String firstName, String lastName, String email, String password,
-                                 String phoneNumber, Location location) {
+    private String customerValidation(String firstName, String lastName, String email, String password,
+                                      String phoneNumber, Location location) {
         String error = "";
 
         if (firstName.equals("") || !firstName.matches("[a-zA-Z]+")) error += "Invalid first name!\n";
