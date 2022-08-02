@@ -64,7 +64,7 @@ class SweetServiceImplTest {
     private void invalidTestsFindSweetById(){
 
         try {
-            Sweet sweet = sweetService.findSweetById("dasdasdasdada");
+            Sweet sweet = sweetService.findSweetById("abcd");
             fail();
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid sweet id!");

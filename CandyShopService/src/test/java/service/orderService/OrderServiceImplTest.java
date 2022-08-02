@@ -25,6 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OrderServiceImplTest {
 
+    private static final Shop MY_SHOP = new Shop("Candy Crush Shop",
+            new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
+    private static final Customer CUSTOMER = new Customer(1, "Razvan", "Berendi",
+            "berendi.rav2001@gmail.com", "1234567890", "0751578787",
+            new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+    private static final Sweet SWEET = new Sweet(1,
+            new ArrayList<>(List.of(
+                    new Ingredient(1, "Sugar", 1.5),
+                    new Ingredient(2, "Milk", 1),
+                    new Ingredient(3, "Flour", 0.75))),
+            SweetType.DONUT, 5);
     private static OrderService orderService;
 
     @BeforeAll
@@ -34,15 +45,9 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        Shop myShop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi",
-                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
         try {
-            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, myShop));
+            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, CUSTOMER, MY_SHOP));
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -62,17 +67,11 @@ class OrderServiceImplTest {
 
     @Test
     void createOrder() {
-        Shop myShop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi",
-                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-
         try {
-            Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+            Order order = orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
 
-            assertEquals(order.getCustomer(), customer);
-            assertEquals(order.getShop(), myShop);
+            assertEquals(order.getCustomer(), CUSTOMER);
+            assertEquals(order.getShop(), MY_SHOP);
             assertEquals(order.getOrderType(), OrderType.DELIVERY);
             assertTrue(order.getOrderedSweets().isEmpty());
 
@@ -114,21 +113,8 @@ class OrderServiceImplTest {
 
     @Test
     void addToOrder() {
-
-        Shop myShop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi",
-                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-        Sweet sweet = new Sweet(1,
-                new ArrayList<>(List.of(
-                        new Ingredient(1, "Sugar", 1.5),
-                        new Ingredient(2, "Milk", 1),
-                        new Ingredient(3, "Flour", 0.75))),
-                SweetType.DONUT, 5);
-
-        validTestAddToOrder(customer, sweet, myShop);
-        invalidTestAddToOrder(customer, sweet, myShop);
+        validTestAddToOrder(CUSTOMER, SWEET, MY_SHOP);
+        invalidTestAddToOrder(CUSTOMER, SWEET, MY_SHOP);
     }
 
     @Test
@@ -164,20 +150,13 @@ class OrderServiceImplTest {
 
     @Test
     void getAllOrdersInADay() {
-        Shop myShop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-        Customer customer = new Customer(1, "Razvan", "Berendi",
-                "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-
-
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
         try {
-            orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-            orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-            orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-            orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+            orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
 
             assertEquals(orderService.getAllOrdersInADay().size(), 5);
             for (int i = 0; i < orderService.getAllOrdersInADay().size(); i++)
@@ -234,7 +213,6 @@ class OrderServiceImplTest {
     }
 
     private void invalidTestsPrintOrderDetails() {
-
         try {
             String result = orderService.printOrderDetails("1234567");
             fail();

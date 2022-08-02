@@ -7,6 +7,7 @@ import repository.customersRepository.CustomerInMemoryRepository;
 import repository.customersRepository.CustomerRepository;
 import service.exception.ServiceException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -15,6 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomerServiceImplTest {
 
     private static CustomerService customerService;
+
+    private static final int ID = 1;
+    private static final String FIRST_NAME = "Razvan";
+    private static final String LAST_NAME = "Berendi";
+    private static final String EMAIL = "br@gmail.com";
+    private static final String PHONE_NUMBER = "0751578787";
+    private static final String PASSWORD = "12345678";
+    private static final Location LOCATION =
+            new Location(1, "Romania", "Cluj", "Aleea Rucar nr. 9, Bloc D13, ap. 1");
+
 
     @BeforeAll
     static void setUpAll() {
@@ -38,30 +49,31 @@ class CustomerServiceImplTest {
         System.out.println("Tests passed");
     }
 
-    private void validTestsLogin(){
+    private void validTestsLogin() {
         try {
-            Customer customer = customerService.login("br@gmail.com", "12345678");
-            assertEquals(customer.getId(), 1);
-            assertEquals(customer.getEmail(), "br@gmail.com");
-            assertEquals(customer.getFirstName(), "Razvan");
-            assertEquals(customer.getLastName(), "Berendi");
-            assertEquals(customer.getPhoneNumber(), "0751578787");
-            assertEquals(customer.getPassword(), "12345678");
-            assertEquals(customer.getCustomerLocation().getAddress(), "Aleea Rucar nr. 9, Bloc D13, ap. 1");
+            Customer customer = customerService.login(EMAIL, PASSWORD);
+            assertEquals(customer.getId(), ID);
+            assertEquals(customer.getEmail(), EMAIL);
+            assertEquals(customer.getFirstName(), FIRST_NAME);
+            assertEquals(customer.getLastName(), LAST_NAME);
+            assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
+            assertEquals(customer.getPassword(), PASSWORD);
+            assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
         } catch (ServiceException e) {
             fail();
         }
     }
-    private void invalidTestsLogin(){
+
+    private void invalidTestsLogin() {
         try {
-            customerService.login("brazvan1234567890@gmail.com", "12345678");
+            customerService.login("brazvan1234567890@gmail.com", PASSWORD);
             fail();
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Authentication failed!");
         }
 
         try {
-            customerService.login("br@gmail.com", "1234dasdas678");
+            customerService.login(EMAIL, "1234dasdas678");
             fail();
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid password!\n");
@@ -75,29 +87,26 @@ class CustomerServiceImplTest {
         invalidTestsLogin();
     }
 
-    private void validTestsCreateAccount(){
+    private void validTestsCreateAccount() {
         try {
-            Customer customer = customerService.createAccount("Razvan", "Berendi",
-                    "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-                    new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+            Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+                    PASSWORD, PHONE_NUMBER, LOCATION);
             assertEquals(customer.getId(), 6);
             assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
-            assertEquals(customer.getFirstName(), "Razvan");
-            assertEquals(customer.getLastName(), "Berendi");
-            assertEquals(customer.getPhoneNumber(), "0751578787");
-            assertEquals(customer.getPassword(), "1234567890");
-            assertEquals(customer.getCustomerLocation().getAddress(), "Strada Peana nr. 10, bloc F7, ap. 5");
+            assertEquals(customer.getFirstName(), FIRST_NAME);
+            assertEquals(customer.getLastName(), LAST_NAME);
+            assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
+            assertEquals(customer.getPassword(), PASSWORD);
+            assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
         } catch (ServiceException e) {
             fail();
         }
     }
 
-    private void invalidTestsCreateAccount(){
+    private void invalidTestsCreateAccount() {
         try {
-            Customer customer = customerService.createAccount(
-                    "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                    "1234567890", "1234",
-                    new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+            Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+                    PASSWORD, "1234", LOCATION);
             fail();
         } catch (ServiceException e) {
             assertEquals(e.getMessage(), "Invalid phone number!\n");
@@ -121,13 +130,11 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "", "Berendi", "br@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, "", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid first name!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan1234", "Berendi", "br@gmail.com", "1234567890",
-                "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, "Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
+                LOCATION);
         assertEquals(errors, "Invalid first name!\n");
     }
 
@@ -142,13 +149,11 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "", "br@gmail.com", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid last name!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "B3r3ndi", "br@gmail.com", "1234567890",
-                "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER,
+                LOCATION);
         assertEquals(errors, "Invalid last name!\n");
 
     }
@@ -164,23 +169,20 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "", "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER,
+                LOCATION);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "razvan.gmail.com", "1234567890",
-                "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD,
+                PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "@gmail.com", "1234567890",
-                "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD,
+                PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "gmail.com@", "1234567890",
-                "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD,
+                PHONE_NUMBER, LOCATION);
         assertEquals(errors, "Invalid email!\n");
     }
 
@@ -195,13 +197,12 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER,
+                LOCATION);
         assertEquals(errors, "Invalid password!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234",
-                "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER,
+                LOCATION);
         assertEquals(errors, "Invalid password!\n");
     }
 
@@ -216,23 +217,21 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890", "",
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "",
                 new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890",
-                "12e456789w", new Location(1, "Romania", "Cluj",
-                        "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                "12e456789w", LOCATION);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890",
-                "09872", new Location(1, "Romania", "Cluj",
-                        "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                "09872", LOCATION);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890",
-                "098123132372", new Location(1, "Romania", "Cluj",
-                        "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                "098123132372", LOCATION);
+
         assertEquals(errors, "Invalid phone number!\n");
     }
 
@@ -247,8 +246,14 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "br@gmail.com", "1234567890",
-                "0751578787", new Location(1, "Romania", "Cluj", ""));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
+                new Location(1, "Romania", "Cluj", ""));
+
+        assertEquals(errors, "Invalid address!\n");
+
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
+                new Location(1, "Romania", "Cluj", "aproape"));
+
         assertEquals(errors, "Invalid address!\n");
     }
 
@@ -263,14 +268,12 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "", "br@gmail.com", "", "",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, "", EMAIL, "", "", LOCATION);
         assertEquals(errors, "Invalid last name!\n" +
                 "Invalid password!\n" +
                 "Invalid phone number!\n");
 
-        errors = (String) method.invoke(customerService, "", "", "br@gmail.com", "1234567890", "",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, "", "", EMAIL, PASSWORD, "", LOCATION);
         assertEquals(errors, "Invalid first name!\n" +
                 "Invalid last name!\n" +
                 "Invalid phone number!\n");
@@ -296,9 +299,8 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = (String) method.invoke(customerService, "Razvan", "Berendi", "berendi.rav2001@gmail.com",
-                "1234567890", "0751578787",
-                new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
+        errors = (String) method.invoke(customerService, FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+                PASSWORD, PHONE_NUMBER, LOCATION);
         assertEquals(errors, "");
     }
 
@@ -316,14 +318,14 @@ class CustomerServiceImplTest {
         verifCustomerMultipleFields();
     }
 
-    private void validTestsFindMail(){
+    private void validTestsFindMail() {
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("asasr@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
     }
 
-    private void invalidTestsFindMail(){
+    private void invalidTestsFindMail() {
         assertFalse(customerService.findMail(""));
         assertFalse(customerService.findMail("berendirazvan@gmail.com"));
         assertFalse(customerService.findMail("@gmail.com"));
