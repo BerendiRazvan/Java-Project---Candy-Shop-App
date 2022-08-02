@@ -2,6 +2,7 @@ package service.customerService;
 
 import domain.Customer;
 import domain.location.Location;
+import org.junit.jupiter.api.*;
 import repository.customersRepository.CustomerInMemoryRepository;
 import repository.customersRepository.CustomerRepository;
 import service.exception.ServiceException;
@@ -15,7 +16,7 @@ class CustomerServiceImplTest {
 
     private static CustomerService customerService;
 
-    @org.junit.jupiter.api.BeforeAll
+    @BeforeAll
     static void setUpAll() {
         System.out.println("Tests for CustomerServiceImpl");
 
@@ -24,15 +25,15 @@ class CustomerServiceImplTest {
         customerService = new CustomerServiceImpl(customerRepository);
     }
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
     }
 
-    @org.junit.jupiter.api.AfterEach
+    @AfterEach
     void tearDown() {
     }
 
-    @org.junit.jupiter.api.AfterAll
+    @AfterAll
     static void tearDownAll() {
         System.out.println("Tests passed");
     }
@@ -68,7 +69,7 @@ class CustomerServiceImplTest {
     }
 
 
-    @org.junit.jupiter.api.Test
+    @Test
     void login() {
         validTestsLogin();
         invalidTestsLogin();
@@ -86,7 +87,7 @@ class CustomerServiceImplTest {
             assertEquals(customer.getPhoneNumber(), "0751578787");
             assertEquals(customer.getPassword(), "1234567890");
             assertEquals(customer.getCustomerLocation().getAddress(), "Strada Peana nr. 10, bloc F7, ap. 5");
-        } catch (Exception e) {
+        } catch (ServiceException e) {
             fail();
         }
     }
@@ -103,7 +104,7 @@ class CustomerServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void createAccount() {
         validTestsCreateAccount();
         invalidTestsCreateAccount();
@@ -302,7 +303,7 @@ class CustomerServiceImplTest {
     }
 
 
-    @org.junit.jupiter.api.Test
+    @Test
     void verifCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         verifValidCustomer();
@@ -334,7 +335,7 @@ class CustomerServiceImplTest {
         assertFalse(customerService.findMail(" br@gmail.com "));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void findMail() {
         validTestsFindMail();
         invalidTestsFindMail();

@@ -65,7 +65,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
 
     public static List<Customer> generateCustomers() {
-        return List.of(
+        return new ArrayList<>(List.of(
                 new Customer(1, "Razvan", "Berendi",
                         "br@gmail.com", "12345678", "0751578787",
                         new Location(1, "Romania", "Cluj", "Aleea Rucar nr. 9, Bloc D13, ap. 1")),
@@ -81,6 +81,6 @@ public class CustomerInMemoryRepository implements CustomerRepository {
                 new Customer(5, "Andreea", "Staciu",
                         "asasr@gmail.com", "12345678", "0721578123",
                         new Location(5, "Romania", "Cluj", "Str. Memo nr. 10, Casa nr. 15"))
-        );
+        ));
     }
 }

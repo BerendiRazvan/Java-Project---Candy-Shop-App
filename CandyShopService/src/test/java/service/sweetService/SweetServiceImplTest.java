@@ -3,6 +3,7 @@ package service.sweetService;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import org.junit.jupiter.api.*;
 import repository.sweetsRepository.SweetInMemoryRepository;
 import repository.sweetsRepository.SweetRepository;
 import service.exception.ServiceException;
@@ -16,7 +17,7 @@ class SweetServiceImplTest {
 
     private static SweetService sweetService;
 
-    @org.junit.jupiter.api.BeforeAll
+    @BeforeAll
     static void setUpAll() {
         System.out.println("Tests for SweetServiceImpl");
 
@@ -25,20 +26,20 @@ class SweetServiceImplTest {
         sweetService = new SweetServiceImpl(sweetRepository);
     }
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
     }
 
-    @org.junit.jupiter.api.AfterEach
+    @AfterEach
     void tearDown() {
     }
 
-    @org.junit.jupiter.api.AfterAll
+    @AfterAll
     static void tearDownAll() {
         System.out.println("Tests passed");
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getAvailableSweets() {
         assertEquals(sweetService.getAvailableSweets().size(), 15);
     }
@@ -77,7 +78,7 @@ class SweetServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void findSweetById() {
         validTestsFindSweetById();
         invalidTestsFindSweetById();

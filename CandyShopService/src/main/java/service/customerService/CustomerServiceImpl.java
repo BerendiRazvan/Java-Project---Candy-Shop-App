@@ -33,9 +33,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         int id = generateCustomerId();
 
-        String verif = verifCustomer(firstName, lastName, email, password, phoneNumber, customerLocation);
-        if (!verif.matches("")) {
-            throw new ServiceException(verif);
+        String errorsAfterVerification = verifCustomer(firstName, lastName, email, password, phoneNumber, customerLocation);
+        if (!errorsAfterVerification.matches("")) {
+            throw new ServiceException(errorsAfterVerification);
         }
 
         Customer customer = new Customer(id, firstName, lastName, email, password, phoneNumber, customerLocation);

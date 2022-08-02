@@ -8,6 +8,7 @@ import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import org.junit.jupiter.api.*;
 import repository.exception.RepositoryException;
 import repository.ordersRepository.OrderInMemoryRepository;
 import repository.ordersRepository.OrderRepository;
@@ -26,12 +27,12 @@ class OrderServiceImplTest {
 
     private static OrderService orderService;
 
-    @org.junit.jupiter.api.BeforeAll
+    @BeforeAll
     static void setUpAll() {
         System.out.println("Tests for OrderServiceImpl");
     }
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
@@ -48,18 +49,18 @@ class OrderServiceImplTest {
         orderService = new OrderServiceImpl(orderRepository);
     }
 
-    @org.junit.jupiter.api.AfterEach
+    @AfterEach
     void tearDown() {
 
     }
 
-    @org.junit.jupiter.api.AfterAll
+    @AfterAll
     static void tearDownAll() {
         System.out.println("Tests passed");
     }
 
 
-    @org.junit.jupiter.api.Test
+    @Test
     void createOrder() {
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
@@ -111,7 +112,7 @@ class OrderServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void addToOrder() {
 
         Shop myShop = new Shop("Candy Crush Shop",
@@ -130,7 +131,7 @@ class OrderServiceImplTest {
         invalidTestAddToOrder(customer, sweet, myShop);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getOrderDetails() {
         String result = orderService.getOrderDetails(1);
         try {
@@ -140,7 +141,7 @@ class OrderServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void removeOrder() {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
@@ -161,7 +162,7 @@ class OrderServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getAllOrdersInADay() {
         Shop myShop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
@@ -189,7 +190,7 @@ class OrderServiceImplTest {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getMoneyMadeToday() {
         assertEquals(orderService.getMoneyMadeToday(), 0);
         Sweet sweet = new Sweet(1,
@@ -206,7 +207,7 @@ class OrderServiceImplTest {
         assertEquals(orderService.getMoneyMadeToday(), 5);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getProfitMadeToday() {
         assertEquals(orderService.getProfitMadeToday(), 0);
         Sweet sweet = new Sweet(1,
@@ -249,13 +250,13 @@ class OrderServiceImplTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void printOrderDetails() {
         validTestsPrintOrderDetails();
         invalidTestsPrintOrderDetails();
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getProfit() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
@@ -311,7 +312,7 @@ class OrderServiceImplTest {
         assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 1);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     private void addQuantityOfSweetToOrder() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
@@ -335,7 +336,7 @@ class OrderServiceImplTest {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void addSweetToOrder() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().isEmpty());

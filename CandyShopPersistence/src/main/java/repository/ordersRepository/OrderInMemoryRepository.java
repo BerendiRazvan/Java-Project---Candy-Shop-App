@@ -70,7 +70,7 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     public static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository,
                                              CustomerRepository customerRepository) {
-        return List.of(
+        return new ArrayList<>(List.of(
                 new Order(1,
                         randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                         randomCustomer(customerRepository.findAll()), shop),
@@ -92,7 +92,7 @@ public class OrderInMemoryRepository implements OrderRepository {
                 new Order(7,
                         randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                         randomCustomer(customerRepository.findAll()), shop)
-        );
+        ));
 
     }
 

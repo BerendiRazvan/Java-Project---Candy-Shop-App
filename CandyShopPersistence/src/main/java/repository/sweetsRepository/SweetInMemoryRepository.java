@@ -65,7 +65,7 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     public static List<Sweet> generateSweets() {
-        return List.of(
+        return new ArrayList<>(List.of(
                 new Sweet(1,
                         new ArrayList<>(List.of(
                                 new Ingredient(1, "Sugar", 1.5),
@@ -174,7 +174,7 @@ public class SweetInMemoryRepository implements SweetRepository {
                                 new Ingredient(58, "Flour", 0.45),
                                 new Ingredient(66, "Cheese", 0.5))),
                         SweetType.CROISSANT, 0.99)
-        );
+        ));
     }
 
 }
