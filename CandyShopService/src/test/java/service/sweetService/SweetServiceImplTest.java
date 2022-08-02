@@ -44,7 +44,7 @@ class SweetServiceImplTest {
         assertEquals(sweetService.getAvailableSweets().size(), 15);
     }
 
-    private void validTestsFindSweetById(){
+    private void testValidFindSweetById(){
         try {
             Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
 
@@ -61,7 +61,7 @@ class SweetServiceImplTest {
         }
     }
 
-    private void invalidTestsFindSweetById(){
+    private void testInvalidFindSweetById(){
 
         try {
             Sweet sweet = sweetService.findSweetById("abcd");
@@ -80,7 +80,7 @@ class SweetServiceImplTest {
 
     @Test
     void findSweetById() {
-        validTestsFindSweetById();
-        invalidTestsFindSweetById();
+        testValidFindSweetById();
+        testInvalidFindSweetById();
     }
 }

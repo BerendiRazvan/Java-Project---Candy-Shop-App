@@ -80,7 +80,7 @@ class OrderServiceImplTest {
         }
     }
 
-    private void validTestAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
+    private void testValidAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
         try {
             Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
@@ -99,7 +99,7 @@ class OrderServiceImplTest {
         }
     }
 
-    private void invalidTestAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
+    private void testInvalidAddToOrder(Customer customer, Sweet sweet, Shop myShop) {
         try {
             Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
@@ -113,8 +113,8 @@ class OrderServiceImplTest {
 
     @Test
     void addToOrder() {
-        validTestAddToOrder(CUSTOMER, SWEET, MY_SHOP);
-        invalidTestAddToOrder(CUSTOMER, SWEET, MY_SHOP);
+        testValidAddToOrder(CUSTOMER, SWEET, MY_SHOP);
+        testInvalidAddToOrder(CUSTOMER, SWEET, MY_SHOP);
     }
 
     @Test
@@ -203,7 +203,7 @@ class OrderServiceImplTest {
         assertEquals(orderService.getProfitMadeToday(), 1.75);
     }
 
-    private void validTestsPrintOrderDetails() {
+    private void testValidPrintOrderDetails() {
         try {
             String result = orderService.printOrderDetails("1");
             assertEquals(result, orderService.getOrderDetails(1));
@@ -212,7 +212,7 @@ class OrderServiceImplTest {
         }
     }
 
-    private void invalidTestsPrintOrderDetails() {
+    private void testInvalidPrintOrderDetails() {
         try {
             String result = orderService.printOrderDetails("1234567");
             fail();
@@ -230,8 +230,8 @@ class OrderServiceImplTest {
 
     @Test
     void printOrderDetails() {
-        validTestsPrintOrderDetails();
-        invalidTestsPrintOrderDetails();
+        testValidPrintOrderDetails();
+        testInvalidPrintOrderDetails();
     }
 
     @Test

@@ -49,7 +49,7 @@ class CustomerServiceImplTest {
         System.out.println("Tests passed");
     }
 
-    private void validTestsLogin() {
+    private void testValidLogin() {
         try {
             Customer customer = customerService.login(EMAIL, PASSWORD);
             assertEquals(customer.getId(), ID);
@@ -64,7 +64,7 @@ class CustomerServiceImplTest {
         }
     }
 
-    private void invalidTestsLogin() {
+    private void testInvalidLogin() {
         try {
             customerService.login("brazvan1234567890@gmail.com", PASSWORD);
             fail();
@@ -83,11 +83,11 @@ class CustomerServiceImplTest {
 
     @Test
     void login() {
-        validTestsLogin();
-        invalidTestsLogin();
+        testValidLogin();
+        testInvalidLogin();
     }
 
-    private void validTestsCreateAccount() {
+    private void testValidCreateAccount() {
         try {
             Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                     PASSWORD, PHONE_NUMBER, LOCATION);
@@ -103,7 +103,7 @@ class CustomerServiceImplTest {
         }
     }
 
-    private void invalidTestsCreateAccount() {
+    private void testInvalidCreateAccount() {
         try {
             Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                     PASSWORD, "1234", LOCATION);
@@ -115,11 +115,11 @@ class CustomerServiceImplTest {
 
     @Test
     void createAccount() {
-        validTestsCreateAccount();
-        invalidTestsCreateAccount();
+        testValidCreateAccount();
+        testInvalidCreateAccount();
     }
 
-    private void verifCustomerFirstName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForFirstName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -138,7 +138,7 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid first name!\n");
     }
 
-    private void verifCustomerLastName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForLastName() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -158,7 +158,7 @@ class CustomerServiceImplTest {
 
     }
 
-    private void verifCustomerMail() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForEmail() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -186,7 +186,7 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid email!\n");
     }
 
-    private void verifCustomerPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -206,7 +206,7 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid password!\n");
     }
 
-    private void verifCustomerPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -235,7 +235,7 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid phone number!\n");
     }
 
-    private void verifCustomerLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -257,7 +257,7 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid address!\n");
     }
 
-    private void verifCustomerMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -288,7 +288,7 @@ class CustomerServiceImplTest {
                 "Invalid address!\n");
     }
 
-    private void verifValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    private void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         //private method - tested with reflection
 
@@ -308,24 +308,24 @@ class CustomerServiceImplTest {
     @Test
     void customerValidation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
-        verifValidCustomer();
-        verifCustomerFirstName();
-        verifCustomerLastName();
-        verifCustomerMail();
-        verifCustomerPassword();
-        verifCustomerPhoneNumber();
-        verifCustomerLocation();
-        verifCustomerMultipleFields();
+        testCustomerValidationForValidCustomer();
+        testCustomerValidationForFirstName();
+        testCustomerValidationForLastName();
+        testCustomerValidationForEmail();
+        testCustomerValidationForPassword();
+        testCustomerValidationForPhoneNumber();
+        testCustomerValidationForLocation();
+        testCustomerValidationForMultipleFields();
     }
 
-    private void validTestsFindMail() {
+    private void testValidFindMail() {
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("asasr@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
     }
 
-    private void invalidTestsFindMail() {
+    private void testInvalidFindMail() {
         assertFalse(customerService.findMail(""));
         assertFalse(customerService.findMail("berendirazvan@gmail.com"));
         assertFalse(customerService.findMail("@gmail.com"));
@@ -339,7 +339,7 @@ class CustomerServiceImplTest {
 
     @Test
     void findMail() {
-        validTestsFindMail();
-        invalidTestsFindMail();
+        testValidFindMail();
+        testInvalidFindMail();
     }
 }
