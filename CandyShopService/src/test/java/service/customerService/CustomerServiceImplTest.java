@@ -51,7 +51,8 @@ class CustomerServiceImplTest {
         System.out.println("Tests passed");
     }
 
-    private void testValidLogin() throws ServiceException {
+    @Test
+    void testValidLogin() throws ServiceException {
         Customer customer = customerService.login(EMAIL, PASSWORD);
         assertEquals(customer.getId(), ID);
         assertEquals(customer.getEmail(), EMAIL);
@@ -62,29 +63,20 @@ class CustomerServiceImplTest {
         assertEquals(customer.getLocation().getAddress(), ADDRESS);
     }
 
-
-    private void testInvalidLogin() {
+    @Test
+    void testInvalidLogin() {
         assertThrowsExactly(ServiceException.class,
-                () -> {
-                    customerService.login("brazvan1234567890@gmail.com", PASSWORD);
-                },
+                () -> customerService.login("brazvan1234567890@gmail.com", PASSWORD),
                 "Authentication failed!");
 
         assertThrowsExactly(ServiceException.class,
-                () -> {
-                    customerService.login(EMAIL, "1234dasdas678");
-                },
+                () -> customerService.login(EMAIL, "1234dasdas678"),
                 "Invalid password!\n");
     }
 
 
     @Test
-    void login() throws ServiceException {
-        testValidLogin();
-        testInvalidLogin();
-    }
-
-    private void testValidCreateAccount() throws ServiceException {
+    void testValidCreateAccount() throws ServiceException {
         Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                 PASSWORD, PHONE_NUMBER, location);
         assertEquals(customer.getId(), 6);
@@ -96,20 +88,14 @@ class CustomerServiceImplTest {
         assertEquals(customer.getLocation().getAddress(), ADDRESS);
     }
 
-    private void testInvalidCreateAccount() {
+    @Test
+    void testInvalidCreateAccount() {
         assertThrowsExactly(ServiceException.class,
-                () -> {
-                    Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                            PASSWORD, "1234", location);
-                },
+                () -> customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com", PASSWORD,
+                        "1234", location),
                 "Invalid phone number!\n");
     }
 
-    @Test
-    void createAccount() throws ServiceException {
-        testValidCreateAccount();
-        testInvalidCreateAccount();
-    }
 
     private String getCustomerValidation(String firstName, String lastName, String email, String password,
                                          String phoneNumber, Location location) throws NoSuchMethodException,
@@ -124,7 +110,8 @@ class CustomerServiceImplTest {
         return (String) method.invoke(customerService, firstName, lastName, email, password, phoneNumber, location);
     }
 
-    private void testCustomerValidationForFirstName() throws InvocationTargetException, NoSuchMethodException,
+    @Test
+    void testCustomerValidationForFirstName() throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException {
         String errors;
 
@@ -135,7 +122,8 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid first name!\n");
     }
 
-    private void testCustomerValidationForLastName() throws NoSuchMethodException, SecurityException,
+    @Test
+    void testCustomerValidationForLastName() throws NoSuchMethodException, SecurityException,
             InvocationTargetException, IllegalAccessException {
         String errors;
 
@@ -146,7 +134,8 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid last name!\n");
     }
 
-    private void testCustomerValidationForEmail() throws NoSuchMethodException, SecurityException,
+    @Test
+    void testCustomerValidationForEmail() throws NoSuchMethodException, SecurityException,
             InvocationTargetException, IllegalAccessException {
         String errors;
 
@@ -163,7 +152,8 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid email!\n");
     }
 
-    private void testCustomerValidationForPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    @Test
+    void testCustomerValidationForPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         String errors;
 
@@ -174,7 +164,8 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid password!\n");
     }
 
-    private void testCustomerValidationForPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    @Test
+    void testCustomerValidationForPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
 
         String errors;
@@ -192,7 +183,8 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid phone number!\n");
     }
 
-    private void testCustomerValidationForLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    @Test
+    void testCustomerValidationForLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         String errors;
 
@@ -205,7 +197,8 @@ class CustomerServiceImplTest {
         assertEquals(errors, "Invalid address!\n");
     }
 
-    private void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    @Test
+    void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
 
         String errors;
@@ -230,7 +223,8 @@ class CustomerServiceImplTest {
                 "Invalid address!\n");
     }
 
-    private void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
+    @Test
+    void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
             IllegalAccessException {
         String errors;
 
@@ -241,26 +235,15 @@ class CustomerServiceImplTest {
 
 
     @Test
-    void customerValidation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
-        testCustomerValidationForValidCustomer();
-        testCustomerValidationForFirstName();
-        testCustomerValidationForLastName();
-        testCustomerValidationForEmail();
-        testCustomerValidationForPassword();
-        testCustomerValidationForPhoneNumber();
-        testCustomerValidationForLocation();
-        testCustomerValidationForMultipleFields();
-    }
-
-    private void testValidFindMail() {
+    void testValidFindMail() {
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("asasr@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
         assertTrue(customerService.findMail("br@gmail.com"));
     }
 
-    private void testInvalidFindMail() {
+    @Test
+    void testInvalidFindMail() {
         assertFalse(customerService.findMail(""));
         assertFalse(customerService.findMail("berendirazvan@gmail.com"));
         assertFalse(customerService.findMail("@gmail.com"));
@@ -272,9 +255,4 @@ class CustomerServiceImplTest {
         assertFalse(customerService.findMail(" br@gmail.com "));
     }
 
-    @Test
-    void findMail() {
-        testValidFindMail();
-        testInvalidFindMail();
-    }
 }

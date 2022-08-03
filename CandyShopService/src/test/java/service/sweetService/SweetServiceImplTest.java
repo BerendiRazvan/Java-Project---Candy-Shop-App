@@ -40,47 +40,31 @@ class SweetServiceImplTest {
     }
 
     @Test
-    void getAvailableSweets() {
+    void testGetAvailableSweets() {
         assertEquals(sweetService.getAvailableSweets().size(), 15);
     }
 
-    private void testValidFindSweetById() {
-        try {
-            Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
-
-            assertEquals(sweet.getId(), 1L);
-            assertEquals(sweet.getSweetType(), SweetType.DONUT);
-            assertEquals(sweet.getPrice(), 5);
-            assertEquals(sweet.getIngredientsList().toString(), new ArrayList<>(List.of(
-                    new Ingredient(1, "Sugar", 1.5),
-                    new Ingredient(2, "Milk", 1),
-                    new Ingredient(3, "Flour", 0.75))).toString());
-            assertEquals(sweet.getExtraIngredients(), new ArrayList<>());
-        } catch (ServiceException e) {
-            fail();
-        }
-    }
-
-    private void testInvalidFindSweetById() {
-
-        try {
-            Sweet sweet = sweetService.findSweetById("abcd");
-            fail();
-        } catch (ServiceException e) {
-            assertEquals(e.getMessage(), "Invalid sweet id!");
-        }
-
-        try {
-            Sweet sweet = sweetService.findSweetById("777");
-            assertNull(sweet);
-        } catch (ServiceException e) {
-            fail();
-        }
+    @Test
+    void testValidFindSweetById() throws ServiceException {
+        Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
+        assertEquals(sweet.getId(), 1L);
+        assertEquals(sweet.getSweetType(), SweetType.DONUT);
+        assertEquals(sweet.getPrice(), 5);
+        assertEquals(sweet.getIngredientsList().toString(), new ArrayList<>(List.of(
+                new Ingredient(1, "Sugar", 1.5),
+                new Ingredient(2, "Milk", 1),
+                new Ingredient(3, "Flour", 0.75))).toString());
+        assertEquals(sweet.getExtraIngredients(), new ArrayList<>());
     }
 
     @Test
-    void findSweetById() {
-        testValidFindSweetById();
-        testInvalidFindSweetById();
+    void testInvalidFindSweetById() throws ServiceException {
+        assertThrowsExactly(ServiceException.class,
+                () -> sweetService.findSweetById("abcd"),
+                "Invalid sweet id!");
+
+        Sweet sweet = sweetService.findSweetById("777");
+        assertNull(sweet);
     }
+
 }
