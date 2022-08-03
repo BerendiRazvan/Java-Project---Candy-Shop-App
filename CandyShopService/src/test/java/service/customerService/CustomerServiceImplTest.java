@@ -23,8 +23,11 @@ class CustomerServiceImplTest {
     private static final String EMAIL = "br@gmail.com";
     private static final String PHONE_NUMBER = "0751578787";
     private static final String PASSWORD = "12345678";
-    private static final Location LOCATION =
-            new Location(1, "Romania", "Cluj", "Aleea Rucar nr. 9, Bloc D13, ap. 1");
+    private static final String COUNTRY = "Romania";
+    private static final String CITY = "Cluj";
+    private static final String ADDRESS = "Aleea Rucar nr. 9, Bloc D13, ap. 1";
+
+    private final Location location = new Location(ID, COUNTRY, CITY, ADDRESS);
 
     @BeforeAll
     static void setUpAll() {
@@ -56,7 +59,7 @@ class CustomerServiceImplTest {
         assertEquals(customer.getLastName(), LAST_NAME);
         assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
         assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getLocation().getAddress(), LOCATION.getAddress());
+        assertEquals(customer.getLocation().getAddress(), ADDRESS);
     }
 
 
@@ -83,21 +86,21 @@ class CustomerServiceImplTest {
 
     private void testValidCreateAccount() throws ServiceException {
         Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                PASSWORD, PHONE_NUMBER, LOCATION);
+                PASSWORD, PHONE_NUMBER, location);
         assertEquals(customer.getId(), 6);
         assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
         assertEquals(customer.getFirstName(), FIRST_NAME);
         assertEquals(customer.getLastName(), LAST_NAME);
         assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
         assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getLocation().getAddress(), LOCATION.getAddress());
+        assertEquals(customer.getLocation().getAddress(), ADDRESS);
     }
 
     private void testInvalidCreateAccount() {
         assertThrowsExactly(ServiceException.class,
                 () -> {
                     Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                            PASSWORD, "1234", LOCATION);
+                            PASSWORD, "1234", location);
                 },
                 "Invalid phone number!\n");
     }
@@ -125,10 +128,10 @@ class CustomerServiceImplTest {
             IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation("", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation("", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid first name!\n");
 
-        errors = getCustomerValidation("Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation("Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid first name!\n");
     }
 
@@ -136,10 +139,10 @@ class CustomerServiceImplTest {
             InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid last name!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid last name!\n");
     }
 
@@ -147,16 +150,16 @@ class CustomerServiceImplTest {
             InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid email!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD, PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "Invalid email!\n");
     }
 
@@ -164,10 +167,10 @@ class CustomerServiceImplTest {
             IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER, location);
         assertEquals(errors, "Invalid password!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER, LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER, location);
         assertEquals(errors, "Invalid password!\n");
     }
 
@@ -176,16 +179,16 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "", location);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "12e456789w", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "12e456789w", location);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "09872", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "09872", location);
         assertEquals(errors, "Invalid phone number!\n");
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "098123132372", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "098123132372", location);
         assertEquals(errors, "Invalid phone number!\n");
     }
 
@@ -207,12 +210,12 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, "", "", LOCATION);
+        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, "", "", location);
         assertEquals(errors, "Invalid last name!\n" +
                 "Invalid password!\n" +
                 "Invalid phone number!\n");
 
-        errors = getCustomerValidation("", "", EMAIL, PASSWORD, "", LOCATION);
+        errors = getCustomerValidation("", "", EMAIL, PASSWORD, "", location);
         assertEquals(errors, "Invalid first name!\n" +
                 "Invalid last name!\n" +
                 "Invalid phone number!\n");
@@ -232,7 +235,7 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                PASSWORD, PHONE_NUMBER, LOCATION);
+                PASSWORD, PHONE_NUMBER, location);
         assertEquals(errors, "");
     }
 

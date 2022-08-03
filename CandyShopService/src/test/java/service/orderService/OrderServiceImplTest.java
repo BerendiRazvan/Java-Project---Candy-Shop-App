@@ -24,18 +24,26 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderServiceImplTest {
-
-    private static final Shop MY_SHOP = new Shop("Candy Crush Shop",
-            new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
-    private static final Customer CUSTOMER = new Customer(1, "Razvan", "Berendi",
-            "berendi.rav2001@gmail.com", "1234567890", "0751578787",
-            new Location(1, "Romania", "Cluj", "Strada Peana nr. 10, bloc F7, ap. 5"));
-    private static final Sweet SWEET = new Sweet(1,
+    private static final String COUNTRY = "Romania";
+    private static final String CITY = "Cluj";
+    private static final String ADDRESS = "Aleea Rucar nr. 9, Bloc D13, ap. 1";
+    private static final String SHOP_NAME = "Candy Crush Shop";
+    private static final int ID = 1;
+    private static final String FIRST_NAME = "Razvan";
+    private static final String LAST_NAME = "Berendi";
+    private static final String EMAIL = "br@gmail.com";
+    private static final String PHONE_NUMBER = "0751578787";
+    private static final String PASSWORD = "12345678";
+    private static final double SWEET_PRICE = 5;
+    private final Shop myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
+    private final Customer customer = new Customer(ID, FIRST_NAME, LAST_NAME,
+            EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
+    private final Sweet sweet = new Sweet(ID,
             new ArrayList<>(List.of(
                     new Ingredient(1, "Sugar", 1.5),
                     new Ingredient(2, "Milk", 1),
                     new Ingredient(3, "Flour", 0.75))),
-            SweetType.DONUT, 5);
+            SweetType.DONUT, SWEET_PRICE);
     private static OrderService orderService;
 
     @BeforeAll
@@ -47,7 +55,7 @@ class OrderServiceImplTest {
     void setUp() {
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
         try {
-            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, CUSTOMER, MY_SHOP));
+            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, myShop));
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -68,10 +76,10 @@ class OrderServiceImplTest {
     @Test
     void createOrder() throws ServiceException {
 
-        Order order = orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+        Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
-        assertEquals(order.getCustomer(), CUSTOMER);
-        assertEquals(order.getShop(), MY_SHOP);
+        assertEquals(order.getCustomer(), customer);
+        assertEquals(order.getShop(), myShop);
         assertEquals(order.getOrderType(), OrderType.DELIVERY);
         assertTrue(order.getOrderedSweets().isEmpty());
 
@@ -104,8 +112,8 @@ class OrderServiceImplTest {
 
     @Test
     void addToOrder() throws ServiceException {
-        testValidAddToOrder(CUSTOMER, SWEET, MY_SHOP);
-        testInvalidAddToOrder(CUSTOMER, SWEET, MY_SHOP);
+        testValidAddToOrder(customer, sweet, myShop);
+        testInvalidAddToOrder(customer, sweet, myShop);
     }
 
     @Test
@@ -140,10 +148,10 @@ class OrderServiceImplTest {
     void getAllOrdersInADay() throws ServiceException {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
-        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
-        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
-        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
-        orderService.createOrder(CUSTOMER, OrderType.DELIVERY, MY_SHOP);
+        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
 
         assertEquals(orderService.getAllOrdersInADay().size(), 5);
         for (int i = 0; i < orderService.getAllOrdersInADay().size(); i++)
@@ -153,14 +161,14 @@ class OrderServiceImplTest {
     @Test
     void getMoneyMadeToday() throws ServiceException {
         assertEquals(orderService.getMoneyMadeToday(), 0);
-        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), SWEET);
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
         assertEquals(orderService.getMoneyMadeToday(), 5);
     }
 
     @Test
     void getProfitMadeToday() throws ServiceException {
         assertEquals(orderService.getProfitMadeToday(), 0);
-        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), SWEET);
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
         assertEquals(orderService.getProfitMadeToday(), 1.75);
     }
 
@@ -202,7 +210,7 @@ class OrderServiceImplTest {
                 orderService.getAllOrdersInADay().get(0).getOrderedSweets());
         assertEquals(result, 0);
 
-        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), SWEET);
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
         result = (double) method.invoke(orderService,
                 orderService.getAllOrdersInADay().get(0).getOrderedSweets());
         assertEquals(result, 1.75);
@@ -218,10 +226,10 @@ class OrderServiceImplTest {
                 Order.class, Sweet.class);
         method1.setAccessible(true);
 
-        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), SWEET);
+        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet);
 
-        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(SWEET));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(SWEET), 1);
+        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 1);
     }
 
     @Test
@@ -234,10 +242,10 @@ class OrderServiceImplTest {
                 Order.class, Sweet.class, int.class);
         method2.setAccessible(true);
 
-        method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), SWEET, 5);
+        method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet, 5);
 
-        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(SWEET));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(SWEET), 6);
+        assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 6);
 
     }
 

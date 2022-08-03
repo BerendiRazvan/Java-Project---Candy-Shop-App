@@ -18,12 +18,17 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer login(String mail, String password) throws ServiceException {
         Customer customerTry = customerRepository.findCustomerByEmail(mail);
         if (customerTry != null) {
-            if (password.equals(customerTry.getPassword())) {
-                return customerTry;
-            } else throw new ServiceException("Invalid password!\n");
+            return verifyPassword(password, customerTry);
         } else {
             throw new ServiceException("Authentication failed!");
         }
+    }
+
+    private Customer verifyPassword(String customerPassword, Customer account) throws ServiceException {
+        if (customerPassword.equals(account.getPassword()))
+            return account;
+        else
+            throw new ServiceException("Invalid password!\n");
     }
 
 
