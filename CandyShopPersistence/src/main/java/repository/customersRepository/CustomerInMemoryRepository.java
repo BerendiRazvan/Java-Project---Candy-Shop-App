@@ -25,30 +25,20 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public void update(Long id, Customer customer) throws RepositoryException {
-        boolean exists = false;
-        for (Customer c : customerList) {
-            if (c.getId() == customer.getId()) {
-                customerList.set(customerList.indexOf(c), customer);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
+        Customer customerToUpdate = findCustomerById(id);
+        if (customerToUpdate == null)
             throw new RepositoryException("This element does not exist!");
+        else
+            customerList.set(customerList.indexOf(customerToUpdate), customer);
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        boolean exists = false;
-        for (Customer customer : customerList) {
-            if (customer.getId() == id) {
-                customerList.remove(customer);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
+        Customer customerToRemove = findCustomerById(id);
+        if (customerToRemove == null)
             throw new RepositoryException("This element does not exist!");
+        else
+            customerList.remove(customerToRemove);
     }
 
     @Override
@@ -60,6 +50,13 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     public Customer findCustomerByEmail(String email) {
         for (Customer customer : customerList)
             if (email.equals(customer.getEmail())) return customer;
+        return null;
+    }
+
+    @Override
+    public Customer findCustomerById(Long id) {
+        for (Customer customer : customerList)
+            if (customer.getId() == id) return customer;
         return null;
     }
 

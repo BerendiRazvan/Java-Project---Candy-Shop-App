@@ -26,30 +26,20 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public void update(Long id, Sweet sweet) throws RepositoryException {
-        boolean exists = false;
-        for (Sweet s : sweetList) {
-            if (s.getId() == sweet.getId()) {
-                sweetList.set(sweetList.indexOf(s), sweet);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
+        Sweet sweetToUpdate = findSweetById(id);
+        if (sweetToUpdate == null)
             throw new RepositoryException("This element does not exist!");
+        else
+            sweetList.set(sweetList.indexOf(sweetToUpdate), sweet);
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        boolean exists = false;
-        for (Sweet sweet : sweetList) {
-            if (sweet.getId() == id) {
-                sweetList.remove(sweet);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
+        Sweet sweetToDelete = findSweetById(id);
+        if (sweetToDelete == null)
             throw new RepositoryException("This element does not exist!");
+        else
+            sweetList.remove(sweetToDelete);
     }
 
     @Override

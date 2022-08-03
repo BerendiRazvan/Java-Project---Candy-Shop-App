@@ -237,7 +237,7 @@ class OrderServiceImplTest {
         method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), SWEET, 5);
 
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(SWEET));
-        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(SWEET), 5);
+        assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(SWEET), 6);
 
     }
 

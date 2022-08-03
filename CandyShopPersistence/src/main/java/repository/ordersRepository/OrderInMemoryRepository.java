@@ -30,30 +30,20 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public void update(Long id, Order order) throws RepositoryException {
-        boolean exists = false;
-        for (Order o : orderList) {
-            if (o.getId() == order.getId()) {
-                orderList.set(orderList.indexOf(o), order);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
+        Order orderToUpdate = findOrderById(id);
+        if (orderToUpdate == null)
             throw new RepositoryException("This element does not exist!");
+        else
+            orderList.set(orderList.indexOf(orderToUpdate), order);
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        boolean exists = false;
-        for (Order order : orderList) {
-            if (order.getId() == id) {
-                orderList.remove(order);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
+        Order orderToRemove = findOrderById(id);
+        if (orderToRemove == null)
             throw new RepositoryException("This element does not exist!");
+        else
+            orderList.remove(orderToRemove);
     }
 
     @Override

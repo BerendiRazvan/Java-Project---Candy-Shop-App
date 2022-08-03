@@ -8,6 +8,7 @@ import domain.sweet.Sweet;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -94,24 +95,42 @@ public class Order {
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
+    private String formatForPrintingOrderedSweets() {
+        StringBuilder orderedSweetsInfo = new StringBuilder();
+        for (Sweet sweet : orderedSweets.keySet())
+            orderedSweetsInfo.append(formatForPrintingSweet(sweet));
+        return orderedSweetsInfo.toString();
+    }
+
+    private String formatForPrintingSweet(Sweet sweet) {
+        return "\n" +
+                sweet.getSweetType() +
+                " - quantity: " +
+                orderedSweets.get(sweet) +
+                " - price: " +
+                orderedSweets.get(sweet) +
+                "*" +
+                df.format(sweet.getPrice()) +
+                "$=" +
+                df.format(orderedSweets.get(sweet) * sweet.getPrice()) +
+                "$" +
+                "\nRecipe:" +
+                formatForPrintingIngredients(sweet.getIngredientsList()) +
+                "\nExtra:" +
+                sweet.getExtraIngredients() +
+                "\n";
+    }
+
+    private String formatForPrintingIngredients(List<Ingredient> ingredientsList) {
+        return ingredientsList
+                .stream()
+                .map(Ingredient::getName)
+                .collect(Collectors.toList())
+                .toString();
+    }
+
     @Override
     public String toString() {
-        StringBuilder ordered = new StringBuilder();
-        for (Sweet sweet : orderedSweets.keySet()) {
-            ordered.append("\n").append(sweet.getSweetType()).append(" - quantity: ")
-                    .append(orderedSweets.get(sweet))
-                    .append(" - price: ")
-                    .append(orderedSweets.get(sweet)).append("*")
-                    .append(df.format(sweet.getPrice())).append("$=")
-                    .append(df.format(orderedSweets.get(sweet) * sweet.getPrice()))
-                    .append("$").append("\nRecipe:").append(sweet
-                            .getIngredientsList()
-                            .stream()
-                            .map(Ingredient::getName)
-                            .collect(Collectors.toList())).append("\nExtra:")
-                    .append(sweet.getExtraIngredients())
-                    .append("\n");
-        }
         return "\n" + "-".repeat(100) + "\n" +
                 "\t".repeat(10) + "Order no." + id + "\t" + orderDateTime.format(DateTimeFormatter
                 .ofPattern("EEE dd.MM.yyyy HH:mm")) +
@@ -122,7 +141,7 @@ public class Order {
                 "\n\nCandy Shop: " + shop.getName() +
                 "\n" + shop.getLocation() +
                 "\n" + "-".repeat(100) + "\n" +
-                "Ordered:\n" + ordered +
+                "Ordered:\n" + formatForPrintingOrderedSweets() +
                 "\n" + "-".repeat(100) + "\n" +
                 "YOUR ORDER WILL READY FOR " + orderType.toString() + " AT: " +
                 waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +
