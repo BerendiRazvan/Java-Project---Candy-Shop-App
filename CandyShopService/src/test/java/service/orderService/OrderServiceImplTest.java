@@ -22,19 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static service.TestConstantValues.*;
 
 class OrderServiceImplTest {
-    private static final String COUNTRY = "Romania";
-    private static final String CITY = "Cluj";
-    private static final String ADDRESS = "Aleea Rucar nr. 9, Bloc D13, ap. 1";
-    private static final String SHOP_NAME = "Candy Crush Shop";
-    private static final int ID = 1;
-    private static final String FIRST_NAME = "Razvan";
-    private static final String LAST_NAME = "Berendi";
-    private static final String EMAIL = "br@gmail.com";
-    private static final String PHONE_NUMBER = "0751578787";
-    private static final String PASSWORD = "12345678";
-    private static final double SWEET_PRICE = 5;
     private final Shop myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
     private final Customer customer = new Customer(ID, FIRST_NAME, LAST_NAME,
             EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));

@@ -25,7 +25,6 @@ public class OrderServiceImpl implements OrderService {
         this.orderRepository = orderRepository;
     }
 
-
     @Override
     public Order createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
         int id = generateOrderId();
@@ -39,22 +38,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private int generateOrderId() {
-        //the temporary method
-        //it will no longer be needed after we add a db because the id will be automatically generated
-        int id = 1;
-        while (true) {
-            boolean ok = true;
-            for (var o : orderRepository.findAll())
-                if (o.getId() == id) {
-                    ok = false;
-                    break;
-                }
-            if (ok) return id;
-            ;
-            id++;
-        }
-    }
 
     @Override
     public void addToOrder(Order order, Sweet newSweet) throws ServiceException {
@@ -121,19 +104,6 @@ public class OrderServiceImpl implements OrderService {
                 .sum();
     }
 
-
-    private double getProfit(Map<Sweet, Integer> orderedSweets) {
-        double profit = 0;
-        for (Sweet sweet : orderedSweets.keySet()) {
-            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getIngredientsList()
-                    .stream()
-                    .mapToDouble(Ingredient::getPrice)
-                    .sum();
-        }
-
-        return profit;
-    }
-
     @Override
     public String printOrderDetails(String orderId) throws ServiceException {
 
@@ -163,6 +133,22 @@ public class OrderServiceImpl implements OrderService {
         return totalToPay;
     }
 
+    private int generateOrderId() {
+        //the temporary method
+        //it will no longer be needed after we add a db because the id will be automatically generated
+        int id = 1;
+        while (true) {
+            boolean ok = true;
+            for (var o : orderRepository.findAll())
+                if (o.getId() == id) {
+                    ok = false;
+                    break;
+                }
+            if (ok) return id;
+            ;
+            id++;
+        }
+    }
 
     private void addSweetToOrder(Order order, Sweet sweet) {
         order.getOrderedSweets().merge(sweet, 1, Integer::sum);
@@ -179,5 +165,16 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderedSweets().get(sweet) == 0) order.getOrderedSweets().remove(sweet);
     }
 
+    private double getProfit(Map<Sweet, Integer> orderedSweets) {
+        double profit = 0;
+        for (Sweet sweet : orderedSweets.keySet()) {
+            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getIngredientsList()
+                    .stream()
+                    .mapToDouble(Ingredient::getPrice)
+                    .sum();
+        }
+
+        return profit;
+    }
 
 }

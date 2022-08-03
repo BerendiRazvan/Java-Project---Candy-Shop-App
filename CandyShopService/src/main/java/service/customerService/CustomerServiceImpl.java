@@ -24,14 +24,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    private Customer verifyPassword(String customerPassword, Customer account) throws ServiceException {
-        if (customerPassword.equals(account.getPassword()))
-            return account;
-        else
-            throw new ServiceException("Invalid password!\n");
-    }
-
-
     @Override
     public Customer createAccount(String firstName, String lastName, String email, String password,
                                   String phoneNumber, Location customerLocation) throws ServiceException {
@@ -53,23 +45,17 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
-    private int generateCustomerId() {
-        //the temporary method
-        //it will no longer be needed after we add a db because the id will be automatically generated
-        int id = 1;
-        while (true) {
-            boolean ok = true;
-            for (var c : customerRepository.findAll())
-                if (c.getId() == id) {
-                    ok = false;
-                    break;
-                }
-
-            if (ok) return id;
-            id++;
-        }
+    @Override
+    public boolean findMail(String mail) {
+        return customerRepository.findCustomerByEmail(mail) != null;
     }
 
+    private Customer verifyPassword(String customerPassword, Customer account) throws ServiceException {
+        if (customerPassword.equals(account.getPassword()))
+            return account;
+        else
+            throw new ServiceException("Invalid password!\n");
+    }
 
     private String customerValidation(String firstName, String lastName, String email, String password,
                                       String phoneNumber, Location location) {
@@ -90,10 +76,21 @@ public class CustomerServiceImpl implements CustomerService {
         return error;
     }
 
+    private int generateCustomerId() {
+        //the temporary method
+        //it will no longer be needed after we add a db because the id will be automatically generated
+        int id = 1;
+        while (true) {
+            boolean ok = true;
+            for (var c : customerRepository.findAll())
+                if (c.getId() == id) {
+                    ok = false;
+                    break;
+                }
 
-    @Override
-    public boolean findMail(String mail) {
-        return customerRepository.findCustomerByEmail(mail) != null;
+            if (ok) return id;
+            id++;
+        }
     }
 
 

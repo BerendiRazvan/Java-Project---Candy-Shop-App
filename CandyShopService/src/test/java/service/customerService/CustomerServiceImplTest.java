@@ -12,21 +12,10 @@ import java.lang.reflect.Method;
 
 
 import static org.junit.jupiter.api.Assertions.*;
+import static service.TestConstantValues.*;
 
 class CustomerServiceImplTest {
-
     private static CustomerService customerService;
-
-    private static final int ID = 1;
-    private static final String FIRST_NAME = "Razvan";
-    private static final String LAST_NAME = "Berendi";
-    private static final String EMAIL = "br@gmail.com";
-    private static final String PHONE_NUMBER = "0751578787";
-    private static final String PASSWORD = "12345678";
-    private static final String COUNTRY = "Romania";
-    private static final String CITY = "Cluj";
-    private static final String ADDRESS = "Aleea Rucar nr. 9, Bloc D13, ap. 1";
-
     private final Location location = new Location(ID, COUNTRY, CITY, ADDRESS);
 
     @BeforeAll
@@ -94,20 +83,6 @@ class CustomerServiceImplTest {
                 () -> customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com", PASSWORD,
                         "1234", location),
                 "Invalid phone number!\n");
-    }
-
-
-    private String getCustomerValidation(String firstName, String lastName, String email, String password,
-                                         String phoneNumber, Location location) throws NoSuchMethodException,
-            SecurityException, InvocationTargetException, IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
-        return (String) method.invoke(customerService, firstName, lastName, email, password, phoneNumber, location);
     }
 
     @Test
@@ -253,6 +228,19 @@ class CustomerServiceImplTest {
         assertFalse(customerService.findMail("1234br@gmail.com"));
         assertFalse(customerService.findMail(" "));
         assertFalse(customerService.findMail(" br@gmail.com "));
+    }
+
+    private String getCustomerValidation(String firstName, String lastName, String email, String password,
+                                         String phoneNumber, Location location) throws NoSuchMethodException,
+            SecurityException, InvocationTargetException, IllegalAccessException {
+        //private method - tested with reflection
+
+        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
+        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
+                String.class, String.class, String.class, String.class, String.class, Location.class);
+        method.setAccessible(true);
+
+        return (String) method.invoke(customerService, firstName, lastName, email, password, phoneNumber, location);
     }
 
 }
