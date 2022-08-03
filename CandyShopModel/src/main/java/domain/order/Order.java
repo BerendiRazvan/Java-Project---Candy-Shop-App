@@ -118,9 +118,9 @@ public class Order {
                 "\n" + "-".repeat(100) + "\n" +
                 "Customer: " + customer.getFirstName() + " " + customer.getLastName() + " | " +
                 customer.getPhoneNumber() + " | " + customer.getEmail() +
-                "\n" + customer.getCustomerLocation() +
-                "\n\nCandy Shop: " + shop.getShopName() +
-                "\n" + shop.getShopLocation() +
+                "\n" + customer.getLocation() +
+                "\n\nCandy Shop: " + shop.getName() +
+                "\n" + shop.getLocation() +
                 "\n" + "-".repeat(100) + "\n" +
                 "Ordered:\n" + ordered +
                 "\n" + "-".repeat(100) + "\n" +

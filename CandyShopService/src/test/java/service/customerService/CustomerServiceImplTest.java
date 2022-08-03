@@ -56,7 +56,7 @@ class CustomerServiceImplTest {
         assertEquals(customer.getLastName(), LAST_NAME);
         assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
         assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
+        assertEquals(customer.getLocation().getAddress(), LOCATION.getAddress());
     }
 
 
@@ -90,7 +90,7 @@ class CustomerServiceImplTest {
         assertEquals(customer.getLastName(), LAST_NAME);
         assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
         assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getCustomerLocation().getAddress(), LOCATION.getAddress());
+        assertEquals(customer.getLocation().getAddress(), LOCATION.getAddress());
     }
 
     private void testInvalidCreateAccount() {

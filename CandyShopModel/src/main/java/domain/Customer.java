@@ -9,17 +9,17 @@ public class Customer {
     private String email;
     private String password;
     private String phoneNumber;
-    private Location customerLocation;
+    private Location location;
 
     public Customer(long id, String firstName, String lastName, String email, String password,
-                    String phoneNumber, Location customerLocation) {
+                    String phoneNumber, Location location) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.customerLocation = customerLocation;
+        this.location = location;
     }
 
     public long getId() {
@@ -70,12 +70,12 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
-    public Location getCustomerLocation() {
-        return customerLocation;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setCustomerLocation(Location customerLocation) {
-        this.customerLocation = customerLocation;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override
@@ -83,6 +83,6 @@ public class Customer {
         return firstName + " " + lastName +
                 "\nEmail: " + email +
                 "\nPhone: " + phoneNumber +
-                "\n" + customerLocation;
+                "\n" + location;
     }
 }

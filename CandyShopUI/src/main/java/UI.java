@@ -213,7 +213,7 @@ public class UI {
 
     private void printShopInfo() {
         System.out.println("\n\n" + "-".repeat(100) + "\n" +
-                "\t".repeat(10) + shop.getShopName() +
+                "\t".repeat(10) + shop.getName() +
                 "\n" + "-".repeat(100) + "\n");
 
         System.out.println("Available sweets: \n");
