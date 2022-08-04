@@ -6,4 +6,6 @@ import repository.Repository;
 
 public interface SweetRepository extends Repository<Long, Sweet> {
     Sweet findSweetById(Long id);
+
+    void generateSweets();
 }

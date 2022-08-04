@@ -58,9 +58,10 @@ public class OrderInMemoryRepository implements OrderRepository {
         return null;
     }
 
-    public static List<Order> generateOrders(Shop shop, SweetRepository sweetRepository,
-                                             CustomerRepository customerRepository) {
-        return new ArrayList<>(List.of(
+    @Override
+    public void generateOrders(Shop shop, SweetRepository sweetRepository,
+                               CustomerRepository customerRepository) {
+        orderList.addAll(Arrays.asList(
                 new Order(1,
                         randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
                         randomCustomer(customerRepository.findAll()), shop),
@@ -85,6 +86,7 @@ public class OrderInMemoryRepository implements OrderRepository {
         ));
 
     }
+
 
     private static Map<Sweet, Integer> randomOrder(List<Sweet> all) {
         Random random = new Random();

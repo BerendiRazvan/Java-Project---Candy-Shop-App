@@ -25,7 +25,8 @@ class SweetServiceImplTest {
     @BeforeEach
     void setUp() {
         SweetRepository sweetRepository =
-                new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
+                new SweetInMemoryRepository(new ArrayList<>());
+        sweetRepository.generateSweets();
         sweetService = new SweetServiceImpl(sweetRepository);
     }
 

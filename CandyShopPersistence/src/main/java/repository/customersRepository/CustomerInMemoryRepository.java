@@ -4,7 +4,7 @@ import domain.Customer;
 import domain.location.Location;
 import repository.exception.RepositoryException;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CustomerInMemoryRepository implements CustomerRepository {
@@ -60,9 +60,9 @@ public class CustomerInMemoryRepository implements CustomerRepository {
         return null;
     }
 
-
-    public static List<Customer> generateCustomers() {
-        return new ArrayList<>(List.of(
+    @Override
+    public void generateCustomers() {
+        customerList.addAll(Arrays.asList(
                 new Customer(1, "Razvan", "Berendi",
                         "br@gmail.com", "12345678", "0751578787",
                         new Location(1, "Romania", "Cluj", "Aleea Rucar nr. 9, Bloc D13, ap. 1")),

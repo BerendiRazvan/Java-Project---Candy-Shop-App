@@ -9,6 +9,7 @@ import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +27,8 @@ class CustomerServiceImplTest {
     @BeforeEach
     void setUp() {
         CustomerRepository customerRepository =
-                new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
+                new CustomerInMemoryRepository(new ArrayList<>());
+        customerRepository.generateCustomers();
         customerService = new CustomerServiceImpl(customerRepository);
     }
 

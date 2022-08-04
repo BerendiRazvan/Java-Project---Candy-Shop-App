@@ -13,6 +13,8 @@ import service.orderService.OrderServiceImpl;
 import service.sweetService.SweetService;
 import service.sweetService.SweetServiceImpl;
 
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -26,12 +28,14 @@ public class Main {
 
         //Repository
         SweetRepository sweetRepository =
-                new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
+                new SweetInMemoryRepository(new ArrayList<>());
+        sweetRepository.generateSweets();
         CustomerRepository customerRepository =
-                new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
+                new CustomerInMemoryRepository(new ArrayList<>());
+        customerRepository.generateCustomers();
         OrderRepository orderRepository =
-                new OrderInMemoryRepository(OrderInMemoryRepository
-                        .generateOrders(myShop, sweetRepository, customerRepository));
+                new OrderInMemoryRepository(new ArrayList<>());
+        orderRepository.generateOrders(myShop, sweetRepository, customerRepository);
         // +++ UseCase2-RepoIngredients +++
 
         //Service
