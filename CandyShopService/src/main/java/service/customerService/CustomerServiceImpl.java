@@ -46,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean findMail(String mail) {
+    public boolean checkIfEmailExists(String mail) {
         return customerRepository.findCustomerByEmail(mail) != null;
     }
 

@@ -22,6 +22,8 @@ public class Order {
 
     private LocalDateTime waitingTime;
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
     public Order(long id, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {
         this.id = id;
         this.orderedSweets = orderedSweets;
@@ -93,7 +95,24 @@ public class Order {
         this.orderDateTime = orderDateTime;
     }
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
+    @Override
+    public String toString() {
+        return "\n" + "-".repeat(100) + "\n" +
+                "\t".repeat(10) + "Order no." + id + "\t" + orderDateTime.format(DateTimeFormatter
+                .ofPattern("EEE dd.MM.yyyy HH:mm")) +
+                "\n" + "-".repeat(100) + "\n" +
+                "Customer: " + customer.getFirstName() + " " + customer.getLastName() + " | " +
+                customer.getPhoneNumber() + " | " + customer.getEmail() +
+                "\n" + customer.getLocation() +
+                "\n\nCandy Shop: " + shop.getName() +
+                "\n" + shop.getLocation() +
+                "\n" + "-".repeat(100) + "\n" +
+                "Ordered:\n" + formatForPrintingOrderedSweets() +
+                "\n" + "-".repeat(100) + "\n" +
+                "YOUR ORDER WILL READY FOR " + orderType.toString() + " AT: " +
+                waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +
+                "\n" + "-".repeat(100) + "\n";
+    }
 
     private String formatForPrintingOrderedSweets() {
         StringBuilder orderedSweetsInfo = new StringBuilder();
@@ -129,22 +148,4 @@ public class Order {
                 .toString();
     }
 
-    @Override
-    public String toString() {
-        return "\n" + "-".repeat(100) + "\n" +
-                "\t".repeat(10) + "Order no." + id + "\t" + orderDateTime.format(DateTimeFormatter
-                .ofPattern("EEE dd.MM.yyyy HH:mm")) +
-                "\n" + "-".repeat(100) + "\n" +
-                "Customer: " + customer.getFirstName() + " " + customer.getLastName() + " | " +
-                customer.getPhoneNumber() + " | " + customer.getEmail() +
-                "\n" + customer.getLocation() +
-                "\n\nCandy Shop: " + shop.getName() +
-                "\n" + shop.getLocation() +
-                "\n" + "-".repeat(100) + "\n" +
-                "Ordered:\n" + formatForPrintingOrderedSweets() +
-                "\n" + "-".repeat(100) + "\n" +
-                "YOUR ORDER WILL READY FOR " + orderType.toString() + " AT: " +
-                waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +
-                "\n" + "-".repeat(100) + "\n";
-    }
 }

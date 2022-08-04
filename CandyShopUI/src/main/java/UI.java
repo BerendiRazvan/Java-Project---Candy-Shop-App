@@ -149,7 +149,7 @@ public class UI {
         System.out.print("Mail = ");
         String mail = scanner.nextLine();
 
-        if (customerService.findMail(mail)) {
+        if (customerService.checkIfEmailExists(mail)) {
             System.out.print("Password = ");
             String password = scanner.nextLine();
             try {

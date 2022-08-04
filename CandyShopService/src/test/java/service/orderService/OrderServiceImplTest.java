@@ -34,7 +34,7 @@ class OrderServiceImplTest {
                     new Ingredient(2, "Milk", 1),
                     new Ingredient(3, "Flour", 0.75))),
             SweetType.DONUT, SWEET_PRICE);
-    private static OrderService orderService;
+    private OrderService orderService;
 
     @BeforeAll
     static void setUpAll() {
@@ -93,7 +93,7 @@ class OrderServiceImplTest {
         assertThrowsExactly(ServiceException.class,
                 () -> orderService.addToOrder(
                         orderService.createOrder(customer, OrderType.DELIVERY, myShop), null),
-                "Invalid sweet id!");
+                SWEET_ID_EXCEPTION);
     }
 
 
@@ -116,7 +116,7 @@ class OrderServiceImplTest {
         orderService.removeOrder(1L);
         assertThrowsExactly(ServiceException.class,
                 () -> orderService.removeOrder(1L),
-                "This element does not exist!");
+                ELEMENT_DOES_NOT_EXIST_EXCEPTION);
         assertEquals(orderService.getAllOrdersInADay().size(), 0);
     }
 
@@ -159,10 +159,10 @@ class OrderServiceImplTest {
     void testInvalidPrintOrderDetails() {
         assertThrowsExactly(ServiceException.class,
                 () -> orderService.printOrderDetails("1234567"),
-                "Invalid order number/id!");
+                ORDER_ID_EXCEPTION);
         assertThrowsExactly(ServiceException.class,
                 () -> orderService.printOrderDetails("adsasdads"),
-                "Invalid order number/id!");
+                ORDER_ID_EXCEPTION);
     }
 
     @Test

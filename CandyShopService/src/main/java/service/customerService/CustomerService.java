@@ -10,5 +10,5 @@ public interface CustomerService {
     Customer createAccount(String firstName, String lastName, String email, String password,
                            String phoneNumber, Location customerLocation) throws ServiceException;
 
-    boolean findMail(String mail);
+    boolean checkIfEmailExists(String mail);
 }

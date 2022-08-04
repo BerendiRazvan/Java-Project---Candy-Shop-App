@@ -12,21 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static service.TestConstantValues.SWEET_ID_EXCEPTION;
 
 class SweetServiceImplTest {
-    private static SweetService sweetService;
+    private SweetService sweetService;
 
     @BeforeAll
     static void setUpAll() {
         System.out.println("Tests for SweetServiceImpl");
-
-        SweetRepository sweetRepository =
-                new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
-        sweetService = new SweetServiceImpl(sweetRepository);
     }
 
     @BeforeEach
     void setUp() {
+        SweetRepository sweetRepository =
+                new SweetInMemoryRepository(SweetInMemoryRepository.generateSweets());
+        sweetService = new SweetServiceImpl(sweetRepository);
     }
 
     @AfterEach
@@ -60,7 +60,7 @@ class SweetServiceImplTest {
     void testInvalidFindSweetById() throws ServiceException {
         assertThrowsExactly(ServiceException.class,
                 () -> sweetService.findSweetById("abcd"),
-                "Invalid sweet id!");
+                SWEET_ID_EXCEPTION);
 
         Sweet sweet = sweetService.findSweetById("777");
         assertNull(sweet);

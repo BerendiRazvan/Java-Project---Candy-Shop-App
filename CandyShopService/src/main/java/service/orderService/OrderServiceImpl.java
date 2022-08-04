@@ -168,13 +168,17 @@ public class OrderServiceImpl implements OrderService {
     private double getProfit(Map<Sweet, Integer> orderedSweets) {
         double profit = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
-            profit += sweet.getPrice() - sweet.getExtraPrice() - sweet.getIngredientsList()
-                    .stream()
-                    .mapToDouble(Ingredient::getPrice)
-                    .sum();
+            profit += sweet.getPrice() - sweet.getExtraPrice() - priceForIngredients(sweet.getIngredientsList());
         }
 
         return profit;
+    }
+
+    private double priceForIngredients(List<Ingredient> ingredientsList) {
+        return ingredientsList
+                .stream()
+                .mapToDouble(Ingredient::getPrice)
+                .sum();
     }
 
 }

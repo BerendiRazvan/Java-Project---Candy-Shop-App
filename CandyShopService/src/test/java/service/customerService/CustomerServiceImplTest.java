@@ -15,20 +15,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static service.TestConstantValues.*;
 
 class CustomerServiceImplTest {
-    private static CustomerService customerService;
+    private CustomerService customerService;
     private final Location location = new Location(ID, COUNTRY, CITY, ADDRESS);
 
     @BeforeAll
     static void setUpAll() {
         System.out.println("Tests for CustomerServiceImpl");
-
-        CustomerRepository customerRepository =
-                new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
-        customerService = new CustomerServiceImpl(customerRepository);
     }
 
     @BeforeEach
     void setUp() {
+        CustomerRepository customerRepository =
+                new CustomerInMemoryRepository(CustomerInMemoryRepository.generateCustomers());
+        customerService = new CustomerServiceImpl(customerRepository);
     }
 
     @AfterEach
@@ -56,11 +55,11 @@ class CustomerServiceImplTest {
     void testInvalidLogin() {
         assertThrowsExactly(ServiceException.class,
                 () -> customerService.login("brazvan1234567890@gmail.com", PASSWORD),
-                "Authentication failed!");
+                AUTHENTICATION_EXCEPTION);
 
         assertThrowsExactly(ServiceException.class,
                 () -> customerService.login(EMAIL, "1234dasdas678"),
-                "Invalid password!\n");
+                CUSTOMER_PASSWORD_EXCEPTION);
     }
 
 
@@ -82,7 +81,7 @@ class CustomerServiceImplTest {
         assertThrowsExactly(ServiceException.class,
                 () -> customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com", PASSWORD,
                         "1234", location),
-                "Invalid phone number!\n");
+                CUSTOMER_PHONE_NUMBER_EXCEPTION);
     }
 
     @Test
@@ -91,10 +90,10 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation("", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid first name!\n");
+        assertEquals(errors, CUSTOMER_FIRST_NAME_EXCEPTION);
 
         errors = getCustomerValidation("Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid first name!\n");
+        assertEquals(errors, CUSTOMER_FIRST_NAME_EXCEPTION);
     }
 
     @Test
@@ -103,10 +102,10 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid last name!\n");
+        assertEquals(errors, CUSTOMER_LAST_NAME_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid last name!\n");
+        assertEquals(errors, CUSTOMER_LAST_NAME_EXCEPTION);
     }
 
     @Test
@@ -115,16 +114,16 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid email!\n");
+        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid email!\n");
+        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid email!\n");
+        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid email!\n");
+        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
     }
 
     @Test
@@ -133,10 +132,10 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid password!\n");
+        assertEquals(errors, CUSTOMER_PASSWORD_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER, location);
-        assertEquals(errors, "Invalid password!\n");
+        assertEquals(errors, CUSTOMER_PASSWORD_EXCEPTION);
     }
 
     @Test
@@ -146,16 +145,16 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "", location);
-        assertEquals(errors, "Invalid phone number!\n");
+        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "12e456789w", location);
-        assertEquals(errors, "Invalid phone number!\n");
+        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "09872", location);
-        assertEquals(errors, "Invalid phone number!\n");
+        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "098123132372", location);
-        assertEquals(errors, "Invalid phone number!\n");
+        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
     }
 
     @Test
@@ -165,11 +164,11 @@ class CustomerServiceImplTest {
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
                 new Location(1, "Romania", "Cluj", ""));
-        assertEquals(errors, "Invalid address!\n");
+        assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
                 new Location(1, "Romania", "Cluj", "aproape"));
-        assertEquals(errors, "Invalid address!\n");
+        assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
     }
 
     @Test
@@ -179,23 +178,26 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, "", EMAIL, "", "", location);
-        assertEquals(errors, "Invalid last name!\n" +
-                "Invalid password!\n" +
-                "Invalid phone number!\n");
+        assertEquals(errors,
+                CUSTOMER_LAST_NAME_EXCEPTION +
+                        CUSTOMER_PASSWORD_EXCEPTION +
+                        CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation("", "", EMAIL, PASSWORD, "", location);
-        assertEquals(errors, "Invalid first name!\n" +
-                "Invalid last name!\n" +
-                "Invalid phone number!\n");
+        assertEquals(errors,
+                CUSTOMER_FIRST_NAME_EXCEPTION +
+                        CUSTOMER_LAST_NAME_EXCEPTION +
+                        CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation("", "", "", "", "",
                 new Location(1, "Romania", "Cluj", ""));
-        assertEquals(errors, "Invalid first name!\n" +
-                "Invalid last name!\n" +
-                "Invalid email!\n" +
-                "Invalid password!\n" +
-                "Invalid phone number!\n" +
-                "Invalid address!\n");
+        assertEquals(errors,
+                CUSTOMER_FIRST_NAME_EXCEPTION +
+                        CUSTOMER_LAST_NAME_EXCEPTION +
+                        CUSTOMER_EMAIL_EXCEPTION +
+                        CUSTOMER_PASSWORD_EXCEPTION +
+                        CUSTOMER_PHONE_NUMBER_EXCEPTION +
+                        CUSTOMER_ADDRESS_EXCEPTION);
     }
 
     @Test
@@ -210,24 +212,24 @@ class CustomerServiceImplTest {
 
 
     @Test
-    void testValidFindMail() {
-        assertTrue(customerService.findMail("br@gmail.com"));
-        assertTrue(customerService.findMail("asasr@gmail.com"));
-        assertTrue(customerService.findMail("br@gmail.com"));
-        assertTrue(customerService.findMail("br@gmail.com"));
+    void testValidCheckIfEmailExists() {
+        assertTrue(customerService.checkIfEmailExists("br@gmail.com"));
+        assertTrue(customerService.checkIfEmailExists("asasr@gmail.com"));
+        assertTrue(customerService.checkIfEmailExists("br@gmail.com"));
+        assertTrue(customerService.checkIfEmailExists("br@gmail.com"));
     }
 
     @Test
-    void testInvalidFindMail() {
-        assertFalse(customerService.findMail(""));
-        assertFalse(customerService.findMail("berendirazvan@gmail.com"));
-        assertFalse(customerService.findMail("@gmail.com"));
-        assertFalse(customerService.findMail("br"));
-        assertFalse(customerService.findMail("br@gmail.com1234"));
-        assertFalse(customerService.findMail("1234br@gmail.com1234"));
-        assertFalse(customerService.findMail("1234br@gmail.com"));
-        assertFalse(customerService.findMail(" "));
-        assertFalse(customerService.findMail(" br@gmail.com "));
+    void testInvalidCheckIfEmailExists() {
+        assertFalse(customerService.checkIfEmailExists(""));
+        assertFalse(customerService.checkIfEmailExists("berendirazvan@gmail.com"));
+        assertFalse(customerService.checkIfEmailExists("@gmail.com"));
+        assertFalse(customerService.checkIfEmailExists("br"));
+        assertFalse(customerService.checkIfEmailExists("br@gmail.com1234"));
+        assertFalse(customerService.checkIfEmailExists("1234br@gmail.com1234"));
+        assertFalse(customerService.checkIfEmailExists("1234br@gmail.com"));
+        assertFalse(customerService.checkIfEmailExists(" "));
+        assertFalse(customerService.checkIfEmailExists(" br@gmail.com "));
     }
 
     private String getCustomerValidation(String firstName, String lastName, String email, String password,
