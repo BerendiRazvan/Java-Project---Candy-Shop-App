@@ -4,8 +4,10 @@ import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
+import domain.sweet.Sweet;
 import service.customerService.CustomerService;
 import service.exception.ServiceException;
+import service.ingredientService.IngredientService;
 import service.orderService.OrderService;
 import service.sweetService.SweetService;
 
@@ -20,15 +22,18 @@ public class UI {
     private CustomerService customerService;
     private SweetService sweetService;
     private OrderService orderService;
+    private IngredientService ingredientService;
 
     private final String menu;
     private final String menuOpt1;
 
-    public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService) {
+    public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
+              IngredientService ingredientService) {
         this.shop = shop;
         this.customerService = customerService;
         this.sweetService = sweetService;
         this.orderService = orderService;
+        this.ingredientService = ingredientService;
 
         menu = "\nOptions:\n" +
                 "1 - Order sweets\n" +
@@ -37,9 +42,13 @@ public class UI {
                 "X - Exit";
 
         menuOpt1 = "\nOptions:\n" +
-                "1 - Add sweet\n" +
-                "2 - Finish order\n" +
-                "3 - Your order details\n" +
+                "1 - Add sweet to order\n" +
+                "2 - Add extra ingredients for an ordered sweet\n" +
+                "3 - Update amount of an ingredient for an ordered sweet\n" +
+                "4 - Remove extra ingredients for an ordered sweet\n" +
+                "5 - Create and add custom sweet\n" +
+                "6 - View order details\n" +
+                "7 - Finish order\n" +
                 "X - Cancel and exit";
     }
 
@@ -93,7 +102,7 @@ public class UI {
         System.out.println(customer);
 
         OrderType orderType = OrderType.DELIVERY;
-        System.out.println("\nYour order will be delivered to you, do you want delivery with pickup?\nAnswer (Yes/No):");
+        System.out.print("\nYour order will be delivered to you, do you want delivery with pickup?\nAnswer (Yes/No):");
 
         String deliveryOpt = scanner.nextLine().toUpperCase();
 
@@ -120,14 +129,89 @@ public class UI {
                             System.out.println("Sweet added, yummy :)");
                         } catch (ServiceException e) {
                             System.out.println("Oh no, we failed to add your sweet :(");
+                            System.out.println(e.getMessage());
                         }
                         break;
                     case "2":
+                        System.out.println("Available ingredients:");
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
                         System.out.println(orderService.getOrderDetails(order.getId()));
-                        break label;
+                        System.out.print("Enter the ID for the ordered sweet you want to change:");
+                        String orderedSweetIdForAdd = scanner.nextLine();
+                        System.out.print("Enter the ID for the extra ingredient you want to add:");
+                        String ingredientIdForAdd = scanner.nextLine();
+                        System.out.print("Enter the amount you want to add:");
+                        String amountForAdd = scanner.nextLine();
+                        try {
+                            orderService.addExtraIngredientToOrderedSweet(order,
+                                    sweetService.findSweetById(orderedSweetIdForAdd),
+                                    ingredientService.findIngredientById(ingredientIdForAdd), amountForAdd);
+                            System.out.println("Sweet modified :)");
+                        } catch (ServiceException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
                     case "3":
+                        System.out.println("Available ingredients:");
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
+                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        System.out.print("Enter the ID for the ordered sweet you want to change:");
+                        String orderedSweetIdForUpdate = scanner.nextLine();
+                        System.out.print("Enter the ID for the extra ingredient you want to update:");
+                        String ingredientIdForUpdate = scanner.nextLine();
+                        System.out.print("Enter the amount you want:");
+                        String amountForUpdate = scanner.nextLine();
+                        try {
+                            orderService.updateExtraIngredientForOrderedSweet(order,
+                                    sweetService.findSweetById(orderedSweetIdForUpdate),
+                                    ingredientService.findIngredientById(ingredientIdForUpdate), amountForUpdate);
+                            System.out.println("Sweet modified :)");
+                        } catch (ServiceException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case "4":
+                        System.out.println("Available ingredients:");
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
+                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        System.out.print("Enter the ID for the ordered sweet you want to change:");
+                        String orderedSweetIdForDelete = scanner.nextLine();
+                        System.out.print("Enter the ID for the extra ingredient you want to delete:");
+                        String ingredientIdForDelete = scanner.nextLine();
+                        try {
+                            orderService.deleteExtraIngredientForOrderedSweet(order,
+                                    sweetService.findSweetById(orderedSweetIdForDelete),
+                                    ingredientService.findIngredientById(ingredientIdForDelete));
+                            System.out.println("Sweet modified :)");
+                        } catch (ServiceException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case "5":
+                        System.out.println("\nAvailable ingredients:");
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
+
+                        Sweet customSweet = sweetService.createEmptySweet();
+                        System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
+                        String ingredients = scanner.nextLine();
+                        if (ingredients.matches("^(([a-zA-Z ]*)(,)([0-9]*)(;))*$"))
+                            try {
+                                sweetService.addAllIngredientsToSweet(customSweet, ingredients);
+                                orderService.addToOrder(order, customSweet);
+                                System.out.println(customSweet);
+                                System.out.println("Sweet added, yummy :)");
+                            } catch (ServiceException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        else
+                            System.out.println("Invalid input for ingredients to add :(");
+                        break;
+                    case "6":
                         System.out.println(orderService.getOrderDetails(order.getId()));
                         break;
+                    case "7":
+                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        break label;
                     case "X":
                         orderService.removeOrder(order.getId());
                         System.out.println("Order deleted!\n");
@@ -224,6 +308,11 @@ public class UI {
 
         System.out.println("\n" + "-".repeat(100) + "\n");
 
+        System.out.println("Available ingredients: \n");
+        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
+
+        System.out.println("\n" + "-".repeat(100) + "\n");
+
     }
 
     private void printShopSweets() {
@@ -232,10 +321,11 @@ public class UI {
         for (var sweet : sweetService.getAvailableSweets()) {
             System.out.print("\n\n" + sweet.getId() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$\nRecipe: ");
-            sweet.getIngredientsList().stream()
+            sweet.getIngredientsList()
+                    .stream()
                     .map(Ingredient::getName)
                     .collect(Collectors.toList())
-                    .forEach(System.out::print);
+                    .forEach(ingredient -> System.out.print(ingredient + ", "));
         }
         System.out.println("\n" + "-".repeat(100) + "\n");
     }

@@ -122,8 +122,8 @@ public class Order {
     }
 
     private String formatForPrintingSweet(Sweet sweet) {
-        return "\n" +
-                sweet.getSweetType() +
+        return "\n" + sweet.getId() +
+                ". " + sweet.getSweetType() +
                 " - quantity: " +
                 orderedSweets.get(sweet) +
                 " - price: " +

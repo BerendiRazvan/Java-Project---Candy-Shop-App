@@ -4,11 +4,15 @@ import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
 import org.junit.jupiter.api.*;
-import repository.sweetsRepository.SweetInMemoryRepository;
-import repository.sweetsRepository.SweetRepository;
+import repository.exception.RepositoryException;
+import repository.ingredientRepository.IngredientInMemoryRepository;
+import repository.ingredientRepository.IngredientRepository;
+import repository.sweetRepository.SweetInMemoryRepository;
+import repository.sweetRepository.SweetRepository;
 import service.exception.ServiceException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,8 +30,20 @@ class SweetServiceImplTest {
     void setUp() {
         SweetRepository sweetRepository =
                 new SweetInMemoryRepository(new ArrayList<>());
-        sweetRepository.generateSweets();
-        sweetService = new SweetServiceImpl(sweetRepository);
+
+        try {
+            sweetRepository.add(new Sweet(1,
+                    Arrays.asList(
+                            new Ingredient(1, "Sugar", 1.5),
+                            new Ingredient(2, "Milk", 1),
+                            new Ingredient(3, "Flour", 0.75)),
+                    SweetType.DONUT, 5));
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
+        }
+        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+
+        sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
     }
 
     @AfterEach
@@ -41,7 +57,7 @@ class SweetServiceImplTest {
 
     @Test
     void testGetAvailableSweets() {
-        assertEquals(sweetService.getAvailableSweets().size(), 15);
+        assertEquals(sweetService.getAvailableSweets().size(), 1);
     }
 
     @Test

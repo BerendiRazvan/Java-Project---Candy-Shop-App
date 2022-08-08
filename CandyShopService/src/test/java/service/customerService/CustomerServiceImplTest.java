@@ -3,8 +3,8 @@ package service.customerService;
 import domain.Customer;
 import domain.location.Location;
 import org.junit.jupiter.api.*;
-import repository.customersRepository.CustomerInMemoryRepository;
-import repository.customersRepository.CustomerRepository;
+import repository.customerRepository.CustomerInMemoryRepository;
+import repository.customerRepository.CustomerRepository;
 import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;

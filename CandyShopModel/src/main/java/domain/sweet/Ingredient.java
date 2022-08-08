@@ -5,10 +5,20 @@ public class Ingredient {
     private String name;
     private double price;
 
+    private int amount;
+
     public Ingredient(long id, String name, double price) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.amount = 1;
+    }
+
+    public Ingredient(long id, String name, double price, int amount) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.amount = amount;
     }
 
     public long getId() {
@@ -35,6 +45,13 @@ public class Ingredient {
         this.price = price;
     }
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 
     @Override
     public String toString() {

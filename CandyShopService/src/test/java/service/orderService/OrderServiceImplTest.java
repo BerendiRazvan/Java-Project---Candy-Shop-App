@@ -10,8 +10,12 @@ import domain.sweet.Sweet;
 import domain.sweet.SweetType;
 import org.junit.jupiter.api.*;
 import repository.exception.RepositoryException;
-import repository.ordersRepository.OrderInMemoryRepository;
-import repository.ordersRepository.OrderRepository;
+import repository.ingredientRepository.IngredientInMemoryRepository;
+import repository.ingredientRepository.IngredientRepository;
+import repository.orderRepository.OrderInMemoryRepository;
+import repository.orderRepository.OrderRepository;
+import repository.sweetRepository.SweetInMemoryRepository;
+import repository.sweetRepository.SweetRepository;
 import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +53,10 @@ class OrderServiceImplTest {
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
-        orderService = new OrderServiceImpl(orderRepository);
+        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+        ingredientRepository.generateIngredients();
+        SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
+        orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
     }
 
     @AfterEach

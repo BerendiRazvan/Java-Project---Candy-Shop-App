@@ -1,4 +1,4 @@
-package repository.ordersRepository;
+package repository.orderRepository;
 
 
 import domain.Customer;
@@ -6,9 +6,9 @@ import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
-import repository.customersRepository.CustomerRepository;
+import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
-import repository.sweetsRepository.SweetRepository;
+import repository.sweetRepository.SweetRepository;
 
 import java.util.*;
 
@@ -87,6 +87,22 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     }
 
+    @Override
+    public int generateOrderId() {
+        //the temporary method
+        //it will no longer be needed after we add a db because the id will be automatically generated
+        int id = 1;
+        while (true) {
+            boolean ok = true;
+            for (var o : orderList)
+                if (o.getId() == id) {
+                    ok = false;
+                    break;
+                }
+            if (ok) return id;
+            id++;
+        }
+    }
 
     private static Map<Sweet, Integer> randomOrder(List<Sweet> all) {
         Random random = new Random();

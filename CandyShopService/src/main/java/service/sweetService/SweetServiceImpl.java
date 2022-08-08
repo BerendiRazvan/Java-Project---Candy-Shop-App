@@ -1,23 +1,35 @@
 package service.sweetService;
 
+import domain.order.Order;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
-import repository.sweetsRepository.SweetRepository;
+import domain.sweet.SweetType;
+import repository.exception.RepositoryException;
+import repository.ingredientRepository.IngredientRepository;
+import repository.sweetRepository.SweetRepository;
 import service.exception.ServiceException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SweetServiceImpl implements SweetService {
 
     private SweetRepository sweetRepository;
+    private IngredientRepository ingredientRepository;
 
-    public SweetServiceImpl(SweetRepository sweetRepository) {
+    public SweetServiceImpl(SweetRepository sweetRepository, IngredientRepository ingredientRepository) {
         this.sweetRepository = sweetRepository;
+        this.ingredientRepository = ingredientRepository;
     }
 
     @Override
     public List<Sweet> getAvailableSweets() {
-        return sweetRepository.findAll();
+        return sweetRepository.findAll()
+                .stream()
+                .filter(sweet -> sweet.getSweetType() != SweetType.UNIQUE)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -28,33 +40,57 @@ public class SweetServiceImpl implements SweetService {
         } catch (Exception e) {
             throw new ServiceException("Invalid sweet id!");
         }
-
         return sweetRepository.findSweetById(id);
-
     }
 
-    private void addIngredientToRecipe(Sweet sweet, Ingredient newIngredient) throws Exception {
-        List<Ingredient> ingredientsList = sweet.getIngredientsList();
-        if (!ingredientsList.contains(newIngredient)) ingredientsList.add(newIngredient);
-        else throw new Exception("This ingredient exists!");
+    @Override
+    public Sweet createEmptySweet() throws ServiceException {
+        long id = sweetRepository.generateSweetId();
+
+        try {
+            Sweet sweet = new Sweet(id, new ArrayList<>(), SweetType.UNIQUE, 2);
+            sweetRepository.add(sweet);
+            return sweet;
+        } catch (RepositoryException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
-    private void addExtraIngredient(Sweet sweet, Ingredient extraIngredient) throws Exception {
-        List<Ingredient> extraIngredients = sweet.getExtraIngredients();
-        if (!extraIngredients.contains(extraIngredient)) extraIngredients.add(extraIngredient);
-        else throw new Exception("This ingredient exists!");
+    @Override
+    public void addIngredientToSweet(Sweet customSweet, Ingredient newIngredient, int amount) throws ServiceException {
+        if (newIngredient == null) throw new ServiceException("Invalid ingredient id!");
+        else {
+            Sweet updateSweet = sweetRepository.findSweetById(customSweet.getId());
+            while (amount != 0) {
+                updateSweet.getIngredientsList().add(newIngredient);
+                updateSweet.setPrice(customSweet.getPrice() + newIngredient.getPrice());
+                amount--;
+            }
+            try {
+                sweetRepository.update(customSweet.getId(), updateSweet);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
     }
 
-    private void removeIngredientFromRecipe(Sweet sweet, Ingredient ingredient) throws Exception {
-        List<Ingredient> ingredientsList = sweet.getIngredientsList();
-        if (ingredientsList.contains(ingredient)) ingredientsList.remove(ingredient);
-        else throw new Exception("This ingredient does not exist!");
-    }
+    @Override
+    public void addAllIngredientsToSweet(Sweet customSweet, String ingredients) throws ServiceException {
+        List<String> ingredientList = List.of(ingredients.split(";"));
+        for (String ingredientAndQuantity : ingredientList) {
+            List<String> pair = List.of(ingredientAndQuantity.split(","));
+            String ingredientName = pair.get(0);
+            int amount;
+            try {
+                amount = Integer.parseInt(pair.get(1));
+            } catch (Exception e) {
+                throw new ServiceException("Invalid ingredients amount!");
+            }
 
-    private void removeExtraIngredient(Sweet sweet, Ingredient extraIngredient) throws Exception {
-        List<Ingredient> extraIngredients = sweet.getExtraIngredients();
-        if (extraIngredients.contains(extraIngredient)) extraIngredients.remove(extraIngredient);
-        else throw new Exception("This ingredient does not exist!");
+            Ingredient ingredient = ingredientRepository.findIngredientByName(ingredientName);
+            if (ingredient != null)
+                addIngredientToSweet(customSweet, ingredient, amount);
+            else throw new ServiceException("Invalid ingredient name!");
+        }
     }
-
 }

@@ -6,12 +6,16 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import domain.sweet.SweetType;
 import repository.exception.RepositoryException;
-import repository.ordersRepository.OrderRepository;
+import repository.ingredientRepository.IngredientRepository;
+import repository.orderRepository.OrderRepository;
+import repository.sweetRepository.SweetRepository;
 import service.exception.ServiceException;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +23,19 @@ import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
+    private SweetRepository sweetRepository;
+    private IngredientRepository ingredientRepository;
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, SweetRepository sweetRepository, IngredientRepository ingredientRepository) {
         this.orderRepository = orderRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.sweetRepository = sweetRepository;
     }
 
     @Override
     public Order createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
-        int id = generateOrderId();
+        int id = orderRepository.generateOrderId();
 
         try {
             Order order = new Order(id, new HashMap<>(), orderType, customer, shop);
@@ -44,8 +52,10 @@ public class OrderServiceImpl implements OrderService {
         if (newSweet == null) throw new ServiceException("Invalid sweet id!");
         else {
             Order updateOrder = orderRepository.findOrderById(order.getId());
-            addSweetToOrder(updateOrder, newSweet);
             try {
+                updateShopStockAfterAddToOrder(newSweet.getIngredientsList());
+                updateShopStockAfterAddToOrder(newSweet.getExtraIngredients());
+                addSweetToOrder(updateOrder, newSweet);
                 orderRepository.update(order.getId(), updateOrder);
             } catch (RepositoryException e) {
                 throw new ServiceException(e.getMessage());
@@ -117,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
         Order yourOrder = orderRepository.findOrderById(id);
         if (yourOrder == null) throw new ServiceException("Invalid order number/id!");
         else {
-            return yourOrder.toString() +
+            return yourOrder +
                     "TOTAL TO PAY: " + df.format(getFinalOrderPrice(yourOrder)) + "$" +
                     "\n" + "-".repeat(100) + "\n";
         }
@@ -133,20 +143,141 @@ public class OrderServiceImpl implements OrderService {
         return totalToPay;
     }
 
-    private int generateOrderId() {
-        //the temporary method
-        //it will no longer be needed after we add a db because the id will be automatically generated
-        int id = 1;
-        while (true) {
-            boolean ok = true;
-            for (var o : orderRepository.findAll())
-                if (o.getId() == id) {
-                    ok = false;
-                    break;
+    @Override
+    public void addExtraIngredientToOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
+            throws ServiceException {
+        if (sweet == null) throw new ServiceException("Invalid sweet!");
+        if (ingredient == null) throw new ServiceException("Invalid ingredient!");
+        int ingredientAmount;
+        try {
+            ingredientAmount = Integer.parseInt(amount);
+        } catch (Exception e) {
+            throw new ServiceException("Invalid amount!");
+        }
+        if (ingredientAmount > ingredient.getAmount())
+            throw new ServiceException("Invalid amount!");
+        if (ingredientAmount < 1)
+            throw new ServiceException("Invalid amount!");
+        if (order.getOrderedSweets().get(sweet) == null)
+            throw new ServiceException("The sweet was not ordered!");
+        else {
+            Sweet customSweet = new Sweet(sweetRepository.generateSweetId(), sweet.getIngredientsList(),
+                    SweetType.UNIQUE, sweet.getPrice());
+            customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
+            removeSweetToOrder(order, sweet);
+            while (ingredientAmount != 0) {
+                customSweet.getExtraIngredients().add(ingredient);
+                customSweet.setPrice(customSweet.getPrice() + ingredient.getPrice());
+                decreasesIngredientsStock(ingredient);
+                ingredientAmount--;
+            }
+            addSweetToOrder(order, customSweet);
+            try {
+                sweetRepository.add(customSweet);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void updateExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
+            throws ServiceException {
+        if (sweet == null) throw new ServiceException("Invalid sweet!");
+        if (ingredient == null) throw new ServiceException("Invalid ingredient!");
+        int ingredientAmount;
+        try {
+            ingredientAmount = Integer.parseInt(amount);
+        } catch (Exception e) {
+            throw new ServiceException("Invalid amount!");
+        }
+        if (ingredientAmount > ingredient.getAmount())
+            throw new ServiceException("Invalid amount!");
+        if (ingredientAmount < 1)
+            throw new ServiceException("Invalid amount!");
+        if (order.getOrderedSweets().get(sweet) == null)
+            throw new ServiceException("The sweet was not ordered!");
+        else {
+            sweet.setSweetType(SweetType.UNIQUE);
+            int actualAmount = (int) sweet.getExtraIngredients()
+                    .stream()
+                    .filter(i -> i == ingredient)
+                    .count();
+            while (actualAmount - ingredientAmount != 0) {
+                if (actualAmount < ingredientAmount) {
+                    sweet.getExtraIngredients().add(ingredient);
+                    sweet.setPrice(sweet.getPrice() + ingredient.getPrice());
+                    decreasesIngredientsStock(ingredient);
+                    actualAmount++;
+                } else {
+                    sweet.getExtraIngredients().remove(ingredient);
+                    sweet.setPrice(sweet.getPrice() - ingredient.getPrice());
+                    increaseIngredientsStock(ingredient);
+                    actualAmount--;
                 }
-            if (ok) return id;
-            ;
-            id++;
+            }
+            try {
+                sweetRepository.update(sweet.getId(), sweet);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void deleteExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient) throws ServiceException {
+        if (sweet == null) throw new ServiceException("Invalid sweet!");
+        if (ingredient == null) throw new ServiceException("Invalid ingredient!");
+        if (order.getOrderedSweets().get(sweet) == null)
+            throw new ServiceException("The sweet was not ordered!");
+        else {
+            int actualAmount = (int) sweet.getExtraIngredients()
+                    .stream()
+                    .filter(i -> i == ingredient)
+                    .count();
+            while (actualAmount != 0) {
+                sweet.getExtraIngredients().remove(ingredient);
+                sweet.setPrice(sweet.getPrice() - ingredient.getPrice());
+                increaseIngredientsStock(ingredient);
+                actualAmount--;
+            }
+            try {
+                sweetRepository.update(sweet.getId(), sweet);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
+    }
+
+    private void updateShopStockAfterAddToOrder(List<Ingredient> ingredientList) throws ServiceException {
+        for (Ingredient ingredient : ingredientList) {
+            try {
+                decreasesIngredientsStock(ingredient);
+            } catch (ServiceException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
+    }
+
+    private void decreasesIngredientsStock(Ingredient ingredient) throws ServiceException {
+        int updatedAmount = ingredient.getAmount() - 1;
+        if (updatedAmount < 0)
+            throw new ServiceException("Invalid amount for this ingredient");
+        ingredient.setAmount(updatedAmount);
+        try {
+            ingredientRepository.update(ingredient.getId(), ingredient);
+        } catch (RepositoryException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    private void increaseIngredientsStock(Ingredient ingredient) throws ServiceException {
+        int updatedAmount = ingredient.getAmount() + 1;
+        ingredient.setAmount(updatedAmount);
+        try {
+            ingredientRepository.update(ingredient.getId(), ingredient);
+        } catch (RepositoryException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
 
