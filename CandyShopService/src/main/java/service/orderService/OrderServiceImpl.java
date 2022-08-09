@@ -162,9 +162,9 @@ public class OrderServiceImpl implements OrderService {
             throw new ServiceException("The sweet was not ordered!");
         else {
             Sweet customSweet = new Sweet(sweetRepository.generateSweetId(), sweet.getIngredientsList(),
-                    SweetType.UNIQUE, sweet.getPrice());
+                    sweet.getSweetType(), sweet.getPrice());
             customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
-            removeSweetToOrder(order, sweet);
+            removeSweetFromOrder(order, sweet);
             while (ingredientAmount != 0) {
                 customSweet.getExtraIngredients().add(ingredient);
                 customSweet.setPrice(customSweet.getPrice() + ingredient.getPrice());
@@ -198,7 +198,6 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderedSweets().get(sweet) == null)
             throw new ServiceException("The sweet was not ordered!");
         else {
-            sweet.setSweetType(SweetType.UNIQUE);
             int actualAmount = (int) sweet.getExtraIngredients()
                     .stream()
                     .filter(i -> i == ingredient)
@@ -291,7 +290,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    private void removeSweetToOrder(Order order, Sweet sweet) {
+    private void removeSweetFromOrder(Order order, Sweet sweet) {
         order.getOrderedSweets().merge(sweet, -1, Integer::sum);
         if (order.getOrderedSweets().get(sweet) == 0) order.getOrderedSweets().remove(sweet);
     }

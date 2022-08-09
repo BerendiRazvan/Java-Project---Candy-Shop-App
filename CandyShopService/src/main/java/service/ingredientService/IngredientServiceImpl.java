@@ -45,13 +45,13 @@ public class IngredientServiceImpl implements IngredientService {
                         return ingredient.getId() +
                                 ". " + ingredient.getName() +
                                 ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
-                                "\tStock: " + ingredient.getAmount() + "\n";
+                                "\tStock: " + ingredient.getAmount();
                     else
                         return ingredient.getId() +
                                 ". " + ingredient.getName() +
                                 ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
                                 "\tStock: " + ingredient.getAmount() +
-                                "\t(reduced quantity in shop stock)\n";
+                                "\t(reduced quantity in shop stock)";
                 }).collect(Collectors.toList());
     }
 }

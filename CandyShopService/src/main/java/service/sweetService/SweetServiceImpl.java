@@ -1,6 +1,5 @@
 package service.sweetService;
 
-import domain.order.Order;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
@@ -10,12 +9,12 @@ import repository.sweetRepository.SweetRepository;
 import service.exception.ServiceException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SweetServiceImpl implements SweetService {
 
+    private static final double SWEET_DEFAULT_PRICE = 2;
     private SweetRepository sweetRepository;
     private IngredientRepository ingredientRepository;
 
@@ -28,7 +27,7 @@ public class SweetServiceImpl implements SweetService {
     public List<Sweet> getAvailableSweets() {
         return sweetRepository.findAll()
                 .stream()
-                .filter(sweet -> sweet.getSweetType() != SweetType.UNIQUE)
+                .filter(sweet -> sweet.getSweetType() != SweetType.UNIQUE && sweet.getExtraIngredients().isEmpty())
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +47,7 @@ public class SweetServiceImpl implements SweetService {
         long id = sweetRepository.generateSweetId();
 
         try {
-            Sweet sweet = new Sweet(id, new ArrayList<>(), SweetType.UNIQUE, 2);
+            Sweet sweet = new Sweet(id, new ArrayList<>(), SweetType.UNIQUE, SWEET_DEFAULT_PRICE);
             sweetRepository.add(sweet);
             return sweet;
         } catch (RepositoryException e) {

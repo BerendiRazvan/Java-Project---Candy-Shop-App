@@ -27,6 +27,8 @@ public class UI {
     private final String menu;
     private final String menuOpt1;
 
+    private  static final String expressionVerification = "^(([a-zA-Z ]*)(,)(\\d*)(;))*$";
+
     public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
               IngredientService ingredientService) {
         this.shop = shop;
@@ -194,7 +196,7 @@ public class UI {
                         Sweet customSweet = sweetService.createEmptySweet();
                         System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
                         String ingredients = scanner.nextLine();
-                        if (ingredients.matches("^(([a-zA-Z ]*)(,)([0-9]*)(;))*$"))
+                        if (ingredients.matches(expressionVerification))
                             try {
                                 sweetService.addAllIngredientsToSweet(customSweet, ingredients);
                                 orderService.addToOrder(order, customSweet);
@@ -286,9 +288,9 @@ public class UI {
         System.out.println("\nToday's orders:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy")));
         orderService.getAllOrdersInADay()
                 .stream()
-                .map(order -> new String("Order no. " + order.getId() + " | "
+                .map(order -> "Order no. " + order.getId() + " | "
                         + df.format(orderService.getFinalOrderPrice(order)) + "$ | Hour: " +
-                        order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm"))))
+                        order.getOrderDateTime().format(DateTimeFormatter.ofPattern("HH:mm")))
                 .collect(Collectors.toList())
                 .forEach(System.out::println);
         System.out.print("Money made today: " + df.format(orderService.getMoneyMadeToday()) + "$\n" +

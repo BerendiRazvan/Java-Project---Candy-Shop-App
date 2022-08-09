@@ -55,7 +55,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     @Override
     public Ingredient findIngredientByName(String name) {
         for (Ingredient ingredient : ingredientList)
-            if (ingredient.getName().toUpperCase().equals(name.toUpperCase())) return ingredient;
+            if (ingredient.getName().equalsIgnoreCase(name)) return ingredient;
         return null;
     }
 

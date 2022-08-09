@@ -65,11 +65,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (lastName.equals("") || !lastName.matches("[a-zA-Z]+")) error += "Invalid last name!\n";
 
-        if (email.equals("") || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) error += "Invalid email!\n";
+        if (email.equals("") || !email.matches("^[A-Za-z\\d+_.-]+@(.+)$")) error += "Invalid email!\n";
 
         if (password.length() < 6) error += "Invalid password!\n";
 
-        if (phoneNumber.length() != 10 || !phoneNumber.matches("[0-9]+")) error += "Invalid phone number!\n";
+        if (phoneNumber.length() != 10 || !phoneNumber.matches("\\d+")) error += "Invalid phone number!\n";
 
         if (location.getAddress().length() < 10) error += "Invalid address!\n";
 

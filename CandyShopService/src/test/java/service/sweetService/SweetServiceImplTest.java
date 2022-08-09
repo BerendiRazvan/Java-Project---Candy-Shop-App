@@ -1,5 +1,7 @@
 package service.sweetService;
 
+import domain.order.Order;
+import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
@@ -16,10 +18,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.TestConstantValues.SWEET_ID_EXCEPTION;
+import static service.TestConstantValues.*;
 
 class SweetServiceImplTest {
     private SweetService sweetService;
+    private final Ingredient ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
 
     @BeforeAll
     static void setUpAll() {
@@ -42,7 +45,7 @@ class SweetServiceImplTest {
             throw new RuntimeException(e);
         }
         IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
-
+        ingredientRepository.generateIngredients();
         sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
     }
 
@@ -81,6 +84,78 @@ class SweetServiceImplTest {
 
         Sweet sweet = sweetService.findSweetById("777");
         assertNull(sweet);
+    }
+
+    @Test
+    void testCreateEmptySweet() throws ServiceException {
+        Sweet sweet = sweetService.createEmptySweet();
+
+        assertEquals(sweet.getSweetType(), SweetType.UNIQUE);
+        assertEquals(sweet.getId(), ID + 1);
+        assertEquals(sweet.getOriginalPrice(), SWEET_DEFAULT_PRICE);
+        assertEquals(sweet.getExtraPrice(), 0);
+        assertEquals(sweet.getPrice(), SWEET_DEFAULT_PRICE);
+        assertTrue(sweet.getExtraIngredients().isEmpty());
+        assertTrue(sweet.getIngredientsList().isEmpty());
+    }
+
+    @Test
+    void testValidAddIngredientToSweet() throws ServiceException {
+        Sweet sweet = sweetService.createEmptySweet();
+        assertEquals(sweet.getIngredientsList().size(), 0);
+
+        sweetService.addIngredientToSweet(sweet, ingredient, AMOUNT);
+        assertEquals(sweet.getIngredientsList().size(), AMOUNT);
+        assertEquals(sweet.getOriginalPrice(), 2 + INGREDIENT_PRICE * AMOUNT);
+    }
+
+    void testInvalidAddIngredientToSweet() {
+        assertThrowsExactly(ServiceException.class,
+                () -> sweetService.addIngredientToSweet(null, ingredient, AMOUNT),
+                ID_INGREDIENT_EXCEPTION);
+    }
+
+    @Test
+    void testValidAddAllIngredientsToSweet() throws ServiceException {
+        Sweet sweet = sweetService.createEmptySweet();
+        assertEquals(sweet.getIngredientsList().size(), 0);
+
+        String add1 = "oreo,2;ice cream,3;";
+        sweetService.addAllIngredientsToSweet(sweet, add1);
+        assertEquals(sweet.getIngredientsList().size(), 5);
+        verifIfAllAdded(add1, sweet.getIngredientsList().subList(0, 5));
+
+        String add2 = "sugar,1;sugar,3;sugar,2;";
+        sweetService.addAllIngredientsToSweet(sweet, add2);
+        assertEquals(sweet.getIngredientsList().size(), 11);
+        verifIfAllAdded(add2, sweet.getIngredientsList().subList(5, 11));
+
+        String add3 = "cacao,2;";
+        sweetService.addAllIngredientsToSweet(sweet, add3);
+        assertEquals(sweet.getIngredientsList().size(), 13);
+        verifIfAllAdded(add3, sweet.getIngredientsList().subList(11, 13));
+    }
+
+
+    @Test
+    void testInvalidAddAllIngredientsToSweet() throws ServiceException {
+        Sweet sweet = sweetService.createEmptySweet();
+        assertEquals(sweet.getIngredientsList().size(), 0);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> sweetService.addAllIngredientsToSweet(sweet, "cacao,buna;"),
+                INGREDIENT_AMOUNT_EXCEPTION);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> sweetService.addAllIngredientsToSweet(sweet, "cacaua,3;"),
+                INGREDIENT_NAME_EXCEPTION);
+
+    }
+
+    private void verifIfAllAdded(String sequence, List<Ingredient> ingredientsList) {
+        for (Ingredient i : ingredientsList)
+            if (!sequence.toUpperCase().contains(i.getName().toUpperCase()))
+                fail();
     }
 
 }

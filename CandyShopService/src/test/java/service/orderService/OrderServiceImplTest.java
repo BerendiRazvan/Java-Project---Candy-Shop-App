@@ -32,12 +32,8 @@ class OrderServiceImplTest {
     private final Shop myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
     private final Customer customer = new Customer(ID, FIRST_NAME, LAST_NAME,
             EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
-    private final Sweet sweet = new Sweet(ID,
-            new ArrayList<>(List.of(
-                    new Ingredient(1, "Sugar", 1.5),
-                    new Ingredient(2, "Milk", 1),
-                    new Ingredient(3, "Flour", 0.75))),
-            SweetType.DONUT, SWEET_PRICE);
+    private Sweet sweet;
+    private final Ingredient ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
     private OrderService orderService;
 
     @BeforeAll
@@ -46,7 +42,7 @@ class OrderServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws RepositoryException {
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
         try {
             orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, myShop));
@@ -55,7 +51,15 @@ class OrderServiceImplTest {
         }
         IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
         ingredientRepository.generateIngredients();
+        sweet = new Sweet(ID,
+                new ArrayList<>(List.of(
+                        ingredientRepository.findIngredientById(1L),
+                        ingredientRepository.findIngredientById(2L),
+                        ingredientRepository.findIngredientById(3L)
+                )),
+                SweetType.DONUT, SWEET_PRICE);
         SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
+        sweetRepository.add(sweet);
         orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
     }
 
@@ -153,7 +157,7 @@ class OrderServiceImplTest {
     void testGetProfitMadeToday() throws ServiceException {
         assertEquals(orderService.getProfitMadeToday(), 0);
         orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
-        assertEquals(orderService.getProfitMadeToday(), 1.75);
+        assertEquals(orderService.getProfitMadeToday(), 2.58);
     }
 
     @Test
@@ -189,7 +193,7 @@ class OrderServiceImplTest {
         orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
         result = (double) method.invoke(orderService,
                 orderService.getAllOrdersInADay().get(0).getOrderedSweets());
-        assertEquals(result, 1.75);
+        assertEquals(result, 2.58);
     }
 
 
@@ -226,6 +230,125 @@ class OrderServiceImplTest {
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
         assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 5);
 
+    }
+
+    @Test
+    void testAddExtraIngredientToOrderedSweet() throws ServiceException {
+        addSweetForTest();
+        orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
+        orderService.getAllOrdersInADay().get(0)
+                .getOrderedSweets()
+                .forEach((key, value) -> {
+                    assertEquals(key.getSweetType(), sweet.getSweetType());
+                    assertEquals(key.getExtraPrice(), INGREDIENT_PRICE * 2);
+                    assertEquals(key.getExtraIngredients().size(), 2);
+                    assertEquals(key.getExtraIngredients().get(0), ingredient);
+                    assertEquals(key.getExtraIngredients().get(1), ingredient);
+                    assertEquals(value, 1);
+                });
+    }
+
+    @Test
+    void testInvalidAddExtraIngredientToOrderedSweet() {
+        //dupa refactorizare acesta va fi testul pt validare la add/remove/update extra ingr
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
+                        null, ingredient, "2"),
+                INVALID_SWEET_EXCEPTION);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
+                        sweet, ingredient, "2"),
+                SWEET_NOT_ORDERED_EXCEPTION);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
+                        sweet, null, "2"),
+                INVALID_INGREDIENT_EXCEPTION);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
+                        sweet, ingredient, "1234567"),
+                INVALID_AMOUNT_EXCEPTION);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
+                        sweet, ingredient, "-1234567"),
+                INVALID_AMOUNT_EXCEPTION);
+
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
+                        sweet, ingredient, "dsdsadada"),
+                INVALID_AMOUNT_EXCEPTION);
+    }
+
+    @Test
+    void testUpdateExtraIngredientForOrderedSweet() throws ServiceException {
+        addSweetForTest();
+
+        orderService.updateExtraIngredientForOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
+        orderService.getAllOrdersInADay().get(0)
+                .getOrderedSweets()
+                .forEach((key, value) -> {
+                    assertEquals(key.getSweetType(), sweet.getSweetType());
+                    assertEquals(key.getExtraPrice(), INGREDIENT_PRICE * 2);
+                    assertEquals(key.getExtraIngredients().size(), 2);
+                    assertEquals(key.getExtraIngredients().get(0), ingredient);
+                    assertEquals(key.getExtraIngredients().get(1), ingredient);
+                    assertEquals(value, 1);
+                });
+
+        orderService.updateExtraIngredientForOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "1");
+
+        orderService.getAllOrdersInADay().get(0)
+                .getOrderedSweets()
+                .forEach((key, value) -> {
+                    assertEquals(key.getSweetType(), sweet.getSweetType());
+                    assertEquals(key.getExtraPrice(), INGREDIENT_PRICE);
+                    assertEquals(key.getExtraIngredients().size(), 1);
+                    assertEquals(key.getExtraIngredients().get(0), ingredient);
+                    assertEquals(value, 1);
+                });
+    }
+
+    @Test
+    void testDeleteExtraIngredientForOrderedSweet() throws ServiceException {
+        addSweetForTest();
+        orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
+
+        orderService.getAllOrdersInADay().get(0)
+                .getOrderedSweets()
+                .forEach((key, value) -> {
+                    try {
+                        orderService.deleteExtraIngredientForOrderedSweet(orderService.getAllOrdersInADay().get(0), key,
+                                key.getExtraIngredients().get(0));
+                    } catch (ServiceException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        orderService.getAllOrdersInADay().get(0)
+                .getOrderedSweets()
+                .forEach((key, value) -> {
+                    assertEquals(key.getSweetType(), sweet.getSweetType());
+                    assertEquals(key.getExtraPrice(), 0);
+                    assertEquals(key.getExtraIngredients().size(), 0);
+                    assertEquals(value, 1);
+                });
+    }
+
+    private void addSweetForTest() throws ServiceException {
+        orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
+        assertEquals(sweet.getExtraIngredients().size(), 0);
+
+        orderService.getAllOrdersInADay().get(0)
+                .getOrderedSweets()
+                .forEach((key, value) -> {
+                    assertEquals(key.getSweetType(), sweet.getSweetType());
+                    assertEquals(key.getExtraPrice(), 0);
+                    assertEquals(key.getExtraIngredients().size(), 0);
+                    assertEquals(value, 1);
+                });
     }
 
 }
