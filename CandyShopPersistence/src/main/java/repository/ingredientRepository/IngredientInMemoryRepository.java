@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IngredientInMemoryRepository implements IngredientRepository {
-    List<Ingredient> ingredientList;
+    private List<Ingredient> ingredientList;
 
     public IngredientInMemoryRepository(List<Ingredient> ingredientList) {
         this.ingredientList = ingredientList;
