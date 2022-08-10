@@ -12,6 +12,8 @@ public class IngredientServiceImpl implements IngredientService {
 
     private IngredientRepository ingredientRepository;
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
     public IngredientServiceImpl(IngredientRepository ingredientRepository) {
         this.ingredientRepository = ingredientRepository;
     }
@@ -33,25 +35,24 @@ public class IngredientServiceImpl implements IngredientService {
         return ingredientRepository.findIngredientById(id);
     }
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-
     @Override
     public List<String> showAllIngredientsInStock() {
         return ingredientRepository.findAll()
                 .stream()
                 .filter(ingredient -> ingredient.getAmount() > 0)
-                .map(ingredient -> {
-                    if (ingredient.getAmount() > 10)
-                        return ingredient.getId() +
-                                ". " + ingredient.getName() +
-                                ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
-                                "\tStock: " + ingredient.getAmount();
-                    else
-                        return ingredient.getId() +
-                                ". " + ingredient.getName() +
-                                ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
-                                "\tStock: " + ingredient.getAmount() +
-                                "\t(reduced quantity in shop stock)";
-                }).collect(Collectors.toList());
+                .map(ingredient -> String.valueOf(getIngredientDetails(ingredient)))
+                .collect(Collectors.toList());
+    }
+
+    private StringBuilder getIngredientDetails(Ingredient ingredient) {
+        StringBuilder ingredientDetails = new StringBuilder(ingredient.getId() + ". " +
+                ingredient.getName() +
+                ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
+                "\tStock: " + ingredient.getAmount());
+
+        if (ingredient.getAmount() > 10)
+            return ingredientDetails;
+        else
+            return ingredientDetails.append("\t(reduced quantity in shop stock)");
     }
 }

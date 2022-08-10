@@ -188,10 +188,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderedSweets().get(sweet) == null)
             throw new ServiceException("The sweet was not ordered!");
         else {
-            int actualAmount = (int) sweet.getExtraIngredients()
-                    .stream()
-                    .filter(i -> i == ingredient)
-                    .count();
+            int actualAmount = getExtraIngredientAmountFromSweet(sweet, ingredient);
             while (actualAmount - ingredientAmount != 0) {
                 if (actualAmount < ingredientAmount) {
                     sweet.getExtraIngredients().add(ingredient);
@@ -220,10 +217,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderedSweets().get(sweet) == null)
             throw new ServiceException("The sweet was not ordered!");
         else {
-            int actualAmount = (int) sweet.getExtraIngredients()
-                    .stream()
-                    .filter(i -> i == ingredient)
-                    .count();
+            int actualAmount = getExtraIngredientAmountFromSweet(sweet, ingredient);
             while (actualAmount != 0) {
                 sweet.getExtraIngredients().remove(ingredient);
                 sweet.setPrice(sweet.getPrice() - ingredient.getPrice());
@@ -236,6 +230,13 @@ public class OrderServiceImpl implements OrderService {
                 throw new ServiceException(e.getMessage());
             }
         }
+    }
+
+    private int getExtraIngredientAmountFromSweet(Sweet sweet, Ingredient ingredient) {
+        return (int) sweet.getExtraIngredients()
+                .stream()
+                .filter(i -> i == ingredient)
+                .count();
     }
 
     private void updateShopStockAfterAddToOrder(List<Ingredient> ingredientList) throws ServiceException {
