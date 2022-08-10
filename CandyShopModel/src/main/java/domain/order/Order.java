@@ -19,9 +19,7 @@ public class Order {
     private Shop shop;
     private LocalDateTime orderDateTime;
     private OrderType orderType;
-
     private LocalDateTime waitingTime;
-
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public Order(long id, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {

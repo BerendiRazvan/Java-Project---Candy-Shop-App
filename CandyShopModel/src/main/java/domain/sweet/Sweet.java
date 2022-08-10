@@ -7,13 +7,11 @@ import java.util.List;
 
 public class Sweet {
     private long id;
-
     private SweetType sweetType;
-
     private List<Ingredient> ingredientsList;
-
     private List<Ingredient> extraIngredients;
     private double price;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public Sweet(long id, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
         this.id = id;
@@ -63,7 +61,6 @@ public class Sweet {
         return price;
     }
 
-
     public double getExtraPrice() {
         return getExtraIngredients()
                 .stream()
@@ -74,8 +71,6 @@ public class Sweet {
     public void setPrice(double price) {
         this.price = price;
     }
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
     public String toString() {

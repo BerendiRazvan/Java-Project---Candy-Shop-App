@@ -15,9 +15,7 @@ public class Ingredient {
     }
 
     public Ingredient(long id, String name, double price, int amount) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
+        this(id, name, price);
         this.amount = amount;
     }
 

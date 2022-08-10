@@ -20,18 +20,6 @@ import service.sweetService.SweetServiceImpl;
 import java.util.ArrayList;
 
 public class Main {
-    /*
-    Add to your user console the functionalities:
-•	Order custom sweet: you can choose additional ingredients for an ordered sweet with custom amount
-•	Make your own sweet: use a recipe with the format ingredient1,amount1; ingredient2,amount2
-•	Remove ingredient for an ordered custom sweet
-•	Update amount of an ingredient from the ordered custom sweet
-•	Print the status of all ingredients and notify the user if the shop runs low on some ingredients
-
-+Update: --ingredients cand cumpara cineva un dulce
-     */
-
-
     public static void main(String[] args) {
         startApp();
     }

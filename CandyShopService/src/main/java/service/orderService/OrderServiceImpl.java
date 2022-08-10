@@ -6,7 +6,6 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
-import domain.sweet.SweetType;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
