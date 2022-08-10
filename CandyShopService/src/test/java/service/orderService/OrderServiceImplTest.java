@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.TestConstantValues.*;
+import static service.UtilsConstantValues.*;
 
 class OrderServiceImplTest {
     private final Shop myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
@@ -59,7 +59,7 @@ class OrderServiceImplTest {
                 )),
                 SweetType.DONUT, SWEET_PRICE);
         SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
-        sweetRepository.add(sweet);
+        sweetRepository.generateSweets(ingredientRepository);
         orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
     }
 

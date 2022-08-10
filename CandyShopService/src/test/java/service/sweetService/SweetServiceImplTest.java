@@ -1,7 +1,5 @@
 package service.sweetService;
 
-import domain.order.Order;
-import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
@@ -18,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.TestConstantValues.*;
+import static service.UtilsConstantValues.*;
 
 class SweetServiceImplTest {
     private SweetService sweetService;

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.TestConstantValues.*;
+import static service.UtilsConstantValues.*;
 
 
 class IngredientServiceImplTest {

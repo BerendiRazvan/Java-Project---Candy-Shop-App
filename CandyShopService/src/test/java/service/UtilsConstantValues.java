@@ -1,6 +1,6 @@
 package service;
 
-public final class TestConstantValues {
+public final class UtilsConstantValues {
     public static final String COUNTRY = "Romania";
     public static final String CITY = "Cluj";
     public static final String ADDRESS = "Aleea Rucar nr. 9, Bloc D13, ap. 1";
@@ -37,7 +37,7 @@ public final class TestConstantValues {
     public static final double SWEET_DEFAULT_PRICE = 2;
 
 
-    private TestConstantValues() {
+    private UtilsConstantValues() {
     }
 
 }

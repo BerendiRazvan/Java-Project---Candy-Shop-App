@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.TestConstantValues.*;
+import static service.UtilsConstantValues.*;
 
 class CustomerServiceImplTest {
     private CustomerService customerService;
