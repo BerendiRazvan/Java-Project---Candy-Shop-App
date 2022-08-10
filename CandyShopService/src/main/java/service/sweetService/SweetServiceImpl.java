@@ -43,7 +43,7 @@ public class SweetServiceImpl implements SweetService {
     }
 
     @Override
-    public Sweet createEmptySweet() throws ServiceException {
+    public Sweet createNewSweetWithoutIngredients() throws ServiceException {
         long id = sweetRepository.generateSweetId();
 
         try {

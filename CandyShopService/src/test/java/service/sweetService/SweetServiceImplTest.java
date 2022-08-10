@@ -88,7 +88,7 @@ class SweetServiceImplTest {
 
     @Test
     void testCreateEmptySweet() throws ServiceException {
-        Sweet sweet = sweetService.createEmptySweet();
+        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
 
         assertEquals(sweet.getSweetType(), SweetType.UNIQUE);
         assertEquals(sweet.getId(), ID + 1);
@@ -101,7 +101,7 @@ class SweetServiceImplTest {
 
     @Test
     void testValidAddIngredientToSweet() throws ServiceException {
-        Sweet sweet = sweetService.createEmptySweet();
+        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
         assertEquals(sweet.getIngredientsList().size(), 0);
 
         sweetService.addIngredientToSweet(sweet, ingredient, AMOUNT);
@@ -117,7 +117,7 @@ class SweetServiceImplTest {
 
     @Test
     void testValidAddAllIngredientsToSweet() throws ServiceException {
-        Sweet sweet = sweetService.createEmptySweet();
+        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
         assertEquals(sweet.getIngredientsList().size(), 0);
 
         String add1 = "oreo,2;ice cream,3;";
@@ -139,7 +139,7 @@ class SweetServiceImplTest {
 
     @Test
     void testInvalidAddAllIngredientsToSweet() throws ServiceException {
-        Sweet sweet = sweetService.createEmptySweet();
+        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
         assertEquals(sweet.getIngredientsList().size(), 0);
 
         assertThrowsExactly(ServiceException.class,

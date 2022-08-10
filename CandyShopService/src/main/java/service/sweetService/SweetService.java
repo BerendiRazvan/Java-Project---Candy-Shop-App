@@ -11,7 +11,7 @@ public interface SweetService {
 
     Sweet findSweetById(String sweetId) throws ServiceException;
 
-    Sweet createEmptySweet() throws ServiceException;
+    Sweet createNewSweetWithoutIngredients() throws ServiceException;
 
     void addIngredientToSweet(Sweet customSweet, Ingredient newIngredient, int amount) throws ServiceException;
 

@@ -193,7 +193,7 @@ public class UI {
                         System.out.println("\nAvailable ingredients:");
                         ingredientService.showAllIngredientsInStock().forEach(System.out::print);
 
-                        Sweet customSweet = sweetService.createEmptySweet();
+                        Sweet customSweet = sweetService.createNewSweetWithoutIngredients();
                         System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
                         String ingredients = scanner.nextLine();
                         if (ingredients.matches(expressionVerification))
