@@ -27,7 +27,7 @@ public class SweetServiceImpl implements SweetService {
     public List<Sweet> getAvailableSweets() {
         return sweetRepository.findAll()
                 .stream()
-                .filter(sweet -> sweet.getSweetType() != SweetType.UNIQUE && sweet.getExtraIngredients().isEmpty())
+                .filter(sweet -> !sweet.getSweetType().equals(SweetType.UNIQUE) && sweet.getExtraIngredients().isEmpty())
                 .collect(Collectors.toList());
     }
 

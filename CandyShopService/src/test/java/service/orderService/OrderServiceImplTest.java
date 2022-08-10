@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static service.UtilsConstantValues.*;
 
 class OrderServiceImplTest {
-    private Shop myShop;
+    private Shop shop;
     private Customer customer;
     private Sweet sweet;
     private Ingredient ingredient;
@@ -42,14 +42,14 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() throws RepositoryException {
-        myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
+        shop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
         customer = new Customer(ID, FIRST_NAME, LAST_NAME,
                 EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
         ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
 
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
         try {
-            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, myShop));
+            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, shop));
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -80,17 +80,17 @@ class OrderServiceImplTest {
 
     @Test
     void testCreateOrder() throws ServiceException {
-        Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+        Order order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
 
         assertEquals(order.getCustomer(), customer);
-        assertEquals(order.getShop(), myShop);
+        assertEquals(order.getShop(), shop);
         assertEquals(order.getOrderType(), OrderType.DELIVERY);
         assertTrue(order.getOrderedSweets().isEmpty());
     }
 
     @Test
     void testValidAddToOrder() throws ServiceException {
-        Order order = orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+        Order order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
 
         double moneyMade = orderService.getMoneyMadeToday();
         orderService.addToOrder(order, sweet);
@@ -107,17 +107,29 @@ class OrderServiceImplTest {
     void testInvalidAddToOrder() {
         assertThrowsExactly(ServiceException.class,
                 () -> orderService.addToOrder(
-                        orderService.createOrder(customer, OrderType.DELIVERY, myShop), null),
+                        orderService.createOrder(customer, OrderType.DELIVERY, shop), null),
                 SWEET_ID_EXCEPTION);
     }
 
 
     @Test
-    void testGetOrderDetails() throws ServiceException {
-        String result = orderService.getOrderDetails(1);
-        assertEquals(result, orderService.printOrderDetails("1"));
+    void testValidGetOrderDetails() throws ServiceException {
+        String result = String.valueOf(orderService.getOrderDetails("1"));
+        assertTrue(result.contains(FIRST_NAME));
+        assertTrue(result.contains(LAST_NAME));
+        assertTrue(result.contains(EMAIL));
+        assertTrue(result.contains(PHONE_NUMBER));
     }
 
+    @Test
+    void testInvalidGetOrderDetails() {
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.getOrderDetails("1234567"),
+                ORDER_ID_EXCEPTION);
+        assertThrowsExactly(ServiceException.class,
+                () -> orderService.getOrderDetails("adsasdads"),
+                ORDER_ID_EXCEPTION);
+    }
 
     @Test
     void testValidRemoveOrder() throws ServiceException {
@@ -140,10 +152,10 @@ class OrderServiceImplTest {
     void testGetAllOrdersInADay() throws ServiceException {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
-        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
-        orderService.createOrder(customer, OrderType.DELIVERY, myShop);
+        orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        orderService.createOrder(customer, OrderType.DELIVERY, shop);
 
         assertEquals(orderService.getAllOrdersInADay().size(), 5);
         for (int i = 0; i < orderService.getAllOrdersInADay().size(); i++)
@@ -162,22 +174,6 @@ class OrderServiceImplTest {
         assertEquals(orderService.getProfitMadeToday(), 0);
         orderService.addToOrder(orderService.getAllOrdersInADay().get(0), sweet);
         assertEquals(orderService.getProfitMadeToday(), 2.58);
-    }
-
-    @Test
-    void testValidPrintOrderDetails() throws ServiceException {
-        String result = orderService.printOrderDetails("1");
-        assertEquals(result, orderService.getOrderDetails(1));
-    }
-
-    @Test
-    void testInvalidPrintOrderDetails() {
-        assertThrowsExactly(ServiceException.class,
-                () -> orderService.printOrderDetails("1234567"),
-                ORDER_ID_EXCEPTION);
-        assertThrowsExactly(ServiceException.class,
-                () -> orderService.printOrderDetails("adsasdads"),
-                ORDER_ID_EXCEPTION);
     }
 
     @Test

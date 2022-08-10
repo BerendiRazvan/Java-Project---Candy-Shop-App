@@ -39,7 +39,7 @@ public class Main {
     public static void startApp() {
         System.out.println("\nWELCOME TO THE CANDY MY FRIEND :)\n");
 
-        Shop myShop = new Shop("Candy Crush Shop",
+        Shop shop = new Shop("Candy Crush Shop",
                 new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
 
         //Repository
@@ -53,7 +53,7 @@ public class Main {
         customerRepository.generateCustomers();
 
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
-        orderRepository.generateOrders(myShop, sweetRepository, customerRepository);
+        orderRepository.generateOrders(shop, sweetRepository, customerRepository);
 
         //Service
         CustomerService customerService = new CustomerServiceImpl(customerRepository);
@@ -62,7 +62,7 @@ public class Main {
         IngredientService ingredientService = new IngredientServiceImpl(ingredientRepository);
 
         //UI
-        UI appUI = new UI(myShop, customerService, sweetService, orderService, ingredientService);
+        UI appUI = new UI(shop, customerService, sweetService, orderService, ingredientService);
         appUI.show();
 
 

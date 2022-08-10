@@ -16,7 +16,7 @@ public interface OrderService {
 
     void addToOrder(Order order, Sweet newSweet) throws ServiceException;
 
-    String getOrderDetails(long orderId);
+    StringBuilder getOrderDetails(String orderId) throws ServiceException;
 
     void removeOrder(long idOrder) throws ServiceException;
 
@@ -25,8 +25,6 @@ public interface OrderService {
     double getMoneyMadeToday();
 
     double getProfitMadeToday();
-
-    String printOrderDetails(String orderId) throws ServiceException;
 
     double getFinalOrderPrice(Order order);
 

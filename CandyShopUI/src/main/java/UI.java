@@ -136,8 +136,8 @@ public class UI {
                         break;
                     case "2":
                         System.out.println("Available ingredients:");
-                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
-                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
+                        System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
                         System.out.print("Enter the ID for the ordered sweet you want to change:");
                         String orderedSweetIdForAdd = scanner.nextLine();
                         System.out.print("Enter the ID for the extra ingredient you want to add:");
@@ -155,8 +155,8 @@ public class UI {
                         break;
                     case "3":
                         System.out.println("Available ingredients:");
-                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
-                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
+                        System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
                         System.out.print("Enter the ID for the ordered sweet you want to change:");
                         String orderedSweetIdForUpdate = scanner.nextLine();
                         System.out.print("Enter the ID for the extra ingredient you want to update:");
@@ -174,8 +174,8 @@ public class UI {
                         break;
                     case "4":
                         System.out.println("Available ingredients:");
-                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
-                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
+                        System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
                         System.out.print("Enter the ID for the ordered sweet you want to change:");
                         String orderedSweetIdForDelete = scanner.nextLine();
                         System.out.print("Enter the ID for the extra ingredient you want to delete:");
@@ -191,7 +191,7 @@ public class UI {
                         break;
                     case "5":
                         System.out.println("\nAvailable ingredients:");
-                        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
+                        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
 
                         Sweet customSweet = sweetService.createNewSweetWithoutIngredients();
                         System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
@@ -209,10 +209,10 @@ public class UI {
                             System.out.println("Invalid input for ingredients to add :(");
                         break;
                     case "6":
-                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
                         break;
                     case "7":
-                        System.out.println(orderService.getOrderDetails(order.getId()));
+                        System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
                         break label;
                     case "X":
                         orderService.removeOrder(order.getId());
@@ -273,7 +273,7 @@ public class UI {
         String orderNumber = scanner.nextLine();
 
         try {
-            System.out.println(orderService.printOrderDetails(orderNumber));
+            System.out.println(orderService.getOrderDetails(orderNumber));
             System.out.println("Order details printed\n");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
@@ -311,7 +311,7 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
 
         System.out.println("Available ingredients: \n");
-        ingredientService.showAllIngredientsInStock().forEach(System.out::print);
+        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
 
         System.out.println("\n" + "-".repeat(100) + "\n");
 
