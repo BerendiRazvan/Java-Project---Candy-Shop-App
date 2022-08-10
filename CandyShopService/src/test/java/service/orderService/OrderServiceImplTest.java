@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.UtilsConstantValues.*;
+import static service.ConstantValues.*;
 
 class OrderServiceImplTest {
     private Shop shop;

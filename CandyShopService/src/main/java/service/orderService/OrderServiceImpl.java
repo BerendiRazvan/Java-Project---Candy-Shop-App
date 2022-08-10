@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static service.utils.Converter.convertStringToInt;
+import static service.utils.Converter.convertStringToLong;
+
 public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
     private SweetRepository sweetRepository;
@@ -283,22 +286,6 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .mapToDouble(Ingredient::getPrice)
                 .sum();
-    }
-
-    private long convertStringToLong(String number) throws ServiceException {
-        try {
-            return Long.parseLong(number);
-        } catch (Exception e) {
-            throw new ServiceException("Invalid input");
-        }
-    }
-
-    private int convertStringToInt(String number) throws ServiceException {
-        try {
-            return Integer.parseInt(number);
-        } catch (Exception e) {
-            throw new ServiceException("Invalid input");
-        }
     }
 
 }

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.UtilsConstantValues.*;
+import static service.ConstantValues.*;
 
 class SweetServiceImplTest {
     private SweetService sweetService;

@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static service.utils.Converter.convertStringToInt;
+
 public class SweetServiceImpl implements SweetService {
 
     private static final double SWEET_DEFAULT_PRICE = 2;
@@ -79,17 +81,20 @@ public class SweetServiceImpl implements SweetService {
         for (String ingredientAndQuantity : ingredientList) {
             List<String> pair = List.of(ingredientAndQuantity.split(","));
             String ingredientName = pair.get(0);
-            int amount;
-            try {
-                amount = Integer.parseInt(pair.get(1));
-            } catch (Exception e) {
-                throw new ServiceException("Invalid ingredients amount!");
-            }
-
             Ingredient ingredient = ingredientRepository.findIngredientByName(ingredientName);
-            if (ingredient != null)
+            if (ingredient != null){
+                int amount = convertStringToInt(pair.get(1));
+                validateAmount(ingredient, amount);
                 addIngredientToSweet(customSweet, ingredient, amount);
+            }
             else throw new ServiceException("Invalid ingredient name!");
         }
+    }
+
+    private void validateAmount(Ingredient ingredient, int amount) throws ServiceException {
+        if (amount > ingredient.getAmount())
+            throw new ServiceException("Invalid amount!");
+        if (amount < 1)
+            throw new ServiceException("Invalid amount!");
     }
 }
