@@ -56,22 +56,23 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public void generateSweets(IngredientRepository ingredientRepository) {
+        List<Ingredient> ingredientList = ingredientRepository.findAll();
         sweetList.addAll(Arrays.asList(
-                new Sweet(1, randomRecipe(ingredientRepository.findAll()), SweetType.DONUT, 5),
-                new Sweet(2, randomRecipe(ingredientRepository.findAll()), SweetType.DONUT, 5.5),
-                new Sweet(3, randomRecipe(ingredientRepository.findAll()), SweetType.CAKE, 23.55),
-                new Sweet(4, randomRecipe(ingredientRepository.findAll()), SweetType.CROISSANT, 3.99),
-                new Sweet(5, randomRecipe(ingredientRepository.findAll()), SweetType.WAFFLES, 4.99),
-                new Sweet(6, randomRecipe(ingredientRepository.findAll()), SweetType.CROISSANT, 3.39),
-                new Sweet(7, randomRecipe(ingredientRepository.findAll()), SweetType.HOMEMADE_CHOCOLATE, 13.39),
-                new Sweet(8, randomRecipe(ingredientRepository.findAll()), SweetType.DONUT, 3.25),
-                new Sweet(9, randomRecipe(ingredientRepository.findAll()), SweetType.CAKE, 49.99),
-                new Sweet(10, randomRecipe(ingredientRepository.findAll()), SweetType.HOMEMADE_CHOCOLATE, 3.99),
-                new Sweet(11, randomRecipe(ingredientRepository.findAll()), SweetType.CROISSANT, 1.99),
-                new Sweet(12, randomRecipe(ingredientRepository.findAll()), SweetType.DONUT, 2.11),
-                new Sweet(13, randomRecipe(ingredientRepository.findAll()), SweetType.WAFFLES, 3.75),
-                new Sweet(14, randomRecipe(ingredientRepository.findAll()), SweetType.WAFFLES, 1.99),
-                new Sweet(15, randomRecipe(ingredientRepository.findAll()), SweetType.CROISSANT, 0.99)
+                new Sweet(1, randomRecipe(ingredientList), SweetType.DONUT, 5),
+                new Sweet(2, randomRecipe(ingredientList), SweetType.DONUT, 5.5),
+                new Sweet(3, randomRecipe(ingredientList), SweetType.CAKE, 23.55),
+                new Sweet(4, randomRecipe(ingredientList), SweetType.CROISSANT, 3.99),
+                new Sweet(5, randomRecipe(ingredientList), SweetType.WAFFLES, 4.99),
+                new Sweet(6, randomRecipe(ingredientList), SweetType.CROISSANT, 3.39),
+                new Sweet(7, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 13.39),
+                new Sweet(8, randomRecipe(ingredientList), SweetType.DONUT, 3.25),
+                new Sweet(9, randomRecipe(ingredientList), SweetType.CAKE, 49.99),
+                new Sweet(10, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 3.99),
+                new Sweet(11, randomRecipe(ingredientList), SweetType.CROISSANT, 1.99),
+                new Sweet(12, randomRecipe(ingredientList), SweetType.DONUT, 2.11),
+                new Sweet(13, randomRecipe(ingredientList), SweetType.WAFFLES, 3.75),
+                new Sweet(14, randomRecipe(ingredientList), SweetType.WAFFLES, 1.99),
+                new Sweet(15, randomRecipe(ingredientList), SweetType.CROISSANT, 0.99)
         ));
     }
 

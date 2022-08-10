@@ -61,28 +61,30 @@ public class OrderInMemoryRepository implements OrderRepository {
     @Override
     public void generateOrders(Shop shop, SweetRepository sweetRepository,
                                CustomerRepository customerRepository) {
+        List<Sweet> sweetList = sweetRepository.findAll();
+        List<Customer> customerList = customerRepository.findAll();
         orderList.addAll(Arrays.asList(
                 new Order(1,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop),
                 new Order(2,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop),
                 new Order(3,
-                        randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.DELIVERY,
+                        randomCustomer(customerList), shop),
                 new Order(4,
-                        randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.DELIVERY,
+                        randomCustomer(customerList), shop),
                 new Order(5,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop),
                 new Order(6,
-                        randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.DELIVERY,
+                        randomCustomer(customerList), shop),
                 new Order(7,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop)
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop)
         ));
 
     }
