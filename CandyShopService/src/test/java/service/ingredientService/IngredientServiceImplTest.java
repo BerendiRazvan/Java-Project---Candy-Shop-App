@@ -15,6 +15,7 @@ import static service.UtilsConstantValues.*;
 
 class IngredientServiceImplTest {
 
+    private static final String CHARACTERS_TO_DELETE = "[a-zA-z :]";
     private IngredientService ingredientService;
     private final Ingredient ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
 
@@ -71,7 +72,7 @@ class IngredientServiceImplTest {
         assertEquals(list.size(), 15);
         for (String s : list) {
             List<String> ingredientAsString = List.of(s.split("\t"));
-            if (Integer.parseInt(ingredientAsString.get(2).replaceAll("[a-zA-z :]", "")) <= 10)
+            if (Integer.parseInt(ingredientAsString.get(2).replaceAll(CHARACTERS_TO_DELETE, "")) <= 10)
                 assertEquals(ingredientAsString.get(3), notificationInfo);
         }
     }
