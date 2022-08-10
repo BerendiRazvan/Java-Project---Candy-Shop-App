@@ -29,11 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static service.UtilsConstantValues.*;
 
 class OrderServiceImplTest {
-    private final Shop myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
-    private final Customer customer = new Customer(ID, FIRST_NAME, LAST_NAME,
-            EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
+    private Shop myShop;
+    private Customer customer;
     private Sweet sweet;
-    private final Ingredient ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+    private Ingredient ingredient;
     private OrderService orderService;
 
     @BeforeAll
@@ -43,6 +42,11 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() throws RepositoryException {
+        myShop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
+        customer = new Customer(ID, FIRST_NAME, LAST_NAME,
+                EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
+        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
         try {
             orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, myShop));

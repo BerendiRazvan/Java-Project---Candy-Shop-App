@@ -17,7 +17,7 @@ import static service.UtilsConstantValues.*;
 
 class CustomerServiceImplTest {
     private CustomerService customerService;
-    private final Location location = new Location(ID, COUNTRY, CITY, ADDRESS);
+    private Location location;
 
     @BeforeAll
     static void setUpAll() {
@@ -26,6 +26,8 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        location = new Location(ID, COUNTRY, CITY, ADDRESS);
+
         CustomerRepository customerRepository =
                 new CustomerInMemoryRepository(new ArrayList<>());
         customerRepository.generateCustomers();

@@ -20,7 +20,7 @@ import static service.UtilsConstantValues.*;
 
 class SweetServiceImplTest {
     private SweetService sweetService;
-    private final Ingredient ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+    private Ingredient ingredient;
 
     @BeforeAll
     static void setUpAll() {
@@ -29,6 +29,8 @@ class SweetServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+
         SweetRepository sweetRepository =
                 new SweetInMemoryRepository(new ArrayList<>());
 
