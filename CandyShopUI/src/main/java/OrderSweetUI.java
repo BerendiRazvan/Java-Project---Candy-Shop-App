@@ -14,15 +14,15 @@ import java.util.Scanner;
 
 public class OrderSweetUI {
 
+    private static final Scanner SCANNER = new Scanner(System.in);
+    private static final String expressionVerification = "^(([a-zA-Z ]*)(,)(\\d*)(;))*$";
     private final Shop shop;
+    private final String menu;
+
     private CustomerService customerService;
     private SweetService sweetService;
     private OrderService orderService;
     private IngredientService ingredientService;
-
-    private final String menu;
-    private static final Scanner SCANNER = new Scanner(System.in);
-    private static final String expressionVerification = "^(([a-zA-Z ]*)(,)(\\d*)(;))*$";
 
     public OrderSweetUI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
                         IngredientService ingredientService) {

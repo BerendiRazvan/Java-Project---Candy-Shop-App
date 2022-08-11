@@ -58,22 +58,23 @@ public class SweetInMemoryRepository implements SweetRepository {
     public void generateSweets(IngredientRepository ingredientRepository) {
         List<Ingredient> ingredientList = ingredientRepository.findAll();
         sweetList.addAll(Arrays.asList(
-                new Sweet(1, randomRecipe(ingredientList), SweetType.DONUT, 5),
-                new Sweet(2, randomRecipe(ingredientList), SweetType.DONUT, 5.5),
-                new Sweet(3, randomRecipe(ingredientList), SweetType.CAKE, 23.55),
-                new Sweet(4, randomRecipe(ingredientList), SweetType.CROISSANT, 3.99),
-                new Sweet(5, randomRecipe(ingredientList), SweetType.WAFFLES, 4.99),
-                new Sweet(6, randomRecipe(ingredientList), SweetType.CROISSANT, 3.39),
-                new Sweet(7, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 13.39),
-                new Sweet(8, randomRecipe(ingredientList), SweetType.DONUT, 3.25),
-                new Sweet(9, randomRecipe(ingredientList), SweetType.CAKE, 49.99),
-                new Sweet(10, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 3.99),
-                new Sweet(11, randomRecipe(ingredientList), SweetType.CROISSANT, 1.99),
-                new Sweet(12, randomRecipe(ingredientList), SweetType.DONUT, 2.11),
-                new Sweet(13, randomRecipe(ingredientList), SweetType.WAFFLES, 3.75),
-                new Sweet(14, randomRecipe(ingredientList), SweetType.WAFFLES, 1.99),
-                new Sweet(15, randomRecipe(ingredientList), SweetType.CROISSANT, 0.99)
+                new Sweet(1, randomRecipe(ingredientList), SweetType.DONUT, 0),
+                new Sweet(2, randomRecipe(ingredientList), SweetType.DONUT, 0),
+                new Sweet(3, randomRecipe(ingredientList), SweetType.CAKE, 0),
+                new Sweet(4, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
+                new Sweet(5, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
+                new Sweet(6, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
+                new Sweet(7, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 0),
+                new Sweet(8, randomRecipe(ingredientList), SweetType.DONUT, 0),
+                new Sweet(9, randomRecipe(ingredientList), SweetType.CAKE, 0),
+                new Sweet(10, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 0),
+                new Sweet(11, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
+                new Sweet(12, randomRecipe(ingredientList), SweetType.DONUT, 0),
+                new Sweet(13, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
+                new Sweet(14, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
+                new Sweet(15, randomRecipe(ingredientList), SweetType.CROISSANT, 0)
         ));
+        sweetList.forEach(sweet -> sweet.setPrice(generatePrice(sweet.getIngredientsList())));
     }
 
     @Override
@@ -90,6 +91,15 @@ public class SweetInMemoryRepository implements SweetRepository {
             if (ok) return id;
             id++;
         }
+    }
+
+    private static double generatePrice(List<Ingredient> list) {
+        Random random = new Random();
+        int extraPriceAddedBySeller = random.nextInt(5);
+        return extraPriceAddedBySeller +
+                list.stream()
+                        .mapToDouble(Ingredient::getPrice)
+                        .sum();
     }
 
     private static List<Ingredient> randomRecipe(List<Ingredient> ingredientList) {

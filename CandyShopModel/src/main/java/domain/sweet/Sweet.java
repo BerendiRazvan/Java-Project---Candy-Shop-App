@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sweet {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private long id;
     private SweetType sweetType;
     private List<Ingredient> ingredientsList;
     private List<Ingredient> extraIngredients;
     private double price;
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public Sweet(long id, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
         this.id = id;
@@ -74,7 +74,7 @@ public class Sweet {
 
     @Override
     public String toString() {
-        return "\n\n" + sweetType +
+        return "\n\n" + sweetType.getName() +
                 "\nPrice: " + df.format(price) + "$ " +
                 "\nRecipe:" +
                 "\nIngredients: " + ingredientsList +

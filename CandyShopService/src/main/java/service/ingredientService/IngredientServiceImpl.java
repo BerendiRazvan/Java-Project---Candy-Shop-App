@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class IngredientServiceImpl implements IngredientService {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     private IngredientRepository ingredientRepository;
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public IngredientServiceImpl(IngredientRepository ingredientRepository) {
         this.ingredientRepository = ingredientRepository;
@@ -45,7 +44,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     private StringBuilder getIngredientDetails(Ingredient ingredient) {
-        StringBuilder ingredientDetails = new StringBuilder(ingredient.getId() + ". " +
+        StringBuilder ingredientDetails = new StringBuilder("(Id:" + ingredient.getId() + ") " +
                 ingredient.getName() +
                 ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
                 "\tStock: " + ingredient.getAmount());

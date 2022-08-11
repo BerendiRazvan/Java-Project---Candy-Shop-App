@@ -24,10 +24,10 @@ import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
 public class OrderServiceImpl implements OrderService {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private OrderRepository orderRepository;
     private SweetRepository sweetRepository;
     private IngredientRepository ingredientRepository;
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public OrderServiceImpl(OrderRepository orderRepository, SweetRepository sweetRepository, IngredientRepository ingredientRepository) {
         this.orderRepository = orderRepository;

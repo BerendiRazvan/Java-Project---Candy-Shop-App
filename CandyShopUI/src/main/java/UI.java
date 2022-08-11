@@ -13,14 +13,14 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class UI {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+    private static final Scanner SCANNER = new Scanner(System.in);
     private final Shop shop;
+    private final String menu;
     private CustomerService customerService;
     private SweetService sweetService;
     private OrderService orderService;
     private IngredientService ingredientService;
-    private final String menu;
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-    private static final Scanner SCANNER = new Scanner(System.in);
 
     public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
               IngredientService ingredientService) {
@@ -88,7 +88,7 @@ public class UI {
     }
 
     private void optionViewOrdersAndProfitForADay() {
-        System.out.println("\nToday's orders:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy")));
+        System.out.println("\nToday's orders: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy")));
         orderService.getAllOrdersInADay()
                 .stream()
                 .map(order -> "Order no. " + order.getId() + " | "
@@ -107,7 +107,7 @@ public class UI {
 
         System.out.println("Available sweets: \n");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.println(sweet.getId() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
+            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$");
         }
 
@@ -123,7 +123,7 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.print("\n\n" + sweet.getId() + ". " + sweet.getSweetType() + " - " + sweet.getPrice()
+            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + sweet.getPrice()
                     + "$\nRecipe: ");
             sweet.getIngredientsList()
                     .stream()
