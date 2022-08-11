@@ -1,4 +1,4 @@
-package repository.customersRepository;
+package repository.customerRepository;
 
 import domain.Customer;
 import domain.location.Location;
@@ -61,6 +61,24 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
+    public int generateCustomerId() {
+        //the temporary method
+        //it will no longer be needed after we add a db because the id will be automatically generated
+        int id = 1;
+        while (true) {
+            boolean ok = true;
+            for (var c : customerList)
+                if (c.getId() == id) {
+                    ok = false;
+                    break;
+                }
+
+            if (ok) return id;
+            id++;
+        }
+    }
+
+    @Override
     public void generateCustomers() {
         customerList.addAll(Arrays.asList(
                 new Customer(1, "Razvan", "Berendi",
@@ -80,4 +98,6 @@ public class CustomerInMemoryRepository implements CustomerRepository {
                         new Location(5, "Romania", "Cluj", "Str. Memo nr. 10, Casa nr. 15"))
         ));
     }
+
+
 }

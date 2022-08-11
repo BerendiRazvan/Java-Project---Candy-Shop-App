@@ -3,8 +3,8 @@ package service.customerService;
 import domain.Customer;
 import domain.location.Location;
 import org.junit.jupiter.api.*;
-import repository.customersRepository.CustomerInMemoryRepository;
-import repository.customersRepository.CustomerRepository;
+import repository.customerRepository.CustomerInMemoryRepository;
+import repository.customerRepository.CustomerRepository;
 import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.TestConstantValues.*;
+import static service.ConstantValues.*;
 
 class CustomerServiceImplTest {
     private CustomerService customerService;
-    private final Location location = new Location(ID, COUNTRY, CITY, ADDRESS);
+    private Location location;
 
     @BeforeAll
     static void setUpAll() {
@@ -26,6 +26,8 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        location = new Location(ID, COUNTRY, CITY, ADDRESS);
+
         CustomerRepository customerRepository =
                 new CustomerInMemoryRepository(new ArrayList<>());
         customerRepository.generateCustomers();

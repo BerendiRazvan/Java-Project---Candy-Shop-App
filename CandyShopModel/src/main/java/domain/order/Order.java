@@ -13,16 +13,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Order {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private long id;
     private Map<Sweet, Integer> orderedSweets;
     private Customer customer;
     private Shop shop;
     private LocalDateTime orderDateTime;
     private OrderType orderType;
-
     private LocalDateTime waitingTime;
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public Order(long id, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {
         this.id = id;
@@ -122,8 +120,8 @@ public class Order {
     }
 
     private String formatForPrintingSweet(Sweet sweet) {
-        return "\n" +
-                sweet.getSweetType() +
+        return "\n(Id:" + sweet.getId() + ")" +
+                " " + sweet.getSweetType().getName() +
                 " - quantity: " +
                 orderedSweets.get(sweet) +
                 " - price: " +
@@ -143,7 +141,7 @@ public class Order {
     private String formatForPrintingIngredients(List<Ingredient> ingredientsList) {
         return ingredientsList
                 .stream()
-                .map(Ingredient::getName)
+                .map(ingredient -> "(Id:" + ingredient.getId() + ") " + ingredient.getName())
                 .collect(Collectors.toList())
                 .toString();
     }

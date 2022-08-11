@@ -1,15 +1,15 @@
 package domain.sweet;
 
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sweet {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private long id;
-    private final SweetType sweetType;
-
+    private SweetType sweetType;
     private List<Ingredient> ingredientsList;
-
     private List<Ingredient> extraIngredients;
     private double price;
 
@@ -49,6 +49,10 @@ public class Sweet {
         return sweetType;
     }
 
+    public void setSweetType(SweetType sweetType) {
+        this.sweetType = sweetType;
+    }
+
     public double getPrice() {
         return getOriginalPrice() + getExtraPrice();
     }
@@ -68,12 +72,11 @@ public class Sweet {
         this.price = price;
     }
 
-
     @Override
     public String toString() {
-        return "\n\n" + sweetType +
-                "\nPrice: " + price + "$ " +
-                "\n" + "Recipe:" +
+        return "\n\n" + sweetType.getName() +
+                "\nPrice: " + df.format(price) + "$ " +
+                "\nRecipe:" +
                 "\nIngredients: " + ingredientsList +
                 "\nExtra ingredients to add: " + extraIngredients;
     }

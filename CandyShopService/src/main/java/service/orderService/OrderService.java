@@ -4,6 +4,7 @@ import domain.Customer;
 import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
+import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import service.exception.ServiceException;
 
@@ -15,7 +16,7 @@ public interface OrderService {
 
     void addToOrder(Order order, Sweet newSweet) throws ServiceException;
 
-    String getOrderDetails(long orderId);
+    StringBuilder getOrderDetails(String orderId) throws ServiceException;
 
     void removeOrder(long idOrder) throws ServiceException;
 
@@ -25,8 +26,13 @@ public interface OrderService {
 
     double getProfitMadeToday();
 
-    String printOrderDetails(String orderId) throws ServiceException;
-
     double getFinalOrderPrice(Order order);
 
+    void addExtraIngredientToOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
+            throws ServiceException;
+
+    void updateExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
+            throws ServiceException;
+
+    void deleteExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient) throws ServiceException;
 }

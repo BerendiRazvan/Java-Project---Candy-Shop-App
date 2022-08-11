@@ -1,4 +1,4 @@
-package repository.ordersRepository;
+package repository.orderRepository;
 
 
 import domain.Customer;
@@ -6,9 +6,9 @@ import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
-import repository.customersRepository.CustomerRepository;
+import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
-import repository.sweetsRepository.SweetRepository;
+import repository.sweetRepository.SweetRepository;
 
 import java.util.*;
 
@@ -61,32 +61,50 @@ public class OrderInMemoryRepository implements OrderRepository {
     @Override
     public void generateOrders(Shop shop, SweetRepository sweetRepository,
                                CustomerRepository customerRepository) {
+        List<Sweet> sweetList = sweetRepository.findAll();
+        List<Customer> customerList = customerRepository.findAll();
         orderList.addAll(Arrays.asList(
                 new Order(1,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop),
                 new Order(2,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop),
                 new Order(3,
-                        randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.DELIVERY,
+                        randomCustomer(customerList), shop),
                 new Order(4,
-                        randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.DELIVERY,
+                        randomCustomer(customerList), shop),
                 new Order(5,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop),
                 new Order(6,
-                        randomOrder(sweetRepository.findAll()), OrderType.DELIVERY,
-                        randomCustomer(customerRepository.findAll()), shop),
+                        randomOrder(sweetList), OrderType.DELIVERY,
+                        randomCustomer(customerList), shop),
                 new Order(7,
-                        randomOrder(sweetRepository.findAll()), OrderType.PICKUP,
-                        randomCustomer(customerRepository.findAll()), shop)
+                        randomOrder(sweetList), OrderType.PICKUP,
+                        randomCustomer(customerList), shop)
         ));
 
     }
 
+    @Override
+    public int generateOrderId() {
+        //the temporary method
+        //it will no longer be needed after we add a db because the id will be automatically generated
+        int id = 1;
+        while (true) {
+            boolean ok = true;
+            for (var o : orderList)
+                if (o.getId() == id) {
+                    ok = false;
+                    break;
+                }
+            if (ok) return id;
+            id++;
+        }
+    }
 
     private static Map<Sweet, Integer> randomOrder(List<Sweet> all) {
         Random random = new Random();
