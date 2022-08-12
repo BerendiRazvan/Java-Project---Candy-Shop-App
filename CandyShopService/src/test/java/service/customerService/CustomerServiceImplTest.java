@@ -26,12 +26,20 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        location = new Location(COUNTRY, CITY, ADDRESS);
+        location = Location.builder()
+                .country(COUNTRY)
+                .city(CITY)
+                .address(ADDRESS)
+                .build();
 
-        CustomerRepository customerRepository =
-                new CustomerInMemoryRepository(new ArrayList<>());
+        CustomerRepository customerRepository = CustomerInMemoryRepository.builder()
+                .customerList(new ArrayList<>())
+                .build();
         customerRepository.generateCustomers();
-        customerService = new CustomerServiceImpl(customerRepository);
+
+        customerService = CustomerServiceImpl.builder()
+                .customerRepository(customerRepository)
+                .build();
     }
 
     @AfterEach
@@ -167,17 +175,25 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                new Location("Romania", "Cluj", ""));
+                Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address("")
+                        .build());
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                new Location("Romania", "Cluj", "aproape"));
+                Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address("aproape")
+                        .build());
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+    void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException,
+            InvocationTargetException, IllegalAccessException {
 
         String errors;
 
@@ -205,8 +221,8 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+    void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException,
+            InvocationTargetException, IllegalAccessException {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",

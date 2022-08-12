@@ -29,24 +29,41 @@ class SweetServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+        ingredient = Ingredient.builder()
+                .id(ID)
+                .name(INGREDIENT_NAME)
+                .price(INGREDIENT_PRICE)
+                .amount(AMOUNT)
+                .build();
 
-        SweetRepository sweetRepository =
-                new SweetInMemoryRepository(new ArrayList<>());
+
+        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
+                .sweetList(new ArrayList<>())
+                .build();
 
         try {
-            sweetRepository.add(new Sweet(1,
-                    Arrays.asList(
-                            new Ingredient(1, "Sugar", 1.5),
-                            new Ingredient(2, "Milk", 1),
-                            new Ingredient(3, "Flour", 0.75)),
-                    SweetType.DONUT, 5));
+            sweetRepository.add(Sweet.builder()
+                    .id(1)
+                    .ingredientsList(
+                            Arrays.asList(
+                                    Ingredient.builder().id(1).name("Sugar").price(1.5).build(),
+                                    Ingredient.builder().id(2).name("Milk").price(1).build(),
+                                    Ingredient.builder().id(3).name("Flour").price(0.75).build()))
+                    .sweetType(SweetType.DONUT)
+                    .price(5).build());
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
-        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+
+        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
+                .ingredientList(new ArrayList<>())
+                .build();
         ingredientRepository.generateIngredients();
-        sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
+
+        sweetService = SweetServiceImpl.builder()
+                .sweetRepository(sweetRepository)
+                .ingredientRepository(ingredientRepository)
+                .build();
     }
 
     @AfterEach
@@ -70,9 +87,9 @@ class SweetServiceImplTest {
         assertEquals(sweet.getSweetType(), SweetType.DONUT);
         assertEquals(sweet.getPrice(), 5);
         assertEquals(sweet.getIngredientsList().toString(), new ArrayList<>(List.of(
-                new Ingredient(1, "Sugar", 1.5),
-                new Ingredient(2, "Milk", 1),
-                new Ingredient(3, "Flour", 0.75))).toString());
+                Ingredient.builder().id(1).name("Sugar").price(1.5).build(),
+                Ingredient.builder().id(2).name("Milk").price(1).build(),
+                Ingredient.builder().id(3).name("Flour").price(0.75).build())).toString());
         assertEquals(sweet.getExtraIngredients(), new ArrayList<>());
     }
 

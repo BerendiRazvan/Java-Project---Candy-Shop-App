@@ -49,7 +49,12 @@ public class SweetServiceImpl implements SweetService {
         long id = sweetRepository.generateSweetId();
 
         try {
-            Sweet sweet = new Sweet(id, new ArrayList<>(), SweetType.UNIQUE, SWEET_DEFAULT_PRICE);
+            Sweet sweet = Sweet.builder()
+                    .id(id)
+                    .ingredientsList(new ArrayList<>())
+                    .sweetType(SweetType.UNIQUE)
+                    .price(SWEET_DEFAULT_PRICE)
+                    .build();
             sweetRepository.add(sweet);
             return sweet;
         } catch (RepositoryException e) {

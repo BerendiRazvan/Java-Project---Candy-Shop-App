@@ -115,7 +115,6 @@ public class SweetInMemoryRepository implements SweetRepository {
                 randomNumberOfSweets--;
             }
         }
-
         return recipe;
     }
 

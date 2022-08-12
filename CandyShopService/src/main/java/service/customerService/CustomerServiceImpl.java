@@ -34,7 +34,15 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ServiceException(errorsAfterValidation);
         }
 
-        Customer customer = new Customer(id, firstName, lastName, email, password, phoneNumber, customerLocation);
+        Customer customer = Customer.builder()
+                .id(id)
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .password(password)
+                .phoneNumber(phoneNumber)
+                .location(customerLocation)
+                .build();
         try {
             customerRepository.add(customer);
         } catch (RepositoryException e) {

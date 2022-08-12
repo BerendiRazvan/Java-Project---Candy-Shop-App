@@ -17,7 +17,6 @@ class IngredientServiceImplTest {
 
     private static final String CHARACTERS_TO_DELETE = "[a-zA-z :]";
     private IngredientService ingredientService;
-    private Ingredient ingredient;
 
     @BeforeAll
     static void setUpAll() {
@@ -26,11 +25,14 @@ class IngredientServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
-
-        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
+                .ingredientList(new ArrayList<>())
+                .build();
         ingredientRepository.generateIngredients();
-        ingredientService = new IngredientServiceImpl(ingredientRepository);
+
+        ingredientService = IngredientServiceImpl.builder()
+                .ingredientRepository(ingredientRepository)
+                .build();
     }
 
     @AfterEach

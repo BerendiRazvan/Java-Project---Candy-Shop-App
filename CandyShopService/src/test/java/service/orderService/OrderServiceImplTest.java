@@ -42,29 +42,79 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() throws RepositoryException {
-        shop = new Shop(SHOP_NAME, new Location(COUNTRY, CITY, ADDRESS));
-        customer = new Customer(ID, FIRST_NAME, LAST_NAME,
-                EMAIL, PASSWORD, PHONE_NUMBER, new Location(COUNTRY, CITY, ADDRESS));
-        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+        shop = Shop.builder()
+                .name(SHOP_NAME)
+                .location(Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address(ADDRESS)
+                        .build())
+                .build();
 
-        OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
+        customer = Customer.builder()
+                .id(ID)
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .phoneNumber(PHONE_NUMBER)
+                .location(Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address(ADDRESS)
+                        .build())
+                .build();
+
+        ingredient = Ingredient.builder()
+                .id(ID)
+                .name(INGREDIENT_NAME)
+                .price(INGREDIENT_PRICE)
+                .amount(AMOUNT)
+                .build();
+
+        OrderRepository orderRepository = OrderInMemoryRepository.builder()
+                .orderList(new ArrayList<>())
+                .build();
+
         try {
-            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, shop));
+            orderRepository.add(Order.builder()
+                    .id(1)
+                    .orderedSweets(new HashMap<>())
+                    .orderType(OrderType.DELIVERY)
+                    .customer(customer)
+                    .shop(shop)
+                    .build());
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
-        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+
+        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
+                .ingredientList(new ArrayList<>())
+                .build();
         ingredientRepository.generateIngredients();
-        sweet = new Sweet(ID,
-                new ArrayList<>(List.of(
-                        ingredientRepository.findIngredientById(1L),
-                        ingredientRepository.findIngredientById(2L),
-                        ingredientRepository.findIngredientById(3L)
-                )),
-                SweetType.DONUT, SWEET_PRICE);
-        SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
+
+        sweet = Sweet.builder()
+                .id(ID)
+                .ingredientsList(
+                        new ArrayList<>(List.of(
+                                ingredientRepository.findIngredientById(1L),
+                                ingredientRepository.findIngredientById(2L),
+                                ingredientRepository.findIngredientById(3L)
+                        )))
+                .sweetType(SweetType.DONUT)
+                .price(SWEET_PRICE)
+                .build();
+
+        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
+                .sweetList(new ArrayList<>())
+                .build();
         sweetRepository.generateSweets(ingredientRepository);
-        orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
+
+        orderService = OrderServiceImpl.builder()
+                .orderRepository(orderRepository)
+                .sweetRepository(sweetRepository)
+                .ingredientRepository(ingredientRepository)
+                .build();
     }
 
     @AfterEach

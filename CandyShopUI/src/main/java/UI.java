@@ -74,7 +74,13 @@ public class UI {
 
     private void optionOrderSweets() {
         printShopSweets();
-        OrderSweetUI orderSweetUI = new OrderSweetUI(shop, customerService, sweetService, orderService, ingredientService);
+        OrderSweetUI orderSweetUI = OrderSweetUI.builder()
+                .shop(shop)
+                .customerService(customerService)
+                .sweetService(sweetService)
+                .orderService(orderService)
+                .ingredientService(ingredientService)
+                .build();
         orderSweetUI.show();
     }
 
@@ -91,7 +97,8 @@ public class UI {
     }
 
     private void optionViewOrdersAndProfitForADay() {
-        System.out.println("\nToday's orders: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy")));
+        System.out.println("\nToday's orders: " + LocalDateTime.now().format(DateTimeFormatter
+                .ofPattern("EEEE, dd.MM.yyyy")));
         orderService.getAllOrdersInADay()
                 .stream()
                 .map(order -> "Order no. " + order.getId() + " | "
@@ -109,10 +116,9 @@ public class UI {
                 "\n" + "-".repeat(100) + "\n");
 
         System.out.println("Available sweets: \n");
-        for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + df.format(sweet.getPrice())
-                    + "$");
-        }
+        for (var sweet : sweetService.getAvailableSweets())
+            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
+                    df.format(sweet.getPrice()) + "$");
 
         System.out.println("\n" + "-".repeat(100) + "\n");
 
@@ -126,8 +132,8 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + df.format(sweet.getPrice())
-                    + "$\nRecipe: ");
+            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
+                    df.format(sweet.getPrice()) + "$\nRecipe: ");
             sweet.getIngredientsList()
                     .stream()
                     .map(Ingredient::getName)

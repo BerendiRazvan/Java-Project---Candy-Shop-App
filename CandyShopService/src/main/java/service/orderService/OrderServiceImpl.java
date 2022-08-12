@@ -137,8 +137,12 @@ public class OrderServiceImpl implements OrderService {
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
 
-        Sweet customSweet = new Sweet(sweetRepository.generateSweetId(), sweet.getIngredientsList(),
-                sweet.getSweetType(), sweet.getPrice());
+        Sweet customSweet = Sweet.builder()
+                .id(sweetRepository.generateSweetId())
+                .ingredientsList(sweet.getIngredientsList())
+                .sweetType(sweet.getSweetType())
+                .price(sweet.getPrice())
+                .build();
         customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
 
         updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);

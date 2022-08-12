@@ -218,15 +218,13 @@ public class OrderSweetUI {
 
 
     private Customer loginOption() {
-        Scanner scanner = new Scanner(System.in);
-
         System.out.println("\nAuthentication");
         System.out.print("Mail = ");
-        String mail = scanner.nextLine();
+        String mail = SCANNER.nextLine();
 
         if (customerService.checkIfEmailExists(mail)) {
             System.out.print("Password = ");
-            String password = scanner.nextLine();
+            String password = SCANNER.nextLine();
             try {
                 return customerService.login(mail, password);
             } catch (ServiceException e) {
@@ -235,15 +233,15 @@ public class OrderSweetUI {
             }
         } else {
             System.out.print("First name = ");
-            String firstName = scanner.nextLine();
+            String firstName = SCANNER.nextLine();
             System.out.print("Last name = ");
-            String lastName = scanner.nextLine();
+            String lastName = SCANNER.nextLine();
             System.out.print("Your password = ");
-            String password = scanner.nextLine();
+            String password = SCANNER.nextLine();
             System.out.print("Phone number = ");
-            String phone = scanner.nextLine();
+            String phone = SCANNER.nextLine();
             System.out.print("Address (street, number, building) = ");
-            String address = scanner.nextLine();
+            String address = SCANNER.nextLine();
 
             try {
                 return customerService.createAccount(firstName, lastName, mail, password, phone,
