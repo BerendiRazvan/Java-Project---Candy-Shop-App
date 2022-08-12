@@ -4,11 +4,13 @@ import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.*;
 
+@Builder
 @AllArgsConstructor
 public class SweetInMemoryRepository implements SweetRepository {
 

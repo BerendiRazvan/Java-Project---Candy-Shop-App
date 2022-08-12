@@ -1,6 +1,7 @@
 package domain.sweet;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class Sweet {
     private @Getter @Setter List<Ingredient> extraIngredients;
     private @Setter double price;
 
+    @Builder
     public Sweet(long id, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
         this.id = id;
         this.sweetType = sweetType;

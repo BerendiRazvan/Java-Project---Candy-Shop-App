@@ -4,6 +4,7 @@ import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.sweetRepository.SweetRepository;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static service.utils.Converter.convertStringToInt;
 
+@Builder
 @AllArgsConstructor
 public class SweetServiceImpl implements SweetService {
 

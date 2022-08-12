@@ -4,6 +4,7 @@ import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
+import lombok.Builder;
 import service.customerService.CustomerService;
 import service.exception.ServiceException;
 import service.ingredientService.IngredientService;
@@ -24,6 +25,7 @@ public class OrderSweetUI {
     private OrderService orderService;
     private IngredientService ingredientService;
 
+    @Builder
     public OrderSweetUI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
                         IngredientService ingredientService) {
         this.shop = shop;

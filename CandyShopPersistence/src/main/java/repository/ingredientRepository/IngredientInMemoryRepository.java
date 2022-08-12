@@ -2,11 +2,13 @@ package repository.ingredientRepository;
 
 import domain.sweet.Ingredient;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Builder
 @AllArgsConstructor
 public class IngredientInMemoryRepository implements IngredientRepository {
     private List<Ingredient> ingredientList;

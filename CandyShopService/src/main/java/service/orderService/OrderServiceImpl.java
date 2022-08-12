@@ -7,6 +7,7 @@ import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
+@Builder
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private static final DecimalFormat df = new DecimalFormat("0.00");

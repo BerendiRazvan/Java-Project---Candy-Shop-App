@@ -27,30 +27,61 @@ public class Main {
     public static void startApp() {
         System.out.println("\nWELCOME TO THE CANDY MY FRIEND :)\n");
 
-        Shop shop = new Shop("Candy Crush Shop",
-                new Location("Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
+        Shop shop = Shop.builder()
+                .name("Candy Crush Shop")
+                .location(Location.builder()
+                        .country("Romania")
+                        .city("Cluj-Napoca")
+                        .address("Str. Memorandumului, nr. 10")
+                        .build())
+                .build();
 
         //Repository
-        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
+                .ingredientList(new ArrayList<>())
+                .build();
         ingredientRepository.generateIngredients();
 
-        SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
+        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
+                .sweetList(new ArrayList<>())
+                .build();
         sweetRepository.generateSweets(ingredientRepository);
 
-        CustomerRepository customerRepository = new CustomerInMemoryRepository(new ArrayList<>());
+        CustomerRepository customerRepository = CustomerInMemoryRepository.builder()
+                .customerList(new ArrayList<>())
+                .build();
         customerRepository.generateCustomers();
 
-        OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
+        OrderRepository orderRepository = OrderInMemoryRepository.builder()
+                .orderList(new ArrayList<>())
+                .build();
         orderRepository.generateOrders(shop, sweetRepository, customerRepository);
 
         //Service
-        CustomerService customerService = new CustomerServiceImpl(customerRepository);
-        OrderService orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
-        SweetService sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
-        IngredientService ingredientService = new IngredientServiceImpl(ingredientRepository);
+        CustomerService customerService = CustomerServiceImpl.builder()
+                .customerRepository(customerRepository)
+                .build();
+        OrderService orderService = OrderServiceImpl.builder()
+                .orderRepository(orderRepository)
+                .sweetRepository(sweetRepository)
+                .ingredientRepository(ingredientRepository)
+                .build();
+        SweetService sweetService = SweetServiceImpl.builder()
+                .sweetRepository(sweetRepository)
+                .ingredientRepository(ingredientRepository)
+                .build();
+        IngredientService ingredientService = IngredientServiceImpl.builder()
+                .ingredientRepository(ingredientRepository)
+                .build();
 
         //UI
-        UI appUI = new UI(shop, customerService, sweetService, orderService, ingredientService);
+        UI appUI = UI.builder()
+                .shop(shop)
+                .customerService(customerService)
+                .sweetService(sweetService)
+                .orderService(orderService)
+                .ingredientService(ingredientService)
+                .build();
         appUI.show();
 
 

@@ -1,5 +1,6 @@
 import domain.Shop;
 import domain.sweet.Ingredient;
+import lombok.Builder;
 import service.customerService.CustomerService;
 import service.exception.ServiceException;
 import service.ingredientService.IngredientService;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+
 public class UI {
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -22,6 +24,7 @@ public class UI {
     private OrderService orderService;
     private IngredientService ingredientService;
 
+    @Builder
     public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
               IngredientService ingredientService) {
         this.shop = shop;

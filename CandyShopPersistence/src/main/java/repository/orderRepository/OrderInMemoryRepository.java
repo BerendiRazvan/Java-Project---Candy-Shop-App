@@ -7,12 +7,14 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
 import repository.sweetRepository.SweetRepository;
 
 import java.util.*;
 
+@Builder
 @AllArgsConstructor
 public class OrderInMemoryRepository implements OrderRepository {
 

@@ -3,11 +3,14 @@ package repository.customerRepository;
 import domain.Customer;
 import domain.location.Location;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 
 import java.util.Arrays;
 import java.util.List;
 
+
+@Builder
 @AllArgsConstructor
 public class CustomerInMemoryRepository implements CustomerRepository {
 

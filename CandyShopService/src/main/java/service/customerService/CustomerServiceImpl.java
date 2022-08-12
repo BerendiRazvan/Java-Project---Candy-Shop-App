@@ -3,10 +3,12 @@ package service.customerService;
 import domain.Customer;
 import domain.location.Location;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
 import service.exception.ServiceException;
 
+@Builder
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;

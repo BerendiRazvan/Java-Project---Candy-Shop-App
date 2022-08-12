@@ -4,6 +4,7 @@ import domain.Customer;
 import domain.Shop;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,7 @@ public class Order {
     private @Getter @Setter OrderType orderType;
     private @Getter LocalDateTime waitingTime;
 
+    @Builder
     public Order(long id, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop) {
         this.id = id;
         this.orderedSweets = orderedSweets;
