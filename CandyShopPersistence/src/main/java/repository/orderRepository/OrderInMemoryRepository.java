@@ -6,19 +6,18 @@ import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
+import lombok.AllArgsConstructor;
 import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
 import repository.sweetRepository.SweetRepository;
 
 import java.util.*;
 
+@AllArgsConstructor
 public class OrderInMemoryRepository implements OrderRepository {
 
     private List<Order> orderList;
 
-    public OrderInMemoryRepository(List<Order> orderList) {
-        this.orderList = orderList;
-    }
 
     @Override
     public void add(Order order) throws RepositoryException {

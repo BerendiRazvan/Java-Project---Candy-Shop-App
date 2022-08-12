@@ -1,15 +1,11 @@
 package domain.order;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum OrderType {
     DELIVERY(60), PICKUP(30);
 
-    private final int minimumWaitingTime;
-
-    OrderType(int minimumWaitingTime) {
-        this.minimumWaitingTime = minimumWaitingTime;
-    }
-
-    public int getMinimumWaitingTime() {
-        return minimumWaitingTime;
-    }
+    private @Getter final int minimumWaitingTime;
 }

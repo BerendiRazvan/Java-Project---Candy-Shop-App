@@ -28,7 +28,7 @@ public class Main {
         System.out.println("\nWELCOME TO THE CANDY MY FRIEND :)\n");
 
         Shop shop = new Shop("Candy Crush Shop",
-                new Location(1, "Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
+                new Location("Romania", "Cluj-Napoca", "Str. Memorandumului, nr. 10"));
 
         //Repository
         IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());

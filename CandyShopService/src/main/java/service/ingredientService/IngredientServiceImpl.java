@@ -1,6 +1,7 @@
 package service.ingredientService;
 
 import domain.sweet.Ingredient;
+import lombok.AllArgsConstructor;
 import repository.ingredientRepository.IngredientRepository;
 import service.exception.ServiceException;
 
@@ -8,14 +9,11 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     private IngredientRepository ingredientRepository;
-
-    public IngredientServiceImpl(IngredientRepository ingredientRepository) {
-        this.ingredientRepository = ingredientRepository;
-    }
 
 
     @Override

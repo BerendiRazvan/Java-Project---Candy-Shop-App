@@ -6,6 +6,7 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import lombok.AllArgsConstructor;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
@@ -23,17 +24,13 @@ import java.util.stream.Collectors;
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private OrderRepository orderRepository;
     private SweetRepository sweetRepository;
     private IngredientRepository ingredientRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, SweetRepository sweetRepository, IngredientRepository ingredientRepository) {
-        this.orderRepository = orderRepository;
-        this.ingredientRepository = ingredientRepository;
-        this.sweetRepository = sweetRepository;
-    }
 
     @Override
     public Order createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
@@ -188,12 +185,10 @@ public class OrderServiceImpl implements OrderService {
         while (actualAmount - ingredientAmount != 0) {
             if (actualAmount < ingredientAmount) {
                 sweet.getExtraIngredients().add(ingredient);
-                sweet.setPrice(sweet.getPrice() + ingredient.getPrice());
                 decreasesIngredientsStock(ingredient);
                 actualAmount++;
             } else {
                 sweet.getExtraIngredients().remove(ingredient);
-                sweet.setPrice(sweet.getPrice() - ingredient.getPrice());
                 increaseIngredientsStock(ingredient);
                 actualAmount--;
             }

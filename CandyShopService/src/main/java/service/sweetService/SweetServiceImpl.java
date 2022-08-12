@@ -3,6 +3,7 @@ package service.sweetService;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import lombok.AllArgsConstructor;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.sweetRepository.SweetRepository;
@@ -14,16 +15,13 @@ import java.util.stream.Collectors;
 
 import static service.utils.Converter.convertStringToInt;
 
+@AllArgsConstructor
 public class SweetServiceImpl implements SweetService {
 
     private static final double SWEET_DEFAULT_PRICE = 2;
     private SweetRepository sweetRepository;
     private IngredientRepository ingredientRepository;
 
-    public SweetServiceImpl(SweetRepository sweetRepository, IngredientRepository ingredientRepository) {
-        this.sweetRepository = sweetRepository;
-        this.ingredientRepository = ingredientRepository;
-    }
 
     @Override
     public List<Sweet> getAvailableSweets() {

@@ -1,17 +1,15 @@
 package repository.ingredientRepository;
 
 import domain.sweet.Ingredient;
+import lombok.AllArgsConstructor;
 import repository.exception.RepositoryException;
 
 import java.util.Arrays;
 import java.util.List;
 
+@AllArgsConstructor
 public class IngredientInMemoryRepository implements IngredientRepository {
     private List<Ingredient> ingredientList;
-
-    public IngredientInMemoryRepository(List<Ingredient> ingredientList) {
-        this.ingredientList = ingredientList;
-    }
 
     @Override
     public void add(Ingredient ingredient) throws RepositoryException {

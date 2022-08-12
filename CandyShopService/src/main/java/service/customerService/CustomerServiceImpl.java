@@ -2,17 +2,14 @@ package service.customerService;
 
 import domain.Customer;
 import domain.location.Location;
+import lombok.AllArgsConstructor;
 import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
 import service.exception.ServiceException;
 
+@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
-
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
-
 
     @Override
     public Customer login(String mail, String password) throws ServiceException {

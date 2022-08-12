@@ -26,7 +26,7 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        location = new Location(ID, COUNTRY, CITY, ADDRESS);
+        location = new Location(COUNTRY, CITY, ADDRESS);
 
         CustomerRepository customerRepository =
                 new CustomerInMemoryRepository(new ArrayList<>());
@@ -167,11 +167,11 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                new Location(1, "Romania", "Cluj", ""));
+                new Location("Romania", "Cluj", ""));
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                new Location(1, "Romania", "Cluj", "aproape"));
+                new Location("Romania", "Cluj", "aproape"));
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
     }
 
@@ -194,7 +194,7 @@ class CustomerServiceImplTest {
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation("", "", "", "", "",
-                new Location(1, "Romania", "Cluj", ""));
+                new Location("Romania", "Cluj", ""));
         assertEquals(errors,
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +

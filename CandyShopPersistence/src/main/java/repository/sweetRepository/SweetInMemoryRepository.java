@@ -3,18 +3,16 @@ package repository.sweetRepository;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import lombok.AllArgsConstructor;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.*;
 
+@AllArgsConstructor
 public class SweetInMemoryRepository implements SweetRepository {
 
     private List<Sweet> sweetList;
-
-    public SweetInMemoryRepository(List<Sweet> sweetList) {
-        this.sweetList = sweetList;
-    }
 
     @Override
     public void add(Sweet sweet) throws RepositoryException {

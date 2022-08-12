@@ -42,9 +42,9 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() throws RepositoryException {
-        shop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
+        shop = new Shop(SHOP_NAME, new Location(COUNTRY, CITY, ADDRESS));
         customer = new Customer(ID, FIRST_NAME, LAST_NAME,
-                EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
+                EMAIL, PASSWORD, PHONE_NUMBER, new Location(COUNTRY, CITY, ADDRESS));
         ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
 
         OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());

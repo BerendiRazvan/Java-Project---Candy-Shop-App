@@ -1,17 +1,20 @@
 package domain.sweet;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sweet {
     private static final DecimalFormat df = new DecimalFormat("0.00");
-    private long id;
-    private SweetType sweetType;
-    private List<Ingredient> ingredientsList;
-    private List<Ingredient> extraIngredients;
-    private double price;
+    private @Getter @Setter long id;
+    private @Getter @Setter SweetType sweetType;
+    private @Getter @Setter List<Ingredient> ingredientsList;
+    private @Getter @Setter List<Ingredient> extraIngredients;
+    private @Setter double price;
 
     public Sweet(long id, List<Ingredient> ingredientsList, SweetType sweetType, double price) {
         this.id = id;
@@ -19,38 +22,6 @@ public class Sweet {
         this.ingredientsList = ingredientsList;
         this.extraIngredients = new ArrayList<>();
         this.price = price;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public List<Ingredient> getIngredientsList() {
-        return ingredientsList;
-    }
-
-    public List<Ingredient> getExtraIngredients() {
-        return extraIngredients;
-    }
-
-    public void setIngredientsList(List<Ingredient> ingredientsList) {
-        this.ingredientsList = ingredientsList;
-    }
-
-    public void setExtraIngredients(List<Ingredient> extraIngredients) {
-        this.extraIngredients = extraIngredients;
-    }
-
-    public SweetType getSweetType() {
-        return sweetType;
-    }
-
-    public void setSweetType(SweetType sweetType) {
-        this.sweetType = sweetType;
     }
 
     public double getPrice() {
@@ -66,10 +37,6 @@ public class Sweet {
                 .stream()
                 .mapToDouble(Ingredient::getPrice)
                 .sum();
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     @Override

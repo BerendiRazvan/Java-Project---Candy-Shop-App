@@ -107,7 +107,7 @@ public class UI {
 
         System.out.println("Available sweets: \n");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + sweet.getPrice()
+            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + df.format(sweet.getPrice())
                     + "$");
         }
 
@@ -123,7 +123,7 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + sweet.getPrice()
+            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + df.format(sweet.getPrice())
                     + "$\nRecipe: ");
             sweet.getIngredientsList()
                     .stream()
