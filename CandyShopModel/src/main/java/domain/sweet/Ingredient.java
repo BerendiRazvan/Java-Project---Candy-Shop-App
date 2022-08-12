@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
+@Getter
+@Setter
 public class Ingredient {
-    private @Getter @Setter long id;
-    private @Getter @Setter String name;
-    private @Getter @Setter double price;
-    private @Getter @Setter int amount;
+    private long id;
+    private String name;
+    private double price;
+    private int amount;
 
     public Ingredient(long id, String name, double price) {
         this.id = id;

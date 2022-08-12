@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
+@Getter
+@Setter
 public class Shop {
-    private @Getter @Setter String name;
-    private @Getter @Setter Location location;
+    private String name;
+    private Location location;
 
     @Override
     public String toString() {

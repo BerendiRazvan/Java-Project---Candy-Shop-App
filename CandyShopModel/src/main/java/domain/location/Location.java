@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
+@Getter
+@Setter
 public class Location {
-    private @Getter @Setter String country;
-    private @Getter @Setter String city;
-    private @Getter @Setter String address;
+    private String country;
+    private String city;
+    private String address;
 
     @Override
     public String toString() {

@@ -6,14 +6,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
+@Getter
+@Setter
 public class Customer {
-    private @Getter @Setter long id;
-    private @Getter @Setter String firstName;
-    private @Getter @Setter String lastName;
-    private @Getter @Setter String email;
-    private @Getter @Setter String password;
-    private @Getter @Setter String phoneNumber;
-    private @Getter @Setter Location location;
+    private long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private String phoneNumber;
+    private Location location;
 
     @Override
     public String toString() {
