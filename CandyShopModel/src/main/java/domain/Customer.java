@@ -3,13 +3,11 @@ package domain;
 import domain.location.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Builder
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class Customer {
     private long id;
     private String firstName;

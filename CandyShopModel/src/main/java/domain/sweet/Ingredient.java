@@ -2,13 +2,11 @@ package domain.sweet;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Builder
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class Ingredient {
     private long id;
     private String name;

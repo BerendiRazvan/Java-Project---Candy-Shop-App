@@ -2,13 +2,11 @@ package domain.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Builder
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class Location {
     private String country;
     private String city;
