@@ -1,5 +1,6 @@
 package repository.sweetRepository;
 
+import domain.order.Order;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
@@ -14,6 +15,7 @@ import java.util.*;
 @AllArgsConstructor
 public class SweetInMemoryRepository implements SweetRepository {
 
+    private static final int SWEETS_TO_GENERATE = 15;
     private List<Sweet> sweetList;
 
     @Override
@@ -57,23 +59,16 @@ public class SweetInMemoryRepository implements SweetRepository {
     @Override
     public void generateSweets(IngredientRepository ingredientRepository) {
         List<Ingredient> ingredientList = ingredientRepository.findAll();
-        sweetList.addAll(Arrays.asList(
-                new Sweet(1, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(2, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(3, randomRecipe(ingredientList), SweetType.CAKE, 0),
-                new Sweet(4, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
-                new Sweet(5, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
-                new Sweet(6, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
-                new Sweet(7, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 0),
-                new Sweet(8, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(9, randomRecipe(ingredientList), SweetType.CAKE, 0),
-                new Sweet(10, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 0),
-                new Sweet(11, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
-                new Sweet(12, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(13, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
-                new Sweet(14, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
-                new Sweet(15, randomRecipe(ingredientList), SweetType.CROISSANT, 0)
-        ));
+        int noOfSweets = SWEETS_TO_GENERATE;
+        while (noOfSweets != 0) {
+            sweetList.add(Sweet.builder()
+                    .id(generateSweetId())
+                    .ingredientsList(randomRecipe(ingredientList))
+                    .sweetType(randomSweetType())
+                    .price(0)
+                    .build());
+            noOfSweets--;
+        }
         sweetList.forEach(sweet -> sweet.setPrice(generatePrice(sweet.getIngredientsList())));
     }
 
@@ -118,4 +113,19 @@ public class SweetInMemoryRepository implements SweetRepository {
         return recipe;
     }
 
+    private SweetType randomSweetType() {
+        Random random = new Random();
+        switch (random.nextInt(5)){
+            case 1:
+                return SweetType.CROISSANT;
+            case 2:
+                return SweetType.DONUT;
+            case 3:
+                return SweetType.WAFFLES;
+            case 4:
+                return SweetType.HOMEMADE_CHOCOLATE;
+            default:
+                return SweetType.CAKE;
+        }
+    }
 }

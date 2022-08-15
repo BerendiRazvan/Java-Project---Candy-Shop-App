@@ -18,6 +18,7 @@ import java.util.*;
 @AllArgsConstructor
 public class OrderInMemoryRepository implements OrderRepository {
 
+    private static final int ORDERS_TO_GENERATE = 7;
     private List<Order> orderList;
 
 
@@ -64,29 +65,17 @@ public class OrderInMemoryRepository implements OrderRepository {
                                CustomerRepository customerRepository) {
         List<Sweet> sweetList = sweetRepository.findAll();
         List<Customer> customerList = customerRepository.findAll();
-        orderList.addAll(Arrays.asList(
-                new Order(1,
-                        randomOrder(sweetList), OrderType.PICKUP,
-                        randomCustomer(customerList), shop),
-                new Order(2,
-                        randomOrder(sweetList), OrderType.PICKUP,
-                        randomCustomer(customerList), shop),
-                new Order(3,
-                        randomOrder(sweetList), OrderType.DELIVERY,
-                        randomCustomer(customerList), shop),
-                new Order(4,
-                        randomOrder(sweetList), OrderType.DELIVERY,
-                        randomCustomer(customerList), shop),
-                new Order(5,
-                        randomOrder(sweetList), OrderType.PICKUP,
-                        randomCustomer(customerList), shop),
-                new Order(6,
-                        randomOrder(sweetList), OrderType.DELIVERY,
-                        randomCustomer(customerList), shop),
-                new Order(7,
-                        randomOrder(sweetList), OrderType.PICKUP,
-                        randomCustomer(customerList), shop)
-        ));
+        int noOfOrders = ORDERS_TO_GENERATE;
+        while (noOfOrders != 0) {
+            orderList.add(Order.builder()
+                    .id(generateOrderId())
+                    .orderedSweets(randomOrder(sweetList))
+                    .orderType(randomOrderType())
+                    .customer(randomCustomer(customerList))
+                    .shop(shop)
+                    .build());
+            noOfOrders--;
+        }
 
     }
 
@@ -126,5 +115,12 @@ public class OrderInMemoryRepository implements OrderRepository {
     private static Customer randomCustomer(List<Customer> all) {
         Random random = new Random();
         return all.get(random.nextInt(all.size()));
+    }
+
+    private static OrderType randomOrderType() {
+        Random random = new Random();
+        if (random.nextInt(2) == 0)
+            return OrderType.DELIVERY;
+        else return OrderType.PICKUP;
     }
 }

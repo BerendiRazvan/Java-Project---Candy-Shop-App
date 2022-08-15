@@ -61,21 +61,21 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     @Override
     public void generateIngredients() {
         ingredientList.addAll(Arrays.asList(
-                new Ingredient(1, "Sugar", 1.5, 23),
-                new Ingredient(2, "Milk", 0.5, 20),
-                new Ingredient(3, "Flour", 0.42, 30),
-                new Ingredient(4, "Chocolate", 1.75, 15),
-                new Ingredient(5, "Honey", 2.05, 7),
-                new Ingredient(6, "Caramel", 1.3, 17),
-                new Ingredient(7, "Whipped cream", 1, 40),
-                new Ingredient(8, "Vanilla", 0.73, 8),
-                new Ingredient(9, "Strawberries", 2.51, 14),
-                new Ingredient(10, "Cacao", 0.25, 5),
-                new Ingredient(11, "Peanut butter", 2.22, 7),
-                new Ingredient(12, "Coconut", 2.01, 20),
-                new Ingredient(13, "Cherry", 3.17, 12),
-                new Ingredient(14, "Oreo", 2.35, 32),
-                new Ingredient(15, "Ice Cream", 2.05, 10)
+                Ingredient.builder().id(1).name("Sugar").price(1.5).amount(23).build(),
+                Ingredient.builder().id(2).name("Milk").price(0.5).amount(21).build(),
+                Ingredient.builder().id(3).name("Flour").price(0.42).amount(30).build(),
+                Ingredient.builder().id(4).name("Chocolate").price(1.75).amount(25).build(),
+                Ingredient.builder().id(5).name("Honey").price(2.05).amount(7).build(),
+                Ingredient.builder().id(6).name("Caramel").price(1.3).amount(17).build(),
+                Ingredient.builder().id(7).name("Whipped cream").price(1).amount(40).build(),
+                Ingredient.builder().id(8).name("Vanilla").price(0.73).amount(8).build(),
+                Ingredient.builder().id(9).name("Strawberries").price(2.51).amount(14).build(),
+                Ingredient.builder().id(10).name("Cacao").price(0.25).amount(5).build(),
+                Ingredient.builder().id(11).name("Peanut butter").price(2.22).amount(7).build(),
+                Ingredient.builder().id(12).name("Coconut").price(2.01).amount(20).build(),
+                Ingredient.builder().id(13).name("Cherry").price(3.17).amount(12).build(),
+                Ingredient.builder().id(14).name("Oreo").price(2.35).amount(32).build(),
+                Ingredient.builder().id(15).name("Ice Cream").price(2.05).amount(10).build()
         ));
     }
 }
