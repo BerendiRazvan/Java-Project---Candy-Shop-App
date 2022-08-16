@@ -3,11 +3,13 @@ package repository.ingredientRepository;
 import domain.sweet.Ingredient;
 import repository.Repository;
 
+import java.util.Optional;
+
 public interface IngredientRepository extends Repository<Long, Ingredient> {
 
-    Ingredient findIngredientById(Long id);
+    Optional<Ingredient> findIngredientById(Long id);
 
-    Ingredient findIngredientByName(String name);
+    Optional<Ingredient> findIngredientByName(String name);
 
     void generateIngredients();
 

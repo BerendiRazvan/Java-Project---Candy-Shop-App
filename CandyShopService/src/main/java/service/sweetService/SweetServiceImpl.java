@@ -12,6 +12,7 @@ import service.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static service.utils.Converter.convertStringToInt;
@@ -34,49 +35,57 @@ public class SweetServiceImpl implements SweetService {
     }
 
     @Override
-    public Sweet findSweetById(String sweetId) throws ServiceException {
+    public Optional<Sweet>  findSweetById(String sweetId) throws ServiceException {
         long id;
         try {
             id = Long.parseLong(sweetId);
         } catch (Exception e) {
             throw new ServiceException("Invalid sweet id!");
         }
-        return sweetRepository.findSweetById(id);
+        Optional<Sweet> sweet = sweetRepository.findSweetById(id);
+        if (sweet.isPresent())
+            return sweet;
+        else throw new ServiceException("Invalid sweet id!");
     }
 
     @Override
-    public Sweet createNewSweetWithoutIngredients() throws ServiceException {
-        long id = sweetRepository.generateSweetId();
+    public Optional<Sweet> createNewSweetWithoutIngredients() throws ServiceException {
 
-        try {
-            Sweet sweet = Sweet.builder()
-                    .id(id)
-                    .ingredientsList(new ArrayList<>())
-                    .sweetType(SweetType.UNIQUE)
-                    .price(SWEET_DEFAULT_PRICE)
-                    .build();
-            sweetRepository.add(sweet);
-            return sweet;
-        } catch (RepositoryException e) {
-            throw new ServiceException(e.getMessage());
-        }
+        Optional<Long> id = sweetRepository.generateSweetId();
+
+        if (id.isPresent()) {
+            try {
+                Sweet sweet = Sweet.builder()
+                        .id(id.get())
+                        .ingredientsList(new ArrayList<>())
+                        .sweetType(SweetType.UNIQUE)
+                        .price(SWEET_DEFAULT_PRICE)
+                        .build();
+                sweetRepository.add(sweet);
+                return Optional.of(sweet);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        } else throw new RuntimeException("Error: generateSweetId");
     }
 
     @Override
     public void addIngredientToSweet(Sweet customSweet, Ingredient newIngredient, int amount) throws ServiceException {
         if (newIngredient == null) throw new ServiceException("Invalid ingredient id!");
         else {
-            Sweet updateSweet = sweetRepository.findSweetById(customSweet.getId());
-            while (amount != 0) {
-                updateSweet.getIngredientsList().add(newIngredient);
-                updateSweet.setPrice(customSweet.getPrice() + newIngredient.getPrice());
-                amount--;
-            }
-            try {
-                sweetRepository.update(customSweet.getId(), updateSweet);
-            } catch (RepositoryException e) {
-                throw new ServiceException(e.getMessage());
-            }
+            Optional<Sweet> updateSweet = sweetRepository.findSweetById(customSweet.getId());
+            if (updateSweet.isPresent()) {
+                while (amount != 0) {
+                    updateSweet.get().getIngredientsList().add(newIngredient);
+                    updateSweet.get().setPrice(customSweet.getPrice() + newIngredient.getPrice());
+                    amount--;
+                }
+                try {
+                    sweetRepository.update(customSweet.getId(), updateSweet.get());
+                } catch (RepositoryException e) {
+                    throw new ServiceException(e.getMessage());
+                }
+            } else throw new ServiceException("Invalid ingredient id!");
         }
     }
 
@@ -86,13 +95,12 @@ public class SweetServiceImpl implements SweetService {
         for (String ingredientAndQuantity : ingredientList) {
             List<String> pair = List.of(ingredientAndQuantity.split(","));
             String ingredientName = pair.get(0);
-            Ingredient ingredient = ingredientRepository.findIngredientByName(ingredientName);
-            if (ingredient != null){
+            Optional<Ingredient> ingredient = ingredientRepository.findIngredientByName(ingredientName);
+            if (ingredient.isPresent()) {
                 int amount = convertStringToInt(pair.get(1));
-                validateAmount(ingredient, amount);
-                addIngredientToSweet(customSweet, ingredient, amount);
-            }
-            else throw new ServiceException("Invalid ingredient name!");
+                validateAmount(ingredient.get(), amount);
+                addIngredientToSweet(customSweet, ingredient.get(), amount);
+            } else throw new ServiceException("Invalid ingredient name!");
         }
     }
 

@@ -5,10 +5,12 @@ import domain.sweet.Sweet;
 import repository.Repository;
 import repository.ingredientRepository.IngredientRepository;
 
+import java.util.Optional;
+
 public interface SweetRepository extends Repository<Long, Sweet> {
-    Sweet findSweetById(Long id);
+    Optional<Sweet> findSweetById(Long id);
 
     void generateSweets(IngredientRepository ingredientRepository);
 
-    long generateSweetId();
+    Optional<Long> generateSweetId();
 }

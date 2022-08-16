@@ -3,13 +3,15 @@ package repository.customerRepository;
 import domain.Customer;
 import repository.Repository;
 
+import java.util.Optional;
+
 
 public interface CustomerRepository extends Repository<Long, Customer> {
-    Customer findCustomerByEmail(String email);
+    Optional<Customer> findCustomerByEmail(String email);
 
-    Customer findCustomerById(Long id);
+    Optional<Customer> findCustomerById(Long id);
 
-    int generateCustomerId();
+    Optional<Long> generateCustomerId();
 
     void generateCustomers();
 }

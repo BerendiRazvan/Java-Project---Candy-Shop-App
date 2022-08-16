@@ -10,6 +10,7 @@ import service.exception.ServiceException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,14 +54,16 @@ class CustomerServiceImplTest {
 
     @Test
     void testValidLogin() throws ServiceException {
-        Customer customer = customerService.login(EMAIL, PASSWORD);
-        assertEquals(customer.getId(), ID);
-        assertEquals(customer.getEmail(), EMAIL);
-        assertEquals(customer.getFirstName(), FIRST_NAME);
-        assertEquals(customer.getLastName(), LAST_NAME);
-        assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
-        assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getLocation().getAddress(), ADDRESS);
+        Optional<Customer> customer = customerService.login(EMAIL, PASSWORD);
+        if (customer.isPresent()) {
+            assertEquals(customer.get().getId(), ID);
+            assertEquals(customer.get().getEmail(), EMAIL);
+            assertEquals(customer.get().getFirstName(), FIRST_NAME);
+            assertEquals(customer.get().getLastName(), LAST_NAME);
+            assertEquals(customer.get().getPhoneNumber(), PHONE_NUMBER);
+            assertEquals(customer.get().getPassword(), PASSWORD);
+            assertEquals(customer.get().getLocation().getAddress(), ADDRESS);
+        } else fail("Customer login failed");
     }
 
     @Test
@@ -77,15 +80,17 @@ class CustomerServiceImplTest {
 
     @Test
     void testValidCreateAccount() throws ServiceException {
-        Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+        Optional<Customer> customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                 PASSWORD, PHONE_NUMBER, location);
-        assertEquals(customer.getId(), 6);
-        assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
-        assertEquals(customer.getFirstName(), FIRST_NAME);
-        assertEquals(customer.getLastName(), LAST_NAME);
-        assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
-        assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getLocation().getAddress(), ADDRESS);
+        if (customer.isPresent()) {
+            assertEquals(customer.get().getId(), 6);
+            assertEquals(customer.get().getEmail(), "berendi.rav2001@gmail.com");
+            assertEquals(customer.get().getFirstName(), FIRST_NAME);
+            assertEquals(customer.get().getLastName(), LAST_NAME);
+            assertEquals(customer.get().getPhoneNumber(), PHONE_NUMBER);
+            assertEquals(customer.get().getPassword(), PASSWORD);
+            assertEquals(customer.get().getLocation().getAddress(), ADDRESS);
+        } else fail("Customer login failed");
     }
 
     @Test

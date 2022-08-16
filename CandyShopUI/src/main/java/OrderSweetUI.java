@@ -3,6 +3,7 @@ import domain.Shop;
 import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
+import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import lombok.Builder;
 import service.customerService.CustomerService;
@@ -11,6 +12,7 @@ import service.ingredientService.IngredientService;
 import service.orderService.OrderService;
 import service.sweetService.SweetService;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class OrderSweetUI {
@@ -49,7 +51,9 @@ public class OrderSweetUI {
     public void show() {
         Customer customer = null;
         while (customer == null) {
-            customer = loginOption();
+            Optional<Customer> customerOptional = loginOption();
+            if (customerOptional.isPresent())
+                customer = customerOptional.get();
         }
 
         System.out.println("\nYour account is:\n");
@@ -65,7 +69,11 @@ public class OrderSweetUI {
 
 
         try {
-            Order order = orderService.createOrder(customer, orderType, shop);
+            Optional<Order> optionalOrder = orderService.createOrder(customer, orderType, shop);
+            Order order;
+            if (optionalOrder.isPresent())
+                order = optionalOrder.get();
+            else throw new RuntimeException("Error: createOrder");
             label:
             while (true) {
                 System.out.println(menu);
@@ -112,34 +120,35 @@ public class OrderSweetUI {
     private void option5(Order order) {
         System.out.println("\nAvailable ingredients:");
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
-
-        Sweet customSweet = null;
         try {
-            customSweet = sweetService.createNewSweetWithoutIngredients();
+            Optional<Sweet> customSweet = sweetService.createNewSweetWithoutIngredients();
+            System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
+            String ingredients = SCANNER.nextLine();
+            if (ingredients.matches(expressionVerification) && customSweet.isPresent())
+                try {
+                    sweetService.addAllIngredientsToSweet(customSweet.get(), ingredients);
+                    orderService.addToOrder(order, customSweet.get());
+                    System.out.println(customSweet);
+                    System.out.println("Sweet added, yummy :)");
+                } catch (ServiceException e) {
+                    System.out.println(e.getMessage());
+                }
+            else
+                System.out.println("Invalid input for ingredients to add :(");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
-        System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
-        String ingredients = SCANNER.nextLine();
-        if (ingredients.matches(expressionVerification))
-            try {
-                sweetService.addAllIngredientsToSweet(customSweet, ingredients);
-                orderService.addToOrder(order, customSweet);
-                System.out.println(customSweet);
-                System.out.println("Sweet added, yummy :)");
-            } catch (ServiceException e) {
-                System.out.println(e.getMessage());
-            }
-        else
-            System.out.println("Invalid input for ingredients to add :(");
     }
 
     private void option1(Order order) {
         System.out.print("Choose a sweet (enter sweet id): ");
         String sweetId = SCANNER.nextLine().toUpperCase();
         try {
-            orderService.addToOrder(order, sweetService.findSweetById(sweetId));
-            System.out.println("Sweet added, yummy :)");
+            Optional<Sweet> sweetOptional = sweetService.findSweetById(sweetId);
+            if (sweetOptional.isPresent()) {
+                orderService.addToOrder(order, sweetOptional.get());
+                System.out.println("Sweet added, yummy :)");
+            } else throw new ServiceException("Invalid sweet id!");
         } catch (ServiceException e) {
             System.out.println("Oh no, we failed to add your sweet :(");
             System.out.println(e.getMessage());
@@ -161,10 +170,14 @@ public class OrderSweetUI {
         System.out.print("Enter the amount you want to add:");
         String amountForAdd = SCANNER.nextLine();
         try {
-            orderService.addExtraIngredientToOrderedSweet(order,
-                    sweetService.findSweetById(orderedSweetIdForAdd),
-                    ingredientService.findIngredientById(ingredientIdForAdd), amountForAdd);
-            System.out.println("Sweet modified :)");
+            Optional<Ingredient> ingredientOptional = ingredientService.findIngredientById(ingredientIdForAdd);
+            Optional<Sweet> sweetOptional = sweetService.findSweetById(orderedSweetIdForAdd);
+            if (ingredientOptional.isPresent() && sweetOptional.isPresent()) {
+                orderService.addExtraIngredientToOrderedSweet(order,
+                        sweetOptional.get(),
+                        ingredientOptional.get(), amountForAdd);
+                System.out.println("Sweet modified :)");
+            } else throw new ServiceException("Invalid sweet/ingredient id!");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
@@ -185,10 +198,14 @@ public class OrderSweetUI {
         System.out.print("Enter the amount you want:");
         String amountForUpdate = SCANNER.nextLine();
         try {
-            orderService.updateExtraIngredientForOrderedSweet(order,
-                    sweetService.findSweetById(orderedSweetIdForUpdate),
-                    ingredientService.findIngredientById(ingredientIdForUpdate), amountForUpdate);
-            System.out.println("Sweet modified :)");
+            Optional<Ingredient> ingredientOptional = ingredientService.findIngredientById(ingredientIdForUpdate);
+            Optional<Sweet> sweetOptional = sweetService.findSweetById(orderedSweetIdForUpdate);
+            if (ingredientOptional.isPresent() && sweetOptional.isPresent()) {
+                orderService.updateExtraIngredientForOrderedSweet(order,
+                        sweetOptional.get(),
+                        ingredientOptional.get(), amountForUpdate);
+                System.out.println("Sweet modified :)");
+            } else throw new ServiceException("Invalid sweet/ingredient id!");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
@@ -207,17 +224,21 @@ public class OrderSweetUI {
         System.out.print("Enter the ID for the extra ingredient you want to delete:");
         String ingredientIdForDelete = SCANNER.nextLine();
         try {
-            orderService.deleteExtraIngredientForOrderedSweet(order,
-                    sweetService.findSweetById(orderedSweetIdForDelete),
-                    ingredientService.findIngredientById(ingredientIdForDelete));
-            System.out.println("Sweet modified :)");
+            Optional<Ingredient> ingredientOptional = ingredientService.findIngredientById(ingredientIdForDelete);
+            Optional<Sweet> sweetOptional = sweetService.findSweetById(orderedSweetIdForDelete);
+            if (ingredientOptional.isPresent() && sweetOptional.isPresent()) {
+                orderService.deleteExtraIngredientForOrderedSweet(order,
+                        sweetOptional.get(),
+                        ingredientOptional.get());
+                System.out.println("Sweet modified :)");
+            } else throw new ServiceException("Invalid sweet/ingredient id!");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
     }
 
 
-    private Customer loginOption() {
+    private Optional<Customer> loginOption() {
         System.out.println("\nAuthentication");
         System.out.print("Mail = ");
         String mail = SCANNER.nextLine();
@@ -229,7 +250,7 @@ public class OrderSweetUI {
                 return customerService.login(mail, password);
             } catch (ServiceException e) {
                 System.out.println(e.getMessage());
-                return null;
+                return Optional.empty();
             }
         } else {
             System.out.print("First name = ");
@@ -248,7 +269,7 @@ public class OrderSweetUI {
                         new Location("Romania", "Cluj-Napoca", address));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                return null;
+                return Optional.empty();
             }
         }
     }

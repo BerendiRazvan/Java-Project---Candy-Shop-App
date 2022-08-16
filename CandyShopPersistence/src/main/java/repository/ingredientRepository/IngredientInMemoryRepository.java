@@ -7,6 +7,7 @@ import repository.exception.RepositoryException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Builder
 @AllArgsConstructor
@@ -23,20 +24,20 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public void update(Long id, Ingredient ingredient) throws RepositoryException {
-        Ingredient ingredientToUpdate = findIngredientById(id);
-        if (ingredientToUpdate == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Ingredient> ingredientToUpdate = findIngredientById(id);
+        if (ingredientToUpdate.isPresent())
+            ingredientList.set(ingredientList.indexOf(ingredientToUpdate.get()), ingredient);
         else
-            ingredientList.set(ingredientList.indexOf(ingredientToUpdate), ingredient);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        Ingredient ingredientToRemove = findIngredientById(id);
-        if (ingredientToRemove == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Ingredient> ingredientToRemove = findIngredientById(id);
+        if (ingredientToRemove.isPresent())
+            ingredientList.remove(ingredientToRemove.get());
         else
-            ingredientList.remove(ingredientToRemove);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
@@ -45,17 +46,17 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     }
 
     @Override
-    public Ingredient findIngredientById(Long id) {
-        for (Ingredient ingredient : ingredientList)
-            if (ingredient.getId() == id) return ingredient;
-        return null;
+    public Optional<Ingredient> findIngredientById(Long id) {
+        return ingredientList.stream()
+                .filter(ingredient -> id == ingredient.getId())
+                .findFirst();
     }
 
     @Override
-    public Ingredient findIngredientByName(String name) {
-        for (Ingredient ingredient : ingredientList)
-            if (ingredient.getName().equalsIgnoreCase(name)) return ingredient;
-        return null;
+    public Optional<Ingredient> findIngredientByName(String name) {
+        return ingredientList.stream()
+                .filter(ingredient -> name.equalsIgnoreCase(ingredient.getName()))
+                .findFirst();
     }
 
     @Override

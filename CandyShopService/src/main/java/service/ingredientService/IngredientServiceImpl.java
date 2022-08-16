@@ -8,6 +8,7 @@ import service.exception.ServiceException;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Builder
@@ -24,14 +25,18 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public Ingredient findIngredientById(String ingredientId) throws ServiceException {
+    public Optional<Ingredient> findIngredientById(String ingredientId) throws ServiceException {
         long id;
         try {
             id = Long.parseLong(ingredientId);
         } catch (Exception e) {
             throw new ServiceException("Invalid ingredient id!");
         }
-        return ingredientRepository.findIngredientById(id);
+        Optional<Ingredient> ingredient = ingredientRepository.findIngredientById(id);
+        if (ingredient.isPresent())
+            return ingredient;
+        else
+            throw new ServiceException("Invalid ingredient id!");
     }
 
     @Override

@@ -14,6 +14,7 @@ import service.exception.ServiceException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static service.ConstantValues.*;
@@ -82,15 +83,17 @@ class SweetServiceImplTest {
 
     @Test
     void testValidFindSweetById() throws ServiceException {
-        Sweet sweet = sweetService.findSweetById(String.valueOf(1L));
-        assertEquals(sweet.getId(), 1L);
-        assertEquals(sweet.getSweetType(), SweetType.DONUT);
-        assertEquals(sweet.getPrice(), 5);
-        assertEquals(sweet.getIngredientsList().toString(), new ArrayList<>(List.of(
-                Ingredient.builder().id(1).name("Sugar").price(1.5).build(),
-                Ingredient.builder().id(2).name("Milk").price(1).build(),
-                Ingredient.builder().id(3).name("Flour").price(0.75).build())).toString());
-        assertEquals(sweet.getExtraIngredients(), new ArrayList<>());
+        Optional<Sweet> sweet = sweetService.findSweetById(String.valueOf(1L));
+        if (sweet.isPresent()) {
+            assertEquals(sweet.get().getId(), 1L);
+            assertEquals(sweet.get().getSweetType(), SweetType.DONUT);
+            assertEquals(sweet.get().getPrice(), 5);
+            assertEquals(sweet.get().getIngredientsList().toString(), new ArrayList<>(List.of(
+                    Ingredient.builder().id(1).name("Sugar").price(1.5).build(),
+                    Ingredient.builder().id(2).name("Milk").price(1).build(),
+                    Ingredient.builder().id(3).name("Flour").price(0.75).build())).toString());
+            assertEquals(sweet.get().getExtraIngredients(), new ArrayList<>());
+        } else fail("Sweet findSweetById failed");
     }
 
     @Test
@@ -98,75 +101,75 @@ class SweetServiceImplTest {
         assertThrowsExactly(ServiceException.class,
                 () -> sweetService.findSweetById("abcd"),
                 SWEET_ID_EXCEPTION);
-
-        Sweet sweet = sweetService.findSweetById("777");
-        assertNull(sweet);
+        assertThrowsExactly(ServiceException.class,
+                () -> sweetService.findSweetById("777"),
+                SWEET_ID_EXCEPTION);
     }
 
     @Test
     void testCreateEmptySweet() throws ServiceException {
-        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
-
-        assertEquals(sweet.getSweetType(), SweetType.UNIQUE);
-        assertEquals(sweet.getId(), ID + 1);
-        assertEquals(sweet.getOriginalPrice(), SWEET_DEFAULT_PRICE);
-        assertEquals(sweet.getExtraPrice(), 0);
-        assertEquals(sweet.getPrice(), SWEET_DEFAULT_PRICE);
-        assertTrue(sweet.getExtraIngredients().isEmpty());
-        assertTrue(sweet.getIngredientsList().isEmpty());
+        Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
+        if (sweet.isPresent()) {
+            assertEquals(sweet.get().getSweetType(), SweetType.UNIQUE);
+            assertEquals(sweet.get().getId(), ID + 1);
+            assertEquals(sweet.get().getOriginalPrice(), SWEET_DEFAULT_PRICE);
+            assertEquals(sweet.get().getExtraPrice(), 0);
+            assertEquals(sweet.get().getPrice(), SWEET_DEFAULT_PRICE);
+            assertTrue(sweet.get().getExtraIngredients().isEmpty());
+            assertTrue(sweet.get().getIngredientsList().isEmpty());
+        } else fail("Sweet createEmptySweet failed");
     }
 
     @Test
     void testValidAddIngredientToSweet() throws ServiceException {
-        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
-        assertEquals(sweet.getIngredientsList().size(), 0);
+        Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
+        if (sweet.isPresent()) {
+            assertEquals(sweet.get().getIngredientsList().size(), 0);
 
-        sweetService.addIngredientToSweet(sweet, ingredient, AMOUNT);
-        assertEquals(sweet.getIngredientsList().size(), AMOUNT);
-        assertEquals(sweet.getOriginalPrice(), 2 + INGREDIENT_PRICE * AMOUNT);
-    }
-
-    void testInvalidAddIngredientToSweet() {
-        assertThrowsExactly(ServiceException.class,
-                () -> sweetService.addIngredientToSweet(null, ingredient, AMOUNT),
-                ID_INGREDIENT_EXCEPTION);
+            sweetService.addIngredientToSweet(sweet.get(), ingredient, AMOUNT);
+            assertEquals(sweet.get().getIngredientsList().size(), AMOUNT);
+            assertEquals(sweet.get().getOriginalPrice(), 2 + INGREDIENT_PRICE * AMOUNT);
+        } else fail("Sweet addIngredientToSweet failed");
     }
 
     @Test
     void testValidAddAllIngredientsToSweet() throws ServiceException {
-        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
-        assertEquals(sweet.getIngredientsList().size(), 0);
+        Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
+        if (sweet.isPresent()) {
+            assertEquals(sweet.get().getIngredientsList().size(), 0);
 
-        String add1 = "oreo,2;ice cream,3;";
-        sweetService.addAllIngredientsToSweet(sweet, add1);
-        assertEquals(sweet.getIngredientsList().size(), 5);
-        verifIfAllAdded(add1, sweet.getIngredientsList().subList(0, 5));
+            String add1 = "oreo,2;ice cream,3;";
+            sweetService.addAllIngredientsToSweet(sweet.get(), add1);
+            assertEquals(sweet.get().getIngredientsList().size(), 5);
+            verifIfAllAdded(add1, sweet.get().getIngredientsList().subList(0, 5));
 
-        String add2 = "sugar,1;sugar,3;sugar,2;";
-        sweetService.addAllIngredientsToSweet(sweet, add2);
-        assertEquals(sweet.getIngredientsList().size(), 11);
-        verifIfAllAdded(add2, sweet.getIngredientsList().subList(5, 11));
+            String add2 = "sugar,1;sugar,3;sugar,2;";
+            sweetService.addAllIngredientsToSweet(sweet.get(), add2);
+            assertEquals(sweet.get().getIngredientsList().size(), 11);
+            verifIfAllAdded(add2, sweet.get().getIngredientsList().subList(5, 11));
 
-        String add3 = "cacao,2;";
-        sweetService.addAllIngredientsToSweet(sweet, add3);
-        assertEquals(sweet.getIngredientsList().size(), 13);
-        verifIfAllAdded(add3, sweet.getIngredientsList().subList(11, 13));
+            String add3 = "cacao,2;";
+            sweetService.addAllIngredientsToSweet(sweet.get(), add3);
+            assertEquals(sweet.get().getIngredientsList().size(), 13);
+            verifIfAllAdded(add3, sweet.get().getIngredientsList().subList(11, 13));
+        } else fail("Sweet addAllIngredientsToSweet failed");
     }
 
 
     @Test
     void testInvalidAddAllIngredientsToSweet() throws ServiceException {
-        Sweet sweet = sweetService.createNewSweetWithoutIngredients();
-        assertEquals(sweet.getIngredientsList().size(), 0);
+        Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
+        if (sweet.isPresent()) {
+            assertEquals(sweet.get().getIngredientsList().size(), 0);
 
-        assertThrowsExactly(ServiceException.class,
-                () -> sweetService.addAllIngredientsToSweet(sweet, "cacao,buna;"),
-                INGREDIENT_AMOUNT_EXCEPTION);
+            assertThrowsExactly(ServiceException.class,
+                    () -> sweetService.addAllIngredientsToSweet(sweet.get(), "cacao,buna;"),
+                    INGREDIENT_AMOUNT_EXCEPTION);
 
-        assertThrowsExactly(ServiceException.class,
-                () -> sweetService.addAllIngredientsToSweet(sweet, "cacaua,3;"),
-                INGREDIENT_NAME_EXCEPTION);
-
+            assertThrowsExactly(ServiceException.class,
+                    () -> sweetService.addAllIngredientsToSweet(sweet.get(), "cacaua,3;"),
+                    INGREDIENT_NAME_EXCEPTION);
+        } else fail("Sweet addAllIngredientsToSweet failed");
     }
 
     private void verifIfAllAdded(String sequence, List<Ingredient> ingredientsList) {

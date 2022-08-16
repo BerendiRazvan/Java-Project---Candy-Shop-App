@@ -5,13 +5,14 @@ import domain.sweet.Sweet;
 import service.exception.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SweetService {
     List<Sweet> getAvailableSweets();
 
-    Sweet findSweetById(String sweetId) throws ServiceException;
+    Optional<Sweet>  findSweetById(String sweetId) throws ServiceException;
 
-    Sweet createNewSweetWithoutIngredients() throws ServiceException;
+    Optional<Sweet> createNewSweetWithoutIngredients() throws ServiceException;
 
     void addIngredientToSweet(Sweet customSweet, Ingredient newIngredient, int amount) throws ServiceException;
 

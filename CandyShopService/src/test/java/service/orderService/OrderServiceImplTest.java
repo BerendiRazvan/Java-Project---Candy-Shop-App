@@ -20,10 +20,7 @@ import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static service.ConstantValues.*;
@@ -93,14 +90,16 @@ class OrderServiceImplTest {
                 .build();
         ingredientRepository.generateIngredients();
 
+        Ingredient ingredient1 = ingredientRepository.findIngredientById(1L).isPresent() ?
+                ingredientRepository.findIngredientById(1L).get() : fail();
+        Ingredient ingredient2 = ingredientRepository.findIngredientById(2L).isPresent() ?
+                ingredientRepository.findIngredientById(2L).get() : fail();
+        Ingredient ingredient3 = ingredientRepository.findIngredientById(3L).isPresent() ?
+                ingredientRepository.findIngredientById(3L).get() : fail();
+
         sweet = Sweet.builder()
                 .id(ID)
-                .ingredientsList(
-                        new ArrayList<>(List.of(
-                                ingredientRepository.findIngredientById(1L),
-                                ingredientRepository.findIngredientById(2L),
-                                ingredientRepository.findIngredientById(3L)
-                        )))
+                .ingredientsList(new ArrayList<>(List.of(ingredient1, ingredient2, ingredient3)))
                 .sweetType(SweetType.DONUT)
                 .price(SWEET_PRICE)
                 .build();
@@ -130,35 +129,37 @@ class OrderServiceImplTest {
 
     @Test
     void testCreateOrder() throws ServiceException {
-        Order order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
-
-        assertEquals(order.getCustomer(), customer);
-        assertEquals(order.getShop(), shop);
-        assertEquals(order.getOrderType(), OrderType.DELIVERY);
-        assertTrue(order.getOrderedSweets().isEmpty());
+        Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        if (order.isPresent()) {
+            assertEquals(order.get().getCustomer(), customer);
+            assertEquals(order.get().getShop(), shop);
+            assertEquals(order.get().getOrderType(), OrderType.DELIVERY);
+            assertTrue(order.get().getOrderedSweets().isEmpty());
+        } else fail("Order createOrder failed");
     }
 
     @Test
     void testValidAddToOrder() throws ServiceException {
-        Order order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        if (order.isPresent()) {
+            double moneyMade = orderService.getMoneyMadeToday();
+            orderService.addToOrder(order.get(), sweet);
 
-        double moneyMade = orderService.getMoneyMadeToday();
-        orderService.addToOrder(order, sweet);
+            assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
 
-        assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
+            orderService.addToOrder(order.get(), sweet);
+            orderService.addToOrder(order.get(), sweet);
 
-        orderService.addToOrder(order, sweet);
-        orderService.addToOrder(order, sweet);
-
-        assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+            assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+        } else fail("Order addToOrder failed");
     }
 
     @Test
-    void testInvalidAddToOrder() {
-        assertThrowsExactly(ServiceException.class,
-                () -> orderService.addToOrder(
-                        orderService.createOrder(customer, OrderType.DELIVERY, shop), null),
-                SWEET_ID_EXCEPTION);
+    void testInvalidAddToOrder() throws ServiceException {
+        Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        order.ifPresent(value -> assertThrowsExactly(ServiceException.class,
+                () -> orderService.addToOrder(value, null),
+                SWEET_ID_EXCEPTION));
     }
 
 

@@ -1,6 +1,6 @@
 package repository.sweetRepository;
 
-import domain.order.Order;
+
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
@@ -28,20 +28,20 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public void update(Long id, Sweet sweet) throws RepositoryException {
-        Sweet sweetToUpdate = findSweetById(id);
-        if (sweetToUpdate == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Sweet> sweetToUpdate = findSweetById(id);
+        if (sweetToUpdate.isPresent())
+            sweetList.set(sweetList.indexOf(sweetToUpdate.get()), sweet);
         else
-            sweetList.set(sweetList.indexOf(sweetToUpdate), sweet);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        Sweet sweetToDelete = findSweetById(id);
-        if (sweetToDelete == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Sweet> sweetToDelete = findSweetById(id);
+        if (sweetToDelete.isPresent())
+            sweetList.remove(sweetToDelete.get());
         else
-            sweetList.remove(sweetToDelete);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
@@ -50,10 +50,10 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public Sweet findSweetById(Long id) {
-        for (Sweet sweet : sweetList)
-            if (id == sweet.getId()) return sweet;
-        return null;
+    public Optional<Sweet> findSweetById(Long id) {
+        return sweetList.stream()
+                .filter(sweet -> id == sweet.getId())
+                .findFirst();
     }
 
     @Override
@@ -61,20 +61,24 @@ public class SweetInMemoryRepository implements SweetRepository {
         List<Ingredient> ingredientList = ingredientRepository.findAll();
         int noOfSweets = SWEETS_TO_GENERATE;
         while (noOfSweets != 0) {
-            sweetList.add(Sweet.builder()
-                    .id(generateSweetId())
-                    .ingredientsList(randomRecipe(ingredientList))
-                    .sweetType(randomSweetType())
-                    .price(0)
-                    .build());
-            noOfSweets--;
+            Optional<Long> id = generateSweetId();
+            Optional<SweetType> sweetType = randomSweetType();
+            if (id.isPresent()&&sweetType.isPresent()) {
+                sweetList.add(Sweet.builder()
+                        .id(id.get())
+                        .ingredientsList(randomRecipe(ingredientList))
+                        .sweetType(sweetType.get())
+                        .price(0)
+                        .build());
+                noOfSweets--;
+            } else throw new RuntimeException("Error: generateSweetId");
         }
         sweetList.forEach(sweet -> sweet.setPrice(generatePrice(sweet.getIngredientsList())));
     }
 
     @Override
-    public long generateSweetId() {
-        int id = 1;
+    public Optional<Long> generateSweetId() {
+        long id = 1;
         while (true) {
             boolean ok = true;
             for (var s : sweetList)
@@ -83,7 +87,7 @@ public class SweetInMemoryRepository implements SweetRepository {
                     break;
                 }
 
-            if (ok) return id;
+            if (ok) return Optional.of(id);
             id++;
         }
     }
@@ -113,19 +117,19 @@ public class SweetInMemoryRepository implements SweetRepository {
         return recipe;
     }
 
-    private SweetType randomSweetType() {
+    private Optional<SweetType> randomSweetType() {
         Random random = new Random();
-        switch (random.nextInt(5)){
+        switch (random.nextInt(5)) {
             case 1:
-                return SweetType.CROISSANT;
+                return Optional.of(SweetType.CROISSANT);
             case 2:
-                return SweetType.DONUT;
+                return Optional.of(SweetType.DONUT);
             case 3:
-                return SweetType.WAFFLES;
+                return Optional.of(SweetType.WAFFLES);
             case 4:
-                return SweetType.HOMEMADE_CHOCOLATE;
+                return Optional.of(SweetType.HOMEMADE_CHOCOLATE);
             default:
-                return SweetType.CAKE;
+                return Optional.of(SweetType.CAKE);
         }
     }
 }

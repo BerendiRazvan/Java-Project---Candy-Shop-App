@@ -25,7 +25,7 @@ public class Main {
     }
 
     public static void startApp() {
-        System.out.println("\nWELCOME TO THE CANDY MY FRIEND :)\n");
+        System.out.println("\nWELCOME TO THE CANDY SHOP MY FRIEND :)\n");
 
         Shop shop = Shop.builder()
                 .name("Candy Crush Shop")

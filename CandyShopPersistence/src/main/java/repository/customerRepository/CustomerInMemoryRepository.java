@@ -8,6 +8,7 @@ import repository.exception.RepositoryException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 @Builder
@@ -26,20 +27,20 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public void update(Long id, Customer customer) throws RepositoryException {
-        Customer customerToUpdate = findCustomerById(id);
-        if (customerToUpdate == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Customer> customerToUpdate = findCustomerById(id);
+        if (customerToUpdate.isPresent())
+            customerList.set(customerList.indexOf(customerToUpdate.get()), customer);
         else
-            customerList.set(customerList.indexOf(customerToUpdate), customer);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        Customer customerToRemove = findCustomerById(id);
-        if (customerToRemove == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Customer> customerToRemove = findCustomerById(id);
+        if (customerToRemove.isPresent())
+            customerList.remove(customerToRemove.get());
         else
-            customerList.remove(customerToRemove);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
@@ -48,24 +49,24 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
-    public Customer findCustomerByEmail(String email) {
-        for (Customer customer : customerList)
-            if (email.equals(customer.getEmail())) return customer;
-        return null;
+    public Optional<Customer> findCustomerByEmail(String email) {
+        return customerList.stream()
+                .filter(customer -> email.equals(customer.getEmail()))
+                .findFirst();
     }
 
     @Override
-    public Customer findCustomerById(Long id) {
-        for (Customer customer : customerList)
-            if (customer.getId() == id) return customer;
-        return null;
+    public Optional<Customer> findCustomerById(Long id) {
+        return customerList.stream()
+                .filter(customer -> id == customer.getId())
+                .findFirst();
     }
 
     @Override
-    public int generateCustomerId() {
+    public Optional<Long> generateCustomerId() {
         //the temporary method
         //it will no longer be needed after we add a db because the id will be automatically generated
-        int id = 1;
+        long id = 1;
         while (true) {
             boolean ok = true;
             for (var c : customerList)
@@ -74,7 +75,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
                     break;
                 }
 
-            if (ok) return id;
+            if (ok) return Optional.of(id);
             id++;
         }
     }

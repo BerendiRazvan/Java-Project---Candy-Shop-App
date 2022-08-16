@@ -32,20 +32,20 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public void update(Long id, Order order) throws RepositoryException {
-        Order orderToUpdate = findOrderById(id);
-        if (orderToUpdate == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Order> orderToUpdate = findOrderById(id);
+        if (orderToUpdate.isPresent())
+            orderList.set(orderList.indexOf(orderToUpdate.get()), order);
         else
-            orderList.set(orderList.indexOf(orderToUpdate), order);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        Order orderToRemove = findOrderById(id);
-        if (orderToRemove == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Order> orderToRemove = findOrderById(id);
+        if (orderToRemove.isPresent())
+            orderList.remove(orderToRemove.get());
         else
-            orderList.remove(orderToRemove);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
@@ -54,10 +54,10 @@ public class OrderInMemoryRepository implements OrderRepository {
     }
 
     @Override
-    public Order findOrderById(Long id) {
-        for (Order order : orderList)
-            if (order.getId() == id) return order;
-        return null;
+    public Optional<Order> findOrderById(Long id) {
+        return orderList.stream()
+                .filter(order -> id == order.getId())
+                .findFirst();
     }
 
     @Override
@@ -67,23 +67,28 @@ public class OrderInMemoryRepository implements OrderRepository {
         List<Customer> customerList = customerRepository.findAll();
         int noOfOrders = ORDERS_TO_GENERATE;
         while (noOfOrders != 0) {
-            orderList.add(Order.builder()
-                    .id(generateOrderId())
-                    .orderedSweets(randomOrder(sweetList))
-                    .orderType(randomOrderType())
-                    .customer(randomCustomer(customerList))
-                    .shop(shop)
-                    .build());
-            noOfOrders--;
+            Optional<Long> id = generateOrderId();
+            Optional<OrderType> orderType = randomOrderType();
+            Optional<Customer> customer = randomCustomer(customerList);
+            if (id.isPresent() && orderType.isPresent() && customer.isPresent()) {
+                orderList.add(Order.builder()
+                        .id(id.get())
+                        .orderedSweets(randomOrder(sweetList))
+                        .orderType(orderType.get())
+                        .customer(customer.get())
+                        .shop(shop)
+                        .build());
+                noOfOrders--;
+            } else throw new RuntimeException("Error: generateOrderId");
         }
 
     }
 
     @Override
-    public int generateOrderId() {
+    public Optional<Long> generateOrderId() {
         //the temporary method
         //it will no longer be needed after we add a db because the id will be automatically generated
-        int id = 1;
+        long id = 1;
         while (true) {
             boolean ok = true;
             for (var o : orderList)
@@ -91,7 +96,7 @@ public class OrderInMemoryRepository implements OrderRepository {
                     ok = false;
                     break;
                 }
-            if (ok) return id;
+            if (ok) return Optional.of(id);
             id++;
         }
     }
@@ -112,15 +117,16 @@ public class OrderInMemoryRepository implements OrderRepository {
         return sweetIntegerMap;
     }
 
-    private static Customer randomCustomer(List<Customer> all) {
+    private static Optional<Customer> randomCustomer(List<Customer> all) {
         Random random = new Random();
-        return all.get(random.nextInt(all.size()));
+        return Optional.of(all.get(random.nextInt(all.size())));
     }
 
-    private static OrderType randomOrderType() {
+    private static Optional<OrderType> randomOrderType() {
         Random random = new Random();
         if (random.nextInt(2) == 0)
-            return OrderType.DELIVERY;
-        else return OrderType.PICKUP;
+            return Optional.of(OrderType.DELIVERY);
+        else
+            return Optional.of(OrderType.PICKUP);
     }
 }
