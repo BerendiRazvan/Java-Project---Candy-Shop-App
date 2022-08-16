@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
 
         Optional<Order> orderById = orderRepository.findOrderById(id);
         if (orderById.isPresent()) {
-            return new StringBuilder(orderById +
+            return new StringBuilder(orderById.get() +
                     "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderById.get())) + "$" +
                     "\n" + "-".repeat(100) + "\n");
         } else throw new ServiceException("Invalid order number/id!");

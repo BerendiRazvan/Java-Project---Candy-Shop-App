@@ -117,29 +117,6 @@ public class OrderSweetUI {
         }
     }
 
-    private void option5(Order order) {
-        System.out.println("\nAvailable ingredients:");
-        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
-        try {
-            Optional<Sweet> customSweet = sweetService.createNewSweetWithoutIngredients();
-            System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
-            String ingredients = SCANNER.nextLine();
-            if (ingredients.matches(expressionVerification) && customSweet.isPresent())
-                try {
-                    sweetService.addAllIngredientsToSweet(customSweet.get(), ingredients);
-                    orderService.addToOrder(order, customSweet.get());
-                    System.out.println(customSweet);
-                    System.out.println("Sweet added, yummy :)");
-                } catch (ServiceException e) {
-                    System.out.println(e.getMessage());
-                }
-            else
-                System.out.println("Invalid input for ingredients to add :(");
-        } catch (ServiceException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     private void option1(Order order) {
         System.out.print("Choose a sweet (enter sweet id): ");
         String sweetId = SCANNER.nextLine().toUpperCase();
@@ -232,6 +209,29 @@ public class OrderSweetUI {
                         ingredientOptional.get());
                 System.out.println("Sweet modified :)");
             } else throw new ServiceException("Invalid sweet/ingredient id!");
+        } catch (ServiceException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void option5(Order order) {
+        System.out.println("\nAvailable ingredients:");
+        ingredientService.showAllIngredientsInStock().forEach(System.out::println);
+        try {
+            Optional<Sweet> customSweet = sweetService.createNewSweetWithoutIngredients();
+            System.out.print("Enter ingredients to add (ingredient1,amount1;ingredient2,amount2;...): ");
+            String ingredients = SCANNER.nextLine();
+            if (ingredients.matches(expressionVerification) && customSweet.isPresent())
+                try {
+                    sweetService.addAllIngredientsToSweet(customSweet.get(), ingredients);
+                    orderService.addToOrder(order, customSweet.get());
+                    System.out.println(customSweet);
+                    System.out.println("Sweet added, yummy :)");
+                } catch (ServiceException e) {
+                    System.out.println(e.getMessage());
+                }
+            else
+                System.out.println("Invalid input for ingredients to add :(");
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
