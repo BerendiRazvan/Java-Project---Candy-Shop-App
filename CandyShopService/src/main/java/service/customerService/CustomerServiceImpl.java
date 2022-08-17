@@ -7,6 +7,7 @@ import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
 import service.exception.ServiceException;
+import validator.CustomerValidator;
 
 import java.util.Optional;
 
@@ -18,23 +19,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<Customer> login(String mail, String password) throws ServiceException {
         Optional<Customer> customerTry = customerRepository.findCustomerByEmail(mail);
-        if (customerTry.isPresent()) {
+        if (customerTry.isPresent())
             return verifyPassword(password, customerTry.get());
-        } else {
+        else
             throw new ServiceException("Authentication failed!");
-        }
     }
 
     @Override
     public Optional<Customer> createAccount(String firstName, String lastName, String email, String password,
-                                  String phoneNumber, Location customerLocation) throws ServiceException {
-
+                                            String phoneNumber, Location customerLocation) throws ServiceException {
         Optional<Long> id = customerRepository.generateCustomerId();
-
-        String errorsAfterValidation = customerValidation(firstName, lastName, email, password, phoneNumber, customerLocation);
-        if (!errorsAfterValidation.matches("")) {
-            throw new ServiceException(errorsAfterValidation);
-        }
 
         if (id.isPresent()) {
             Customer customer = Customer.builder()
@@ -46,12 +40,18 @@ public class CustomerServiceImpl implements CustomerService {
                     .phoneNumber(phoneNumber)
                     .location(customerLocation)
                     .build();
+
+            CustomerValidator validator = new CustomerValidator();
+            if (!validator.isValidCustomer(customer))
+                throw new ServiceException(validator.customerValidation(customer));
+
             try {
                 customerRepository.add(customer);
             } catch (RepositoryException e) {
                 throw new ServiceException(e.getMessage());
             }
             return Optional.of(customer);
+
         } else throw new RuntimeException("Error: generateCustomerId");
     }
 
@@ -65,24 +65,5 @@ public class CustomerServiceImpl implements CustomerService {
             return Optional.of(account);
         else
             throw new ServiceException("Invalid password!\n");
-    }
-
-    private String customerValidation(String firstName, String lastName, String email, String password,
-                                      String phoneNumber, Location location) {
-        String error = "";
-
-        if (firstName.equals("") || !firstName.matches("[a-zA-Z]+")) error += "Invalid first name!\n";
-
-        if (lastName.equals("") || !lastName.matches("[a-zA-Z]+")) error += "Invalid last name!\n";
-
-        if (email.equals("") || !email.matches("^[A-Za-z\\d+_.-]+@(.+)$")) error += "Invalid email!\n";
-
-        if (password.length() < 6) error += "Invalid password!\n";
-
-        if (phoneNumber.length() != 10 || !phoneNumber.matches("\\d+")) error += "Invalid phone number!\n";
-
-        if (location.getAddress().length() < 10) error += "Invalid address!\n";
-
-        return error;
     }
 }

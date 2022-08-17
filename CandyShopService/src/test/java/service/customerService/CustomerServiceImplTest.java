@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
 import service.exception.ServiceException;
+import validator.CustomerValidator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import static service.ConstantValues.*;
 
 class CustomerServiceImplTest {
     private CustomerService customerService;
+    private CustomerValidator validator;
     private Location location;
 
     @BeforeAll
@@ -27,6 +29,8 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        validator = new CustomerValidator();
+
         location = Location.builder()
                 .country(COUNTRY)
                 .city(CITY)
@@ -106,10 +110,10 @@ class CustomerServiceImplTest {
             IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation("", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerFirstNameValidator("");
         assertEquals(errors, CUSTOMER_FIRST_NAME_EXCEPTION);
 
-        errors = getCustomerValidation("Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerFirstNameValidator("Razvan1234");
         assertEquals(errors, CUSTOMER_FIRST_NAME_EXCEPTION);
     }
 
@@ -118,10 +122,10 @@ class CustomerServiceImplTest {
             InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerLastNameValidator("");
         assertEquals(errors, CUSTOMER_LAST_NAME_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerLastNameValidator("B3r3ndi");
         assertEquals(errors, CUSTOMER_LAST_NAME_EXCEPTION);
     }
 
@@ -130,16 +134,16 @@ class CustomerServiceImplTest {
             InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerEmailValidator("");
         assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerEmailValidator("razvan.gmail.com");
         assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerEmailValidator("@gmail.com");
         assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerEmailValidator("gmail.com@");
         assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
     }
 
@@ -148,10 +152,10 @@ class CustomerServiceImplTest {
             IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER, location);
+        errors = validator.customerPasswordValidator("");
         assertEquals(errors, CUSTOMER_PASSWORD_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER, location);
+        errors = validator.customerPasswordValidator("1234");
         assertEquals(errors, CUSTOMER_PASSWORD_EXCEPTION);
     }
 
@@ -161,16 +165,16 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "", location);
+        errors = validator.customerPhoneNumberValidator("");
         assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "12e456789w", location);
+        errors = validator.customerPhoneNumberValidator("12e456789w");
         assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "09872", location);
+        errors = validator.customerPhoneNumberValidator("09872");
         assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "098123132372", location);
+        errors = validator.customerPhoneNumberValidator("098123132372");
         assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
     }
 
@@ -179,20 +183,18 @@ class CustomerServiceImplTest {
             IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                Location.builder()
-                        .country(COUNTRY)
-                        .city(CITY)
-                        .address("")
-                        .build());
+        errors = validator.customerLocationValidator(Location.builder()
+                .country(COUNTRY)
+                .city(CITY)
+                .address("")
+                .build());
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                Location.builder()
-                        .country(COUNTRY)
-                        .city(CITY)
-                        .address("aproape")
-                        .build());
+        errors = validator.customerLocationValidator(Location.builder()
+                .country(COUNTRY)
+                .city(CITY)
+                .address("")
+                .build());
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
     }
 
@@ -202,20 +204,40 @@ class CustomerServiceImplTest {
 
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, "", "", location);
+        errors = validator.customerValidation(Customer.builder()
+                .firstName(FIRST_NAME)
+                .lastName("")
+                .email(EMAIL)
+                .password("")
+                .phoneNumber("")
+                .location(location)
+                .build());
         assertEquals(errors,
                 CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_PASSWORD_EXCEPTION +
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation("", "", EMAIL, PASSWORD, "", location);
+        errors = validator.customerValidation(Customer.builder()
+                .firstName("")
+                .lastName("")
+                .email(EMAIL)
+                .password(PASSWORD)
+                .phoneNumber("")
+                .location(location)
+                .build());
         assertEquals(errors,
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation("", "", "", "", "",
-                new Location("Romania", "Cluj", ""));
+        errors = validator.customerValidation(Customer.builder()
+                .firstName("")
+                .lastName("")
+                .email("")
+                .password("")
+                .phoneNumber("")
+                .location(new Location("Romania", "Cluj", ""))
+                .build());
         assertEquals(errors,
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +
@@ -230,8 +252,14 @@ class CustomerServiceImplTest {
             InvocationTargetException, IllegalAccessException {
         String errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                PASSWORD, PHONE_NUMBER, location);
+        errors = validator.customerValidation(Customer.builder()
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email("berendi.rav2001@gmail.com")
+                .password(PASSWORD)
+                .phoneNumber(PHONE_NUMBER)
+                .location(location)
+                .build());
         assertEquals(errors, "");
     }
 
@@ -255,19 +283,6 @@ class CustomerServiceImplTest {
         assertFalse(customerService.checkIfEmailExists("1234br@gmail.com"));
         assertFalse(customerService.checkIfEmailExists(" "));
         assertFalse(customerService.checkIfEmailExists(" br@gmail.com "));
-    }
-
-    private String getCustomerValidation(String firstName, String lastName, String email, String password,
-                                         String phoneNumber, Location location) throws NoSuchMethodException,
-            SecurityException, InvocationTargetException, IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
-        return (String) method.invoke(customerService, firstName, lastName, email, password, phoneNumber, location);
     }
 
 }
