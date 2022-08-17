@@ -10,6 +10,7 @@ import service.exception.ServiceException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,12 +27,20 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        location = new Location(ID, COUNTRY, CITY, ADDRESS);
+        location = Location.builder()
+                .country(COUNTRY)
+                .city(CITY)
+                .address(ADDRESS)
+                .build();
 
-        CustomerRepository customerRepository =
-                new CustomerInMemoryRepository(new ArrayList<>());
+        CustomerRepository customerRepository = CustomerInMemoryRepository.builder()
+                .customerList(new ArrayList<>())
+                .build();
         customerRepository.generateCustomers();
-        customerService = new CustomerServiceImpl(customerRepository);
+
+        customerService = CustomerServiceImpl.builder()
+                .customerRepository(customerRepository)
+                .build();
     }
 
     @AfterEach
@@ -45,14 +54,16 @@ class CustomerServiceImplTest {
 
     @Test
     void testValidLogin() throws ServiceException {
-        Customer customer = customerService.login(EMAIL, PASSWORD);
-        assertEquals(customer.getId(), ID);
-        assertEquals(customer.getEmail(), EMAIL);
-        assertEquals(customer.getFirstName(), FIRST_NAME);
-        assertEquals(customer.getLastName(), LAST_NAME);
-        assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
-        assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getLocation().getAddress(), ADDRESS);
+        Optional<Customer> customer = customerService.login(EMAIL, PASSWORD);
+        if (customer.isPresent()) {
+            assertEquals(customer.get().getId(), ID);
+            assertEquals(customer.get().getEmail(), EMAIL);
+            assertEquals(customer.get().getFirstName(), FIRST_NAME);
+            assertEquals(customer.get().getLastName(), LAST_NAME);
+            assertEquals(customer.get().getPhoneNumber(), PHONE_NUMBER);
+            assertEquals(customer.get().getPassword(), PASSWORD);
+            assertEquals(customer.get().getLocation().getAddress(), ADDRESS);
+        } else fail("Customer login failed");
     }
 
     @Test
@@ -69,15 +80,17 @@ class CustomerServiceImplTest {
 
     @Test
     void testValidCreateAccount() throws ServiceException {
-        Customer customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
+        Optional<Customer> customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                 PASSWORD, PHONE_NUMBER, location);
-        assertEquals(customer.getId(), 6);
-        assertEquals(customer.getEmail(), "berendi.rav2001@gmail.com");
-        assertEquals(customer.getFirstName(), FIRST_NAME);
-        assertEquals(customer.getLastName(), LAST_NAME);
-        assertEquals(customer.getPhoneNumber(), PHONE_NUMBER);
-        assertEquals(customer.getPassword(), PASSWORD);
-        assertEquals(customer.getLocation().getAddress(), ADDRESS);
+        if (customer.isPresent()) {
+            assertEquals(customer.get().getId(), 6);
+            assertEquals(customer.get().getEmail(), "berendi.rav2001@gmail.com");
+            assertEquals(customer.get().getFirstName(), FIRST_NAME);
+            assertEquals(customer.get().getLastName(), LAST_NAME);
+            assertEquals(customer.get().getPhoneNumber(), PHONE_NUMBER);
+            assertEquals(customer.get().getPassword(), PASSWORD);
+            assertEquals(customer.get().getLocation().getAddress(), ADDRESS);
+        } else fail("Customer login failed");
     }
 
     @Test
@@ -167,17 +180,25 @@ class CustomerServiceImplTest {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                new Location(1, "Romania", "Cluj", ""));
+                Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address("")
+                        .build());
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                new Location(1, "Romania", "Cluj", "aproape"));
+                Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address("aproape")
+                        .build());
         assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+    void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException,
+            InvocationTargetException, IllegalAccessException {
 
         String errors;
 
@@ -194,7 +215,7 @@ class CustomerServiceImplTest {
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
         errors = getCustomerValidation("", "", "", "", "",
-                new Location(1, "Romania", "Cluj", ""));
+                new Location("Romania", "Cluj", ""));
         assertEquals(errors,
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +
@@ -205,8 +226,8 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+    void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException,
+            InvocationTargetException, IllegalAccessException {
         String errors;
 
         errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",

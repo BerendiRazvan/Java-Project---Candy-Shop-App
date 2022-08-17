@@ -9,10 +9,11 @@ import domain.sweet.Sweet;
 import service.exception.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderService {
 
-    Order createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException;
+    Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException;
 
     void addToOrder(Order order, Sweet newSweet) throws ServiceException;
 

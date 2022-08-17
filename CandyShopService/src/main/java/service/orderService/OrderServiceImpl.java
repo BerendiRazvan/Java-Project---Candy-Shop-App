@@ -6,6 +6,8 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
@@ -14,38 +16,34 @@ import service.exception.ServiceException;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
+@Builder
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private OrderRepository orderRepository;
     private SweetRepository sweetRepository;
     private IngredientRepository ingredientRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, SweetRepository sweetRepository, IngredientRepository ingredientRepository) {
-        this.orderRepository = orderRepository;
-        this.ingredientRepository = ingredientRepository;
-        this.sweetRepository = sweetRepository;
-    }
 
     @Override
-    public Order createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
-        int id = orderRepository.generateOrderId();
+    public Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
+        Optional<Long> id = orderRepository.generateOrderId();
 
-        try {
-            Order order = new Order(id, new HashMap<>(), orderType, customer, shop);
-            orderRepository.add(order);
-            return order;
-        } catch (RepositoryException e) {
-            throw new ServiceException(e.getMessage());
-        }
+        if (id.isPresent()) {
+            try {
+                Order order = new Order(id.get(), new HashMap<>(), orderType, customer, shop);
+                orderRepository.add(order);
+                return Optional.of(order);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        } else throw new RuntimeException("Error: generateOrderId");
     }
 
 
@@ -53,15 +51,17 @@ public class OrderServiceImpl implements OrderService {
     public void addToOrder(Order order, Sweet newSweet) throws ServiceException {
         if (newSweet == null) throw new ServiceException("Invalid sweet id!");
         else {
-            Order updateOrder = orderRepository.findOrderById(order.getId());
-            try {
-                updateShopStockAfterAddToOrder(newSweet.getIngredientsList());
-                updateShopStockAfterAddToOrder(newSweet.getExtraIngredients());
-                addSweetToOrder(updateOrder, newSweet);
-                orderRepository.update(order.getId(), updateOrder);
-            } catch (RepositoryException e) {
-                throw new ServiceException(e.getMessage());
-            }
+            Optional<Order> updateOrder = orderRepository.findOrderById(order.getId());
+            if (updateOrder.isPresent()) {
+                try {
+                    updateShopStockAfterAddToOrder(newSweet.getIngredientsList());
+                    updateShopStockAfterAddToOrder(newSweet.getExtraIngredients());
+                    addSweetToOrder(updateOrder.get(), newSweet);
+                    orderRepository.update(order.getId(), updateOrder.get());
+                } catch (RepositoryException e) {
+                    throw new ServiceException(e.getMessage());
+                }
+            } else throw new ServiceException("Invalid sweet id!");
         }
     }
 
@@ -70,13 +70,12 @@ public class OrderServiceImpl implements OrderService {
     public StringBuilder getOrderDetails(String orderId) throws ServiceException {
         long id = convertStringToLong(orderId);
 
-        Order orderById = orderRepository.findOrderById(id);
-        if (orderById == null) throw new ServiceException("Invalid order number/id!");
-        else {
-            return new StringBuilder(orderById +
-                    "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderById)) + "$" +
+        Optional<Order> orderById = orderRepository.findOrderById(id);
+        if (orderById.isPresent()) {
+            return new StringBuilder(orderById.get() +
+                    "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderById.get())) + "$" +
                     "\n" + "-".repeat(100) + "\n");
-        }
+        } else throw new ServiceException("Invalid order number/id!");
     }
 
     @Override
@@ -138,19 +137,28 @@ public class OrderServiceImpl implements OrderService {
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
 
-        Sweet customSweet = new Sweet(sweetRepository.generateSweetId(), sweet.getIngredientsList(),
-                sweet.getSweetType(), sweet.getPrice());
-        customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
+        Optional<Long> id = sweetRepository.generateSweetId();
+        if (id.isPresent()) {
+            Sweet customSweet = Sweet.builder()
+                    .id(id.get())
+                    .ingredientsList(sweet.getIngredientsList())
+                    .sweetType(sweet.getSweetType())
+                    .price(sweet.getPrice())
+                    .build();
+            customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
 
-        updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);
 
-        removeSweetFromOrder(order, sweet);
-        addSweetToOrder(order, customSweet);
-        try {
-            sweetRepository.add(customSweet);
-        } catch (RepositoryException e) {
-            throw new ServiceException(e.getMessage());
-        }
+            updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);
+
+            removeSweetFromOrder(order, sweet);
+            addSweetToOrder(order, customSweet);
+
+            try {
+                sweetRepository.add(customSweet);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        } else throw new RuntimeException("Error: generateSweetId");
     }
 
     @Override
@@ -188,12 +196,10 @@ public class OrderServiceImpl implements OrderService {
         while (actualAmount - ingredientAmount != 0) {
             if (actualAmount < ingredientAmount) {
                 sweet.getExtraIngredients().add(ingredient);
-                sweet.setPrice(sweet.getPrice() + ingredient.getPrice());
                 decreasesIngredientsStock(ingredient);
                 actualAmount++;
             } else {
                 sweet.getExtraIngredients().remove(ingredient);
-                sweet.setPrice(sweet.getPrice() - ingredient.getPrice());
                 increaseIngredientsStock(ingredient);
                 actualAmount--;
             }

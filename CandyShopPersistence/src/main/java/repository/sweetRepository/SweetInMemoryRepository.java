@@ -1,20 +1,22 @@
 package repository.sweetRepository;
 
+
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.*;
 
+@Builder
+@AllArgsConstructor
 public class SweetInMemoryRepository implements SweetRepository {
 
+    private static final int SWEETS_TO_GENERATE = 15;
     private List<Sweet> sweetList;
-
-    public SweetInMemoryRepository(List<Sweet> sweetList) {
-        this.sweetList = sweetList;
-    }
 
     @Override
     public void add(Sweet sweet) throws RepositoryException {
@@ -26,20 +28,20 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public void update(Long id, Sweet sweet) throws RepositoryException {
-        Sweet sweetToUpdate = findSweetById(id);
-        if (sweetToUpdate == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Sweet> sweetToUpdate = findSweetById(id);
+        if (sweetToUpdate.isPresent())
+            sweetList.set(sweetList.indexOf(sweetToUpdate.get()), sweet);
         else
-            sweetList.set(sweetList.indexOf(sweetToUpdate), sweet);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        Sweet sweetToDelete = findSweetById(id);
-        if (sweetToDelete == null)
-            throw new RepositoryException("This element does not exist!");
+        Optional<Sweet> sweetToDelete = findSweetById(id);
+        if (sweetToDelete.isPresent())
+            sweetList.remove(sweetToDelete.get());
         else
-            sweetList.remove(sweetToDelete);
+            throw new RepositoryException("This element does not exist!");
     }
 
     @Override
@@ -48,38 +50,35 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public Sweet findSweetById(Long id) {
-        for (Sweet sweet : sweetList)
-            if (id == sweet.getId()) return sweet;
-        return null;
+    public Optional<Sweet> findSweetById(Long id) {
+        return sweetList.stream()
+                .filter(sweet -> id == sweet.getId())
+                .findFirst();
     }
 
     @Override
     public void generateSweets(IngredientRepository ingredientRepository) {
         List<Ingredient> ingredientList = ingredientRepository.findAll();
-        sweetList.addAll(Arrays.asList(
-                new Sweet(1, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(2, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(3, randomRecipe(ingredientList), SweetType.CAKE, 0),
-                new Sweet(4, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
-                new Sweet(5, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
-                new Sweet(6, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
-                new Sweet(7, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 0),
-                new Sweet(8, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(9, randomRecipe(ingredientList), SweetType.CAKE, 0),
-                new Sweet(10, randomRecipe(ingredientList), SweetType.HOMEMADE_CHOCOLATE, 0),
-                new Sweet(11, randomRecipe(ingredientList), SweetType.CROISSANT, 0),
-                new Sweet(12, randomRecipe(ingredientList), SweetType.DONUT, 0),
-                new Sweet(13, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
-                new Sweet(14, randomRecipe(ingredientList), SweetType.WAFFLES, 0),
-                new Sweet(15, randomRecipe(ingredientList), SweetType.CROISSANT, 0)
-        ));
+        int noOfSweets = SWEETS_TO_GENERATE;
+        while (noOfSweets != 0) {
+            Optional<Long> id = generateSweetId();
+            Optional<SweetType> sweetType = randomSweetType();
+            if (id.isPresent()&&sweetType.isPresent()) {
+                sweetList.add(Sweet.builder()
+                        .id(id.get())
+                        .ingredientsList(randomRecipe(ingredientList))
+                        .sweetType(sweetType.get())
+                        .price(0)
+                        .build());
+                noOfSweets--;
+            } else throw new RuntimeException("Error: generateSweetId");
+        }
         sweetList.forEach(sweet -> sweet.setPrice(generatePrice(sweet.getIngredientsList())));
     }
 
     @Override
-    public long generateSweetId() {
-        int id = 1;
+    public Optional<Long> generateSweetId() {
+        long id = 1;
         while (true) {
             boolean ok = true;
             for (var s : sweetList)
@@ -88,7 +87,7 @@ public class SweetInMemoryRepository implements SweetRepository {
                     break;
                 }
 
-            if (ok) return id;
+            if (ok) return Optional.of(id);
             id++;
         }
     }
@@ -115,8 +114,22 @@ public class SweetInMemoryRepository implements SweetRepository {
                 randomNumberOfSweets--;
             }
         }
-
         return recipe;
     }
 
+    private Optional<SweetType> randomSweetType() {
+        Random random = new Random();
+        switch (random.nextInt(5)) {
+            case 1:
+                return Optional.of(SweetType.CROISSANT);
+            case 2:
+                return Optional.of(SweetType.DONUT);
+            case 3:
+                return Optional.of(SweetType.WAFFLES);
+            case 4:
+                return Optional.of(SweetType.HOMEMADE_CHOCOLATE);
+            default:
+                return Optional.of(SweetType.CAKE);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 import domain.Shop;
 import domain.sweet.Ingredient;
+import lombok.Builder;
 import service.customerService.CustomerService;
 import service.exception.ServiceException;
 import service.ingredientService.IngredientService;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+
 public class UI {
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -22,6 +24,7 @@ public class UI {
     private OrderService orderService;
     private IngredientService ingredientService;
 
+    @Builder
     public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
               IngredientService ingredientService) {
         this.shop = shop;
@@ -71,7 +74,13 @@ public class UI {
 
     private void optionOrderSweets() {
         printShopSweets();
-        OrderSweetUI orderSweetUI = new OrderSweetUI(shop, customerService, sweetService, orderService, ingredientService);
+        OrderSweetUI orderSweetUI = OrderSweetUI.builder()
+                .shop(shop)
+                .customerService(customerService)
+                .sweetService(sweetService)
+                .orderService(orderService)
+                .ingredientService(ingredientService)
+                .build();
         orderSweetUI.show();
     }
 
@@ -88,7 +97,8 @@ public class UI {
     }
 
     private void optionViewOrdersAndProfitForADay() {
-        System.out.println("\nToday's orders: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy")));
+        System.out.println("\nToday's orders: " + LocalDateTime.now().format(DateTimeFormatter
+                .ofPattern("EEEE, dd.MM.yyyy")));
         orderService.getAllOrdersInADay()
                 .stream()
                 .map(order -> "Order no. " + order.getId() + " | "
@@ -106,10 +116,9 @@ public class UI {
                 "\n" + "-".repeat(100) + "\n");
 
         System.out.println("Available sweets: \n");
-        for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + sweet.getPrice()
-                    + "$");
-        }
+        for (var sweet : sweetService.getAvailableSweets())
+            System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
+                    df.format(sweet.getPrice()) + "$");
 
         System.out.println("\n" + "-".repeat(100) + "\n");
 
@@ -123,8 +132,8 @@ public class UI {
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
-            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " + sweet.getPrice()
-                    + "$\nRecipe: ");
+            System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
+                    df.format(sweet.getPrice()) + "$\nRecipe: ");
             sweet.getIngredientsList()
                     .stream()
                     .map(Ingredient::getName)

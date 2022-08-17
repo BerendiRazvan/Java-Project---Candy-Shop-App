@@ -8,6 +8,7 @@ import service.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static service.ConstantValues.*;
@@ -17,7 +18,6 @@ class IngredientServiceImplTest {
 
     private static final String CHARACTERS_TO_DELETE = "[a-zA-z :]";
     private IngredientService ingredientService;
-    private Ingredient ingredient;
 
     @BeforeAll
     static void setUpAll() {
@@ -26,11 +26,14 @@ class IngredientServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
-
-        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
+                .ingredientList(new ArrayList<>())
+                .build();
         ingredientRepository.generateIngredients();
-        ingredientService = new IngredientServiceImpl(ingredientRepository);
+
+        ingredientService = IngredientServiceImpl.builder()
+                .ingredientRepository(ingredientRepository)
+                .build();
     }
 
     @AfterEach
@@ -52,11 +55,13 @@ class IngredientServiceImplTest {
 
     @Test
     void testValidFindIngredientById() throws ServiceException {
-        Ingredient ingredientById = ingredientService.findIngredientById(String.valueOf(ID));
-        assertEquals(ingredientById.getId(), ID);
-        assertEquals(ingredientById.getAmount(), AMOUNT);
-        assertEquals(ingredientById.getPrice(), INGREDIENT_PRICE);
-        assertEquals(ingredientById.getName(), INGREDIENT_NAME);
+        Optional<Ingredient> ingredientById = ingredientService.findIngredientById(String.valueOf(ID));
+        if(ingredientById.isPresent()) {
+            assertEquals(ingredientById.get().getId(), ID);
+            assertEquals(ingredientById.get().getAmount(), AMOUNT);
+            assertEquals(ingredientById.get().getPrice(), INGREDIENT_PRICE);
+            assertEquals(ingredientById.get().getName(), INGREDIENT_NAME);
+        }else fail("Ingredient findIngredientById failed");
     }
 
     @Test
@@ -64,7 +69,9 @@ class IngredientServiceImplTest {
         assertThrowsExactly(ServiceException.class,
                 () -> ingredientService.findIngredientById("dajdnas"),
                 INGREDIENT_ID_EXCEPTION);
-        assertNull(ingredientService.findIngredientById("123456"));
+        assertThrowsExactly(ServiceException.class,
+                () -> ingredientService.findIngredientById("123456"),
+                INGREDIENT_ID_EXCEPTION);
     }
 
     @Test

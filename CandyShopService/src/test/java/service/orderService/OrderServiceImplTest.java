@@ -20,10 +20,7 @@ import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static service.ConstantValues.*;
@@ -42,29 +39,81 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() throws RepositoryException {
-        shop = new Shop(SHOP_NAME, new Location(ID, COUNTRY, CITY, ADDRESS));
-        customer = new Customer(ID, FIRST_NAME, LAST_NAME,
-                EMAIL, PASSWORD, PHONE_NUMBER, new Location(ID, COUNTRY, CITY, ADDRESS));
-        ingredient = new Ingredient(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+        shop = Shop.builder()
+                .name(SHOP_NAME)
+                .location(Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address(ADDRESS)
+                        .build())
+                .build();
 
-        OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
+        customer = Customer.builder()
+                .id(ID)
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .phoneNumber(PHONE_NUMBER)
+                .location(Location.builder()
+                        .country(COUNTRY)
+                        .city(CITY)
+                        .address(ADDRESS)
+                        .build())
+                .build();
+
+        ingredient = Ingredient.builder()
+                .id(ID)
+                .name(INGREDIENT_NAME)
+                .price(INGREDIENT_PRICE)
+                .amount(AMOUNT)
+                .build();
+
+        OrderRepository orderRepository = OrderInMemoryRepository.builder()
+                .orderList(new ArrayList<>())
+                .build();
+
         try {
-            orderRepository.add(new Order(1, new HashMap<>(), OrderType.DELIVERY, customer, shop));
+            orderRepository.add(Order.builder()
+                    .id(1)
+                    .orderedSweets(new HashMap<>())
+                    .orderType(OrderType.DELIVERY)
+                    .customer(customer)
+                    .shop(shop)
+                    .build());
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
-        IngredientRepository ingredientRepository = new IngredientInMemoryRepository(new ArrayList<>());
+
+        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
+                .ingredientList(new ArrayList<>())
+                .build();
         ingredientRepository.generateIngredients();
-        sweet = new Sweet(ID,
-                new ArrayList<>(List.of(
-                        ingredientRepository.findIngredientById(1L),
-                        ingredientRepository.findIngredientById(2L),
-                        ingredientRepository.findIngredientById(3L)
-                )),
-                SweetType.DONUT, SWEET_PRICE);
-        SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
+
+        Ingredient ingredient1 = ingredientRepository.findIngredientById(1L).isPresent() ?
+                ingredientRepository.findIngredientById(1L).get() : fail();
+        Ingredient ingredient2 = ingredientRepository.findIngredientById(2L).isPresent() ?
+                ingredientRepository.findIngredientById(2L).get() : fail();
+        Ingredient ingredient3 = ingredientRepository.findIngredientById(3L).isPresent() ?
+                ingredientRepository.findIngredientById(3L).get() : fail();
+
+        sweet = Sweet.builder()
+                .id(ID)
+                .ingredientsList(new ArrayList<>(List.of(ingredient1, ingredient2, ingredient3)))
+                .sweetType(SweetType.DONUT)
+                .price(SWEET_PRICE)
+                .build();
+
+        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
+                .sweetList(new ArrayList<>())
+                .build();
         sweetRepository.generateSweets(ingredientRepository);
-        orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
+
+        orderService = OrderServiceImpl.builder()
+                .orderRepository(orderRepository)
+                .sweetRepository(sweetRepository)
+                .ingredientRepository(ingredientRepository)
+                .build();
     }
 
     @AfterEach
@@ -80,35 +129,37 @@ class OrderServiceImplTest {
 
     @Test
     void testCreateOrder() throws ServiceException {
-        Order order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
-
-        assertEquals(order.getCustomer(), customer);
-        assertEquals(order.getShop(), shop);
-        assertEquals(order.getOrderType(), OrderType.DELIVERY);
-        assertTrue(order.getOrderedSweets().isEmpty());
+        Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        if (order.isPresent()) {
+            assertEquals(order.get().getCustomer(), customer);
+            assertEquals(order.get().getShop(), shop);
+            assertEquals(order.get().getOrderType(), OrderType.DELIVERY);
+            assertTrue(order.get().getOrderedSweets().isEmpty());
+        } else fail("Order createOrder failed");
     }
 
     @Test
     void testValidAddToOrder() throws ServiceException {
-        Order order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        if (order.isPresent()) {
+            double moneyMade = orderService.getMoneyMadeToday();
+            orderService.addToOrder(order.get(), sweet);
 
-        double moneyMade = orderService.getMoneyMadeToday();
-        orderService.addToOrder(order, sweet);
+            assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
 
-        assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
+            orderService.addToOrder(order.get(), sweet);
+            orderService.addToOrder(order.get(), sweet);
 
-        orderService.addToOrder(order, sweet);
-        orderService.addToOrder(order, sweet);
-
-        assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+            assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+        } else fail("Order addToOrder failed");
     }
 
     @Test
-    void testInvalidAddToOrder() {
-        assertThrowsExactly(ServiceException.class,
-                () -> orderService.addToOrder(
-                        orderService.createOrder(customer, OrderType.DELIVERY, shop), null),
-                SWEET_ID_EXCEPTION);
+    void testInvalidAddToOrder() throws ServiceException {
+        Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
+        order.ifPresent(value -> assertThrowsExactly(ServiceException.class,
+                () -> orderService.addToOrder(value, null),
+                SWEET_ID_EXCEPTION));
     }
 
 

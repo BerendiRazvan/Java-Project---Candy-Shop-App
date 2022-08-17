@@ -4,11 +4,12 @@ import domain.sweet.Ingredient;
 import service.exception.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IngredientService {
     List<Ingredient> getAllIngredients();
 
-    Ingredient findIngredientById(String ingredientId) throws ServiceException;
+    Optional<Ingredient> findIngredientById(String ingredientId) throws ServiceException;
 
     List<String> showAllIngredientsInStock();
 }

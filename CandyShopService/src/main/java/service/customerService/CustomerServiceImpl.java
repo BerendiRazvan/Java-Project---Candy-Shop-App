@@ -2,57 +2,67 @@ package service.customerService;
 
 import domain.Customer;
 import domain.location.Location;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
 import repository.exception.RepositoryException;
 import service.exception.ServiceException;
 
+import java.util.Optional;
+
+@Builder
+@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
-
-
     @Override
-    public Customer login(String mail, String password) throws ServiceException {
-        Customer customerTry = customerRepository.findCustomerByEmail(mail);
-        if (customerTry != null) {
-            return verifyPassword(password, customerTry);
+    public Optional<Customer> login(String mail, String password) throws ServiceException {
+        Optional<Customer> customerTry = customerRepository.findCustomerByEmail(mail);
+        if (customerTry.isPresent()) {
+            return verifyPassword(password, customerTry.get());
         } else {
             throw new ServiceException("Authentication failed!");
         }
     }
 
     @Override
-    public Customer createAccount(String firstName, String lastName, String email, String password,
+    public Optional<Customer> createAccount(String firstName, String lastName, String email, String password,
                                   String phoneNumber, Location customerLocation) throws ServiceException {
 
-        int id = customerRepository.generateCustomerId();
+        Optional<Long> id = customerRepository.generateCustomerId();
 
         String errorsAfterValidation = customerValidation(firstName, lastName, email, password, phoneNumber, customerLocation);
         if (!errorsAfterValidation.matches("")) {
             throw new ServiceException(errorsAfterValidation);
         }
 
-        Customer customer = new Customer(id, firstName, lastName, email, password, phoneNumber, customerLocation);
-        try {
-            customerRepository.add(customer);
-        } catch (RepositoryException e) {
-            throw new ServiceException(e.getMessage());
-        }
-
-        return customer;
+        if (id.isPresent()) {
+            Customer customer = Customer.builder()
+                    .id(id.get())
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .password(password)
+                    .phoneNumber(phoneNumber)
+                    .location(customerLocation)
+                    .build();
+            try {
+                customerRepository.add(customer);
+            } catch (RepositoryException e) {
+                throw new ServiceException(e.getMessage());
+            }
+            return Optional.of(customer);
+        } else throw new RuntimeException("Error: generateCustomerId");
     }
 
     @Override
     public boolean checkIfEmailExists(String mail) {
-        return customerRepository.findCustomerByEmail(mail) != null;
+        return customerRepository.findCustomerByEmail(mail).isPresent();
     }
 
-    private Customer verifyPassword(String customerPassword, Customer account) throws ServiceException {
+    private Optional<Customer> verifyPassword(String customerPassword, Customer account) throws ServiceException {
         if (customerPassword.equals(account.getPassword()))
-            return account;
+            return Optional.of(account);
         else
             throw new ServiceException("Invalid password!\n");
     }
