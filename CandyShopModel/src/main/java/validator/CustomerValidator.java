@@ -26,7 +26,7 @@ public class CustomerValidator {
 
     public String customerEmailValidator(String email) {
         if (email.equals("") || !email.matches(EMAIL_VALIDATION))
-           return "Invalid email!\n";
+            return "Invalid email!\n";
         return "";
     }
 
