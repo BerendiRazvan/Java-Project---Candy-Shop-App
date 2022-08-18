@@ -51,6 +51,7 @@ public class SweetValidator {
     }
 
     public String sweetValidation(Sweet sweet) {
+        if (sweet == null) return "Sweet can not be null!";
         return sweetTypeValidator(sweet.getSweetType()) +
                 sweetIngredientsListValidator(sweet.getIngredientsList()) +
                 sweetExtraIngredientsValidator(sweet.getExtraIngredients()) +

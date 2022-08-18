@@ -26,6 +26,7 @@ public class ShopValidator {
     }
 
     public String shopValidation(Shop shop) {
+        if (shop == null) return "Shop can not be null!";
         return shopNameValidator(shop.getName()) +
                 shopLocationValidator(shop.getLocation());
     }

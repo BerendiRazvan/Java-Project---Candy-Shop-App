@@ -54,6 +54,7 @@ public class CustomerValidator {
     }
 
     public String customerValidation(Customer customer) {
+        if (customer == null) return "Customer can not be null!";
         return customerFirstNameValidator(customer.getFirstName()) +
                 customerLastNameValidator(customer.getLastName()) +
                 customerEmailValidator(customer.getEmail()) +

@@ -54,6 +54,7 @@ public class OrderValidator {
     }
 
     public String orderValidation(Order order) {
+        if (order == null) return "Order can not be null!";
         return orderOrderedSweetsValidator(order.getOrderedSweets()) +
                 orderCustomerValidator(order.getCustomer()) +
                 orderShopValidator(order.getShop()) +

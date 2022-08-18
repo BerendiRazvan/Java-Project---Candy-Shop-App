@@ -32,6 +32,7 @@ public class LocationValidator {
     }
 
     public String locationValidation(Location location) {
+        if (location == null) return "Location can not be null!";
         return locationCountryValidator(location.getCountry()) +
                 locationCityValidator(location.getCity()) +
                 locationAddressValidator(location.getAddress());

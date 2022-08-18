@@ -30,6 +30,7 @@ public class IngredientValidator {
     }
 
     public String ingredientValidation(Ingredient ingredient) {
+        if (ingredient == null) return "Ingredient can not be null!";
         return ingredientNameValidator(ingredient.getName()) +
                 ingredientPriceValidator(ingredient.getPrice()) +
                 ingredientAmountValidator(ingredient.getAmount());
