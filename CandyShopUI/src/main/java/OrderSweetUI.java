@@ -5,9 +5,9 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import exception.CandyShopException;
 import lombok.Builder;
 import service.customerService.CustomerService;
-import service.exception.ServiceException;
 import service.ingredientService.IngredientService;
 import service.orderService.OrderService;
 import service.sweetService.SweetService;
@@ -112,7 +112,7 @@ public class OrderSweetUI {
                         break;
                 }
             }
-        } catch (ServiceException e) {
+        } catch (CandyShopException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
@@ -125,8 +125,8 @@ public class OrderSweetUI {
             if (sweetOptional.isPresent()) {
                 orderService.addToOrder(order, sweetOptional.get());
                 System.out.println("Sweet added, yummy :)");
-            } else throw new ServiceException("Invalid sweet id!");
-        } catch (ServiceException e) {
+            } else throw new CandyShopException("Invalid sweet id!");
+        } catch (CandyShopException e) {
             System.out.println("Oh no, we failed to add your sweet :(");
             System.out.println(e.getMessage());
         }
@@ -137,7 +137,7 @@ public class OrderSweetUI {
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
             System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
-        } catch (ServiceException e) {
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
         System.out.print("Enter the ID for the ordered sweet you want to change:");
@@ -154,8 +154,8 @@ public class OrderSweetUI {
                         sweetOptional.get(),
                         ingredientOptional.get(), amountForAdd);
                 System.out.println("Sweet modified :)");
-            } else throw new ServiceException("Invalid sweet/ingredient id!");
-        } catch (ServiceException e) {
+            } else throw new CandyShopException("Invalid sweet/ingredient id!");
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -165,7 +165,7 @@ public class OrderSweetUI {
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
             System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
-        } catch (ServiceException e) {
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
         System.out.print("Enter the ID for the ordered sweet you want to change:");
@@ -182,8 +182,8 @@ public class OrderSweetUI {
                         sweetOptional.get(),
                         ingredientOptional.get(), amountForUpdate);
                 System.out.println("Sweet modified :)");
-            } else throw new ServiceException("Invalid sweet/ingredient id!");
-        } catch (ServiceException e) {
+            } else throw new CandyShopException("Invalid sweet/ingredient id!");
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -193,7 +193,7 @@ public class OrderSweetUI {
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
             System.out.println(orderService.getOrderDetails(String.valueOf(order.getId())));
-        } catch (ServiceException e) {
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
         System.out.print("Enter the ID for the ordered sweet you want to change:");
@@ -208,8 +208,8 @@ public class OrderSweetUI {
                         sweetOptional.get(),
                         ingredientOptional.get());
                 System.out.println("Sweet modified :)");
-            } else throw new ServiceException("Invalid sweet/ingredient id!");
-        } catch (ServiceException e) {
+            } else throw new CandyShopException("Invalid sweet/ingredient id!");
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -227,12 +227,12 @@ public class OrderSweetUI {
                     orderService.addToOrder(order, customSweet.get());
                     System.out.println(customSweet.get());
                     System.out.println("Sweet added, yummy :)");
-                } catch (ServiceException e) {
+                } catch (CandyShopException e) {
                     System.out.println(e.getMessage());
                 }
             else
                 System.out.println("Invalid input for ingredients to add :(");
-        } catch (ServiceException e) {
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -248,7 +248,7 @@ public class OrderSweetUI {
             String password = SCANNER.nextLine();
             try {
                 return customerService.login(mail, password);
-            } catch (ServiceException e) {
+            } catch (CandyShopException e) {
                 System.out.println(e.getMessage());
                 return Optional.empty();
             }

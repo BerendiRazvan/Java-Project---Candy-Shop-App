@@ -1,7 +1,6 @@
 package repository;
 
-import repository.exception.RepositoryException;
-
+import exception.RepositoryException;
 import java.util.List;
 
 public interface Repository<ID, T> {

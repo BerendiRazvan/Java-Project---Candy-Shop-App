@@ -2,14 +2,13 @@ package service.customerService;
 
 import domain.Customer;
 import domain.location.Location;
+import exception.ServiceException;
 import org.junit.jupiter.api.*;
 import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
-import service.exception.ServiceException;
 import validator.CustomerValidator;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Optional;
 

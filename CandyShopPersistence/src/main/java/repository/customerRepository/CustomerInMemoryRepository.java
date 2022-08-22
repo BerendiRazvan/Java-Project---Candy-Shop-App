@@ -2,9 +2,10 @@ package repository.customerRepository;
 
 import domain.Customer;
 import domain.location.Location;
+import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import repository.exception.RepositoryException;
+
 
 import java.util.Arrays;
 import java.util.List;

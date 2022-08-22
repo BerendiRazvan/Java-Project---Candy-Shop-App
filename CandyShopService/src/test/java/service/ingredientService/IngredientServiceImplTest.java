@@ -1,10 +1,10 @@
 package service.ingredientService;
 
 import domain.sweet.Ingredient;
+import exception.ServiceException;
 import org.junit.jupiter.api.*;
 import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
-import service.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;

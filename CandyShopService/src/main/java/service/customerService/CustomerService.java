@@ -2,7 +2,7 @@ package service.customerService;
 
 import domain.Customer;
 import domain.location.Location;
-import service.exception.ServiceException;
+import exception.ServiceException;
 
 import java.util.Optional;
 

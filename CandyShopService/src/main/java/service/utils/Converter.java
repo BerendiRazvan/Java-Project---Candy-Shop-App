@@ -1,6 +1,6 @@
 package service.utils;
 
-import service.exception.ServiceException;
+import exception.ServiceException;
 
 public class Converter {
     public static long convertStringToLong(String number) throws ServiceException {

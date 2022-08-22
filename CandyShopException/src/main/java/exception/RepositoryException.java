@@ -1,6 +1,6 @@
-package repository.exception;
+package exception;
 
-public class RepositoryException extends Exception {
+public class RepositoryException extends CandyShopException {
     public RepositoryException() {
 
     }

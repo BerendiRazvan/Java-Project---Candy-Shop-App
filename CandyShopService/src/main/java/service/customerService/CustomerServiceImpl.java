@@ -2,11 +2,11 @@ package service.customerService;
 
 import domain.Customer;
 import domain.location.Location;
+import exception.RepositoryException;
+import exception.ServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
-import repository.exception.RepositoryException;
-import service.exception.ServiceException;
 import validator.CustomerValidator;
 
 import java.util.Optional;

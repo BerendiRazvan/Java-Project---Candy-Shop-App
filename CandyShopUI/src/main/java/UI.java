@@ -1,8 +1,8 @@
 import domain.Shop;
 import domain.sweet.Ingredient;
+import exception.CandyShopException;
 import lombok.Builder;
 import service.customerService.CustomerService;
-import service.exception.ServiceException;
 import service.ingredientService.IngredientService;
 import service.orderService.OrderService;
 import service.sweetService.SweetService;
@@ -91,7 +91,7 @@ public class UI {
         try {
             System.out.println(orderService.getOrderDetails(orderNumber));
             System.out.println("Order details printed\n");
-        } catch (ServiceException e) {
+        } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
     }

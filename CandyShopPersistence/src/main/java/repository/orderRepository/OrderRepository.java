@@ -3,7 +3,6 @@ package repository.orderRepository;
 
 import domain.Shop;
 import domain.order.Order;
-import domain.sweet.Ingredient;
 import repository.Repository;
 import repository.customerRepository.CustomerRepository;
 import repository.sweetRepository.SweetRepository;

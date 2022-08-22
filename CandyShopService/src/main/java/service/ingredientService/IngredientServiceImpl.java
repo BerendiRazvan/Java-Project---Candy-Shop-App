@@ -1,10 +1,11 @@
 package service.ingredientService;
 
 import domain.sweet.Ingredient;
+import exception.ServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import repository.ingredientRepository.IngredientRepository;
-import service.exception.ServiceException;
+
 
 import java.text.DecimalFormat;
 import java.util.List;

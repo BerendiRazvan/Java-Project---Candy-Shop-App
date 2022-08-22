@@ -6,7 +6,7 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
-import service.exception.ServiceException;
+import exception.ServiceException;
 
 import java.util.List;
 import java.util.Optional;

@@ -8,15 +8,15 @@ import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import exception.RepositoryException;
+import exception.ServiceException;
 import org.junit.jupiter.api.*;
-import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderInMemoryRepository;
 import repository.orderRepository.OrderRepository;
 import repository.sweetRepository.SweetInMemoryRepository;
 import repository.sweetRepository.SweetRepository;
-import service.exception.ServiceException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

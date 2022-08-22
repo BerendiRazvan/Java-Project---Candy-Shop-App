@@ -4,9 +4,9 @@ package repository.sweetRepository;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.*;

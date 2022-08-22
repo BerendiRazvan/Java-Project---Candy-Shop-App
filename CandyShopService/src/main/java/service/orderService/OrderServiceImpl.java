@@ -6,13 +6,14 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import exception.RepositoryException;
+import exception.ServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import repository.exception.RepositoryException;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
 import repository.sweetRepository.SweetRepository;
-import service.exception.ServiceException;
+
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -37,7 +38,13 @@ public class OrderServiceImpl implements OrderService {
 
         if (id.isPresent()) {
             try {
-                Order order = new Order(id.get(), new HashMap<>(), orderType, customer, shop);
+                Order order = Order.builder()
+                        .id(id.get())
+                        .orderedSweets(new HashMap<>())
+                        .orderType(orderType)
+                        .customer(customer)
+                        .shop(shop)
+                        .build();
                 orderRepository.add(order);
                 return Optional.of(order);
             } catch (RepositoryException e) {
