@@ -49,10 +49,6 @@ public class OrderValidator {
         return "";
     }
 
-    public boolean isValidOrder(Order order) {
-        return validateOrder(order).equals("");
-    }
-
     public String validateOrder(Order order) {
         if (order == null) return "Order can not be null!";
         return validateOrderOrderedSweet(order.getOrderedSweets()) +
