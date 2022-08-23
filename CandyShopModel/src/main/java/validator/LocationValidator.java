@@ -3,6 +3,11 @@ package validator;
 import domain.location.Location;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 @NoArgsConstructor
 public class LocationValidator {
     private static final int MINIMUM_ADDRESS_LENGTH = 10;
@@ -28,13 +33,16 @@ public class LocationValidator {
     }
 
     public boolean isValidLocation(Location location) {
-        return validateLocation(location).equals("");
+        return validateLocation(location).isEmpty();
     }
 
-    public String validateLocation(Location location) {
-        if (location == null) return "Location can not be null!";
-        return validateLocationCountry(location.getCountry()) +
-                validateLocationCity(location.getCity()) +
-                validateLocationAddress(location.getAddress());
+    public List<String> validateLocation(Location location) {
+        if (location == null) return List.of("Location can not be null!");
+        List<String> errors = new ArrayList<>(
+                Arrays.asList(validateLocationCountry(location.getCountry()),
+                        validateLocationCity(location.getCity()),
+                        validateLocationAddress(location.getAddress())));
+        errors.removeAll(Collections.singleton(""));
+        return errors;
     }
 }

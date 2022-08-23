@@ -10,6 +10,7 @@ import validator.CustomerValidator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -201,7 +202,7 @@ class CustomerServiceImplTest {
     void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException,
             InvocationTargetException, IllegalAccessException {
 
-        String errors;
+        List<String> errors;
 
         errors = validator.validateCustomer(Customer.builder()
                 .firstName(FIRST_NAME)
@@ -212,9 +213,9 @@ class CustomerServiceImplTest {
                 .location(location)
                 .build());
         assertEquals(errors,
-                CUSTOMER_LAST_NAME_EXCEPTION +
-                        CUSTOMER_PASSWORD_EXCEPTION +
-                        CUSTOMER_PHONE_NUMBER_EXCEPTION);
+                List.of(CUSTOMER_LAST_NAME_EXCEPTION,
+                        CUSTOMER_PASSWORD_EXCEPTION,
+                        CUSTOMER_PHONE_NUMBER_EXCEPTION));
 
         errors = validator.validateCustomer(Customer.builder()
                 .firstName("")
@@ -225,9 +226,9 @@ class CustomerServiceImplTest {
                 .location(location)
                 .build());
         assertEquals(errors,
-                CUSTOMER_FIRST_NAME_EXCEPTION +
-                        CUSTOMER_LAST_NAME_EXCEPTION +
-                        CUSTOMER_PHONE_NUMBER_EXCEPTION);
+                List.of(CUSTOMER_FIRST_NAME_EXCEPTION,
+                        CUSTOMER_LAST_NAME_EXCEPTION,
+                        CUSTOMER_PHONE_NUMBER_EXCEPTION));
 
         errors = validator.validateCustomer(Customer.builder()
                 .firstName("")
@@ -238,18 +239,18 @@ class CustomerServiceImplTest {
                 .location(new Location("Romania", "Cluj", ""))
                 .build());
         assertEquals(errors,
-                CUSTOMER_FIRST_NAME_EXCEPTION +
-                        CUSTOMER_LAST_NAME_EXCEPTION +
-                        CUSTOMER_EMAIL_EXCEPTION +
-                        CUSTOMER_PASSWORD_EXCEPTION +
-                        CUSTOMER_PHONE_NUMBER_EXCEPTION +
-                        CUSTOMER_ADDRESS_EXCEPTION);
+                List.of(CUSTOMER_FIRST_NAME_EXCEPTION,
+                        CUSTOMER_LAST_NAME_EXCEPTION,
+                        CUSTOMER_EMAIL_EXCEPTION,
+                        CUSTOMER_PASSWORD_EXCEPTION,
+                        CUSTOMER_PHONE_NUMBER_EXCEPTION,
+                        CUSTOMER_ADDRESS_EXCEPTION));
     }
 
     @Test
     void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException,
             InvocationTargetException, IllegalAccessException {
-        String errors;
+        List<String> errors;
 
         errors = validator.validateCustomer(Customer.builder()
                 .firstName(FIRST_NAME)
@@ -259,7 +260,7 @@ class CustomerServiceImplTest {
                 .phoneNumber(PHONE_NUMBER)
                 .location(location)
                 .build());
-        assertEquals(errors, "");
+        assertTrue(errors.isEmpty());
     }
 
 

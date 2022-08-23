@@ -5,6 +5,9 @@ import domain.sweet.Sweet;
 import domain.sweet.SweetType;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -47,14 +50,17 @@ public class SweetValidator {
     }
 
     public boolean isValidSweet(Sweet sweet) {
-        return validateSweet(sweet).equals("");
+        return validateSweet(sweet).isEmpty();
     }
 
-    public String validateSweet(Sweet sweet) {
-        if (sweet == null) return "Sweet can not be null!";
-        return validateSweetType(sweet.getSweetType()) +
-                validateSweetIngredientsList(sweet.getIngredientsList()) +
-                validateSweetExtraIngredients(sweet.getExtraIngredients()) +
-                validateSweetPrice(sweet.getPrice());
+    public List<String> validateSweet(Sweet sweet) {
+        if (sweet == null) return List.of("Sweet can not be null!");
+        List<String> errors = new ArrayList<>(
+                Arrays.asList(validateSweetType(sweet.getSweetType()),
+                        validateSweetIngredientsList(sweet.getIngredientsList()),
+                        validateSweetExtraIngredients(sweet.getExtraIngredients()),
+                        validateSweetPrice(sweet.getPrice())));
+        errors.removeAll(Collections.singleton(""));
+        return errors;
     }
 }

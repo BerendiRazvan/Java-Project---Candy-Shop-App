@@ -7,9 +7,10 @@ import exception.ServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
-import validator.CustomerValidator;
 
 import java.util.Optional;
+
+import static service.utils.BuildingObjects.newCustomer;
 
 @Builder
 @AllArgsConstructor
@@ -31,20 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Long> id = customerRepository.generateCustomerId();
 
         if (id.isPresent()) {
-            Customer customer = Customer.builder()
-                    .id(id.get())
-                    .firstName(firstName)
-                    .lastName(lastName)
-                    .email(email)
-                    .password(password)
-                    .phoneNumber(phoneNumber)
-                    .location(customerLocation)
-                    .build();
-
-            CustomerValidator validator = new CustomerValidator();
-            if (!validator.isValidCustomer(customer))
-                throw new ServiceException(validator.validateCustomer(customer));
-
+            Customer customer = newCustomer(id.get(), firstName, lastName, email, password, phoneNumber, customerLocation);
             try {
                 customerRepository.add(customer);
             } catch (RepositoryException e) {

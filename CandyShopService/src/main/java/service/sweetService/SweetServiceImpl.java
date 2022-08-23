@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static service.utils.BuildingObjects.newSweet;
 import static service.utils.Converter.convertStringToInt;
 
 @Builder
@@ -35,7 +36,7 @@ public class SweetServiceImpl implements SweetService {
     }
 
     @Override
-    public Optional<Sweet>  findSweetById(String sweetId) throws ServiceException {
+    public Optional<Sweet> findSweetById(String sweetId) throws ServiceException {
         long id;
         try {
             id = Long.parseLong(sweetId);
@@ -55,12 +56,7 @@ public class SweetServiceImpl implements SweetService {
 
         if (id.isPresent()) {
             try {
-                Sweet sweet = Sweet.builder()
-                        .id(id.get())
-                        .ingredientsList(new ArrayList<>())
-                        .sweetType(SweetType.UNIQUE)
-                        .price(SWEET_DEFAULT_PRICE)
-                        .build();
+                Sweet sweet = newSweet(id.get(), new ArrayList<>(), SweetType.UNIQUE, SWEET_DEFAULT_PRICE);
                 sweetRepository.add(sweet);
                 return Optional.of(sweet);
             } catch (RepositoryException e) {

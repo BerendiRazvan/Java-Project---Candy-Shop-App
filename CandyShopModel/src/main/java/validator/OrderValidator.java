@@ -7,7 +7,7 @@ import domain.order.OrderType;
 import domain.sweet.Sweet;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.*;
 
 public class OrderValidator {
     private static final int MINIMUM_AMOUNT_OF_ORDERED_SWEETS_VALUE = 1;
@@ -49,12 +49,19 @@ public class OrderValidator {
         return "";
     }
 
-    public String validateOrder(Order order) {
-        if (order == null) return "Order can not be null!";
-        return validateOrderOrderedSweet(order.getOrderedSweets()) +
-                validateOrderCustomer(order.getCustomer()) +
-                validateOrderShop(order.getShop()) +
-                validateOrderDateTime(order.getOrderDateTime()) +
-                validateOrderType(order.getOrderType());
+    public boolean isValidOrder(Order order) {
+        return validateOrder(order).isEmpty();
+    }
+
+    public List<String> validateOrder(Order order) {
+        if (order == null) return List.of("Order can not be null!");
+        List<String> errors = new ArrayList<>(
+                Arrays.asList(validateOrderOrderedSweet(order.getOrderedSweets()),
+                        validateOrderCustomer(order.getCustomer()),
+                        validateOrderShop(order.getShop()),
+                        validateOrderDateTime(order.getOrderDateTime()),
+                        validateOrderType(order.getOrderType())));
+        errors.removeAll(Collections.singleton(""));
+        return errors;
     }
 }

@@ -2,6 +2,11 @@ package validator;
 
 import domain.sweet.Ingredient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class IngredientValidator {
     private static final String WORD_VALIDATION_REGULAR_EXPRESSION = "[a-zA-Z]+";
     private static final double MINIMUM_PRICE_VALUE = 0;
@@ -26,13 +31,16 @@ public class IngredientValidator {
     }
 
     public boolean isValidIngredient(Ingredient ingredient) {
-        return validateIngredient(ingredient).equals("");
+        return validateIngredient(ingredient).isEmpty();
     }
 
-    public String validateIngredient(Ingredient ingredient) {
-        if (ingredient == null) return "Ingredient can not be null!";
-        return validateIngredientName(ingredient.getName()) +
-                validateIngredientPrice(ingredient.getPrice()) +
-                validateIngredientAmount(ingredient.getAmount());
+    public List<String> validateIngredient(Ingredient ingredient) {
+        if (ingredient == null) return List.of("Ingredient can not be null!");
+        List<String> errors = new ArrayList<>(
+                Arrays.asList(validateIngredientName(ingredient.getName()),
+                        validateIngredientPrice(ingredient.getPrice()),
+                        validateIngredientAmount(ingredient.getAmount())));
+        errors.removeAll(Collections.singleton(""));
+        return errors;
     }
 }

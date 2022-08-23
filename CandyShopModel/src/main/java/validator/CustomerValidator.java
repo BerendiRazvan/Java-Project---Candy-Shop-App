@@ -4,6 +4,11 @@ import domain.Customer;
 import domain.location.Location;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 @NoArgsConstructor
 public class CustomerValidator {
     private static final String WORD_VALIDATION_REGULAR_EXPRESSION = "[a-zA-Z]+";
@@ -50,16 +55,19 @@ public class CustomerValidator {
     }
 
     public boolean isValidCustomer(Customer customer) {
-        return validateCustomer(customer).equals("");
+        return validateCustomer(customer).isEmpty();
     }
 
-    public String validateCustomer(Customer customer) {
-        if (customer == null) return "Customer can not be null!";
-        return validateCustomerFirstName(customer.getFirstName()) +
-                validateCustomerLastName(customer.getLastName()) +
-                validateCustomerEmail(customer.getEmail()) +
-                validateCustomerPassword(customer.getPassword()) +
-                validateCustomerPhoneNumber(customer.getPhoneNumber()) +
-                validateCustomerLocation(customer.getLocation());
+    public List<String> validateCustomer(Customer customer) {
+        if (customer == null) return List.of("Customer can not be null!");
+        List<String> errors = new ArrayList<>(
+                Arrays.asList(validateCustomerFirstName(customer.getFirstName()),
+                        validateCustomerLastName(customer.getLastName()),
+                        validateCustomerEmail(customer.getEmail()),
+                        validateCustomerPassword(customer.getPassword()),
+                        validateCustomerPhoneNumber(customer.getPhoneNumber()),
+                        validateCustomerLocation(customer.getLocation())));
+        errors.removeAll(Collections.singleton(""));
+        return errors;
     }
 }

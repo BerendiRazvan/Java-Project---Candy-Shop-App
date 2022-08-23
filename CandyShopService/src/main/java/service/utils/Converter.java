@@ -2,7 +2,7 @@ package service.utils;
 
 import exception.ServiceException;
 
-public class Converter {
+public final class Converter {
     public static long convertStringToLong(String number) throws ServiceException {
         try {
             return Long.parseLong(number);

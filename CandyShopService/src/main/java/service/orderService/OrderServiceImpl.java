@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static service.utils.BuildingObjects.newOrder;
+import static service.utils.BuildingObjects.newSweet;
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
@@ -38,13 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (id.isPresent()) {
             try {
-                Order order = Order.builder()
-                        .id(id.get())
-                        .orderedSweets(new HashMap<>())
-                        .orderType(orderType)
-                        .customer(customer)
-                        .shop(shop)
-                        .build();
+                Order order = newOrder(id.get(), orderType, customer, shop);
                 orderRepository.add(order);
                 return Optional.of(order);
             } catch (RepositoryException e) {
@@ -146,14 +142,8 @@ public class OrderServiceImpl implements OrderService {
 
         Optional<Long> id = sweetRepository.generateSweetId();
         if (id.isPresent()) {
-            Sweet customSweet = Sweet.builder()
-                    .id(id.get())
-                    .ingredientsList(sweet.getIngredientsList())
-                    .sweetType(sweet.getSweetType())
-                    .price(sweet.getPrice())
-                    .build();
+            Sweet customSweet = newSweet(id.get(), sweet.getIngredientsList(), sweet.getSweetType(), sweet.getPrice());
             customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
-
 
             updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);
 
