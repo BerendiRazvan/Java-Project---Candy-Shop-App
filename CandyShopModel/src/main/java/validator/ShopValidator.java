@@ -6,15 +6,15 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class ShopValidator {
-    private static final String ONLY_LETTERS_VALIDATION = "[a-zA-Z]+";
+    private static final String WORD_VALIDATION_REGULAR_EXPRESSION = "[a-zA-Z]+";
 
-    public String shopNameValidator(String name) {
-        if (name.equals("") || !name.matches(ONLY_LETTERS_VALIDATION))
+    public String validateShopName(String name) {
+        if (name.equals("") || !name.matches(WORD_VALIDATION_REGULAR_EXPRESSION))
             return "Invalid name!\n";
         return "";
     }
 
-    public String shopLocationValidator(Location location) {
+    public String validateShopLocation(Location location) {
         LocationValidator validator = new LocationValidator();
         if (!validator.isValidLocation(location))
             return "Invalid location!\n";
@@ -22,12 +22,12 @@ public class ShopValidator {
     }
 
     public boolean isValidShop(Shop shop) {
-        return shopValidation(shop).equals("");
+        return validateShop(shop).equals("");
     }
 
-    public String shopValidation(Shop shop) {
+    public String validateShop(Shop shop) {
         if (shop == null) return "Shop can not be null!";
-        return shopNameValidator(shop.getName()) +
-                shopLocationValidator(shop.getLocation());
+        return validateShopName(shop.getName()) +
+                validateShopLocation(shop.getLocation());
     }
 }

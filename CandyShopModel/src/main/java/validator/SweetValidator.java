@@ -11,7 +11,7 @@ import java.util.List;
 public class SweetValidator {
     private static final double MINIMUM_PRICE_VALUE = 0;
 
-    public String sweetTypeValidator(SweetType sweetType) {
+    public String validateSweetType(SweetType sweetType) {
         if (!(sweetType.equals(SweetType.CAKE) ||
                 sweetType.equals(SweetType.CROISSANT) ||
                 sweetType.equals(SweetType.DONUT) ||
@@ -22,7 +22,7 @@ public class SweetValidator {
         return "";
     }
 
-    public String sweetIngredientsListValidator(List<Ingredient> ingredientList) {
+    public String validateSweetIngredientsList(List<Ingredient> ingredientList) {
         for (Ingredient ingredient : ingredientList) {
             IngredientValidator validator = new IngredientValidator();
             if (!validator.isValidIngredient(ingredient))
@@ -31,7 +31,7 @@ public class SweetValidator {
         return "";
     }
 
-    public String sweetExtraIngredientsValidator(List<Ingredient> extraIngredients) {
+    public String validateSweetExtraIngredients(List<Ingredient> extraIngredients) {
         for (Ingredient ingredient : extraIngredients) {
             IngredientValidator validator = new IngredientValidator();
             if (!validator.isValidIngredient(ingredient))
@@ -40,21 +40,21 @@ public class SweetValidator {
         return "";
     }
 
-    public String sweetPriceValidator(double price) {
+    public String validateSweetPrice(double price) {
         if (price < MINIMUM_PRICE_VALUE)
             return "Invalid price!\n";
         return "";
     }
 
     public boolean isValidSweet(Sweet sweet) {
-        return sweetValidation(sweet).equals("");
+        return validateSweet(sweet).equals("");
     }
 
-    public String sweetValidation(Sweet sweet) {
+    public String validateSweet(Sweet sweet) {
         if (sweet == null) return "Sweet can not be null!";
-        return sweetTypeValidator(sweet.getSweetType()) +
-                sweetIngredientsListValidator(sweet.getIngredientsList()) +
-                sweetExtraIngredientsValidator(sweet.getExtraIngredients()) +
-                sweetPriceValidator(sweet.getPrice());
+        return validateSweetType(sweet.getSweetType()) +
+                validateSweetIngredientsList(sweet.getIngredientsList()) +
+                validateSweetExtraIngredients(sweet.getExtraIngredients()) +
+                validateSweetPrice(sweet.getPrice());
     }
 }

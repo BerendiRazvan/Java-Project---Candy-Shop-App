@@ -12,7 +12,7 @@ import java.util.Map;
 public class OrderValidator {
     private static final int MINIMUM_AMOUNT_OF_ORDERED_SWEETS_VALUE = 1;
 
-    public String orderOrderedSweetsValidator(Map<Sweet, Integer> orderedSweets) {
+    public String validateOrderOrderedSweet(Map<Sweet, Integer> orderedSweets) {
         for (Sweet sweet : orderedSweets.keySet()) {
             SweetValidator sweetValidator = new SweetValidator();
             if (!sweetValidator.isValidSweet(sweet))
@@ -23,42 +23,42 @@ public class OrderValidator {
         return "";
     }
 
-    public String orderCustomerValidator(Customer customer) {
+    public String validateOrderCustomer(Customer customer) {
         CustomerValidator validator = new CustomerValidator();
         if (!validator.isValidCustomer(customer))
             return "Invalid customer!\n";
         return "";
     }
 
-    public String orderShopValidator(Shop shop) {
+    public String validateOrderShop(Shop shop) {
         ShopValidator validator = new ShopValidator();
         if (!validator.isValidShop(shop))
             return "Invalid shop!\n";
         return "";
     }
 
-    public String orderDateTimeValidator(LocalDateTime orderDateTime) {
+    public String validateOrderDateTime(LocalDateTime orderDateTime) {
         if (orderDateTime.isBefore(LocalDateTime.of(2020, 1, 1, 0, 0)))
             return "Invalid order date time!\n";
         return "";
     }
 
-    public String orderTypeValidator(OrderType orderType) {
+    public String validateOrderType(OrderType orderType) {
         if (!(orderType.equals(OrderType.DELIVERY) || orderType.equals(OrderType.PICKUP)))
             return "Invalid order type!\n";
         return "";
     }
 
     public boolean isValidOrder(Order order) {
-        return orderValidation(order).equals("");
+        return validateOrder(order).equals("");
     }
 
-    public String orderValidation(Order order) {
+    public String validateOrder(Order order) {
         if (order == null) return "Order can not be null!";
-        return orderOrderedSweetsValidator(order.getOrderedSweets()) +
-                orderCustomerValidator(order.getCustomer()) +
-                orderShopValidator(order.getShop()) +
-                orderDateTimeValidator(order.getOrderDateTime()) +
-                orderTypeValidator(order.getOrderType());
+        return validateOrderOrderedSweet(order.getOrderedSweets()) +
+                validateOrderCustomer(order.getCustomer()) +
+                validateOrderShop(order.getShop()) +
+                validateOrderDateTime(order.getOrderDateTime()) +
+                validateOrderType(order.getOrderType());
     }
 }

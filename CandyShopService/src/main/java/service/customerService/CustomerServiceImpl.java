@@ -43,7 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             CustomerValidator validator = new CustomerValidator();
             if (!validator.isValidCustomer(customer))
-                throw new ServiceException(validator.customerValidation(customer));
+                throw new ServiceException(validator.validateCustomer(customer));
 
             try {
                 customerRepository.add(customer);
