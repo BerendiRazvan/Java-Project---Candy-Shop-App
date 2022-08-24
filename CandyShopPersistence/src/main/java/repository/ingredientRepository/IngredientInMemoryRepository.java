@@ -6,6 +6,9 @@ import exception.BuildException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import repository.customerRepository.CustomerInMemoryRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,41 +17,57 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 public class IngredientInMemoryRepository implements IngredientRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
     private List<Ingredient> ingredientList;
 
     @Override
     public void add(Ingredient ingredient) throws RepositoryException {
-        if (!ingredientList.contains(ingredient))
+        LOGGER.info("Add ingredient - started");
+        if (!ingredientList.contains(ingredient)) {
             ingredientList.add(ingredient);
-        else
+            LOGGER.info("Add ingredient - finished");
+        } else {
+            LOGGER.warn("Add ingredient - exception occurred -> {}", "This element already exists!");
             throw new RepositoryException("This element already exists!");
+        }
     }
 
     @Override
     public void update(Long id, Ingredient ingredient) throws RepositoryException {
+        LOGGER.info("Update ingredient with id ({}) - started", id);
         Optional<Ingredient> ingredientToUpdate = findIngredientById(id);
-        if (ingredientToUpdate.isPresent())
+        if (ingredientToUpdate.isPresent()) {
             ingredientList.set(ingredientList.indexOf(ingredientToUpdate.get()), ingredient);
-        else
+            LOGGER.info("Update ingredient with id ({}) - finished", id);
+        } else {
+            LOGGER.warn("Update ingredient with id ({}) - exception occurred -> {}", id,
+                    "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
+        }
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
+        LOGGER.info("Delete ingredient with id ({}) - started", id);
         Optional<Ingredient> ingredientToRemove = findIngredientById(id);
-        if (ingredientToRemove.isPresent())
+        if (ingredientToRemove.isPresent()) {
             ingredientList.remove(ingredientToRemove.get());
-        else
+            LOGGER.info("Delete ingredient with id ({}) - finished", id);
+        } else {
+            LOGGER.warn("Delete ingredient with id ({}) - exception occurred -> {}", id, "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
+        }
     }
 
     @Override
     public List<Ingredient> findAll() {
+        LOGGER.info("FindAll ingredients - called");
         return ingredientList;
     }
 
     @Override
     public Optional<Ingredient> findIngredientById(Long id) {
+        LOGGER.info("FindIngredientById ingredient with id ({}) - called", id);
         return ingredientList.stream()
                 .filter(ingredient -> id == ingredient.getId())
                 .findFirst();
@@ -56,6 +75,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public Optional<Ingredient> findIngredientByName(String name) {
+        LOGGER.info("FindIngredientByName ingredient with name ({}) - called", name);
         return ingredientList.stream()
                 .filter(ingredient -> name.equalsIgnoreCase(ingredient.getName()))
                 .findFirst();
@@ -63,6 +83,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public void generateIngredients() throws BuildException {
+        LOGGER.info("GenerateIngredients - started");
         IngredientBuilder ingredientBuilder = new IngredientBuilder();
         ingredientList.addAll(Arrays.asList(
                 ingredientBuilder.build(1, "Sugar", 1.5, 23),
@@ -81,5 +102,6 @@ public class IngredientInMemoryRepository implements IngredientRepository {
                 ingredientBuilder.build(14, "Oreo", 2.35, 32),
                 ingredientBuilder.build(15, "Ice Cream", 2.05, 10)
         ));
+        LOGGER.info("GenerateIngredients - finished");
     }
 }

@@ -7,6 +7,8 @@ import exception.BuildException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.Arrays;
@@ -17,42 +19,57 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 public class CustomerInMemoryRepository implements CustomerRepository {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
     private List<Customer> customerList;
 
     @Override
     public void add(Customer customer) throws RepositoryException {
-        if (!customerList.contains(customer))
+        LOGGER.info("Add customer - started");
+        if (!customerList.contains(customer)) {
             customerList.add(customer);
-        else
+            LOGGER.info("Add customer - finished");
+        } else {
+            LOGGER.warn("Add customer - exception occurred -> {}", "This element already exists!");
             throw new RepositoryException("This element already exists!");
+        }
     }
 
     @Override
     public void update(Long id, Customer customer) throws RepositoryException {
+        LOGGER.info("Update customer with id ({}) - started", id);
         Optional<Customer> customerToUpdate = findCustomerById(id);
-        if (customerToUpdate.isPresent())
+        if (customerToUpdate.isPresent()) {
             customerList.set(customerList.indexOf(customerToUpdate.get()), customer);
-        else
+            LOGGER.info("Update customer with id ({}) - finished", id);
+        } else {
+            LOGGER.warn("Update customer with id ({}) to - exception occurred -> {}", id,
+                    "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
+        }
     }
 
     @Override
     public void delete(Long id) throws RepositoryException {
+        LOGGER.info("Delete customer with id ({}) - started", id);
         Optional<Customer> customerToRemove = findCustomerById(id);
-        if (customerToRemove.isPresent())
+        if (customerToRemove.isPresent()) {
             customerList.remove(customerToRemove.get());
-        else
+            LOGGER.info("Delete customer with id ({}) - finished", id);
+        } else {
+            LOGGER.warn("Delete customer with id ({}) - exception occurred -> {}", id, "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
+        }
     }
 
     @Override
     public List<Customer> findAll() {
+        LOGGER.info("FindAll customers - called");
         return customerList;
     }
 
     @Override
     public Optional<Customer> findCustomerByEmail(String email) {
+        LOGGER.info("FindCustomerByEmail customer with email ({}) - called", email);
         return customerList.stream()
                 .filter(customer -> email.equals(customer.getEmail()))
                 .findFirst();
@@ -60,6 +77,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public Optional<Customer> findCustomerById(Long id) {
+        LOGGER.info("FindCustomerById customer with id ({}) - called", id);
         return customerList.stream()
                 .filter(customer -> id == customer.getId())
                 .findFirst();
@@ -69,6 +87,9 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     public Optional<Long> generateCustomerId() {
         //the temporary method
         //it will no longer be needed after we add a db because the id will be automatically generated
+
+        LOGGER.info("GenerateCustomerId - started");
+
         long id = 1;
         while (true) {
             boolean ok = true;
@@ -78,13 +99,17 @@ public class CustomerInMemoryRepository implements CustomerRepository {
                     break;
                 }
 
-            if (ok) return Optional.of(id);
+            if (ok) {
+                LOGGER.info("GenerateCustomerId - finished");
+                return Optional.of(id);
+            }
             id++;
         }
     }
 
     @Override
     public void generateCustomers() throws BuildException {
+        LOGGER.info("GenerateCustomers - started");
         LocationBuilder locationBuilder = new LocationBuilder();
         CustomerBuilder customerBuilder = new CustomerBuilder();
 
@@ -109,6 +134,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
                         "12345678", "0721578123", locationBuilder.build("Romania", "Cluj",
                                 "Str. Memo nr. 10, Casa nr. 15"))
         ));
+        LOGGER.info("GenerateCustomers - finished");
     }
 
 
