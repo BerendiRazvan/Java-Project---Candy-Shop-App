@@ -3,6 +3,7 @@ package repository.orderRepository;
 
 import domain.Shop;
 import domain.order.Order;
+import exception.BuildException;
 import repository.Repository;
 import repository.customerRepository.CustomerRepository;
 import repository.sweetRepository.SweetRepository;
@@ -13,7 +14,7 @@ public interface OrderRepository extends Repository<Long, Order> {
     Optional<Order> findOrderById(Long id);
 
     void generateOrders(Shop shop, SweetRepository sweetRepository,
-                        CustomerRepository customerRepository);
+                        CustomerRepository customerRepository) throws BuildException;
 
     Optional<Long> generateOrderId();
 }

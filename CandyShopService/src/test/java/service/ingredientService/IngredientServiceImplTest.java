@@ -1,9 +1,11 @@
 package service.ingredientService;
 
+import builder.IngredientInMemoryRepositoryBuilder;
+import builder.IngredientServiceImplBuilder;
 import domain.sweet.Ingredient;
+import exception.BuildException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
-import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.ArrayList;
@@ -25,15 +27,15 @@ class IngredientServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() {
-        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
-                .ingredientList(new ArrayList<>())
-                .build();
+    void setUp() throws BuildException {
+        IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
+
+        IngredientServiceImplBuilder ingredientServiceImplBuilder = new IngredientServiceImplBuilder();
+
+        IngredientRepository ingredientRepository = ingredientInMemoryRepositoryBuilder.build(new ArrayList<>());
         ingredientRepository.generateIngredients();
 
-        ingredientService = IngredientServiceImpl.builder()
-                .ingredientRepository(ingredientRepository)
-                .build();
+        ingredientService = ingredientServiceImplBuilder.build(ingredientRepository);
     }
 
     @AfterEach
@@ -56,16 +58,16 @@ class IngredientServiceImplTest {
     @Test
     void testValidFindIngredientById() throws ServiceException {
         Optional<Ingredient> ingredientById = ingredientService.findIngredientById(String.valueOf(ID));
-        if(ingredientById.isPresent()) {
+        if (ingredientById.isPresent()) {
             assertEquals(ingredientById.get().getId(), ID);
             assertEquals(ingredientById.get().getAmount(), AMOUNT);
             assertEquals(ingredientById.get().getPrice(), INGREDIENT_PRICE);
             assertEquals(ingredientById.get().getName(), INGREDIENT_NAME);
-        }else fail("Ingredient findIngredientById failed");
+        } else fail("Ingredient findIngredientById failed");
     }
 
     @Test
-    void testInvalidFindIngredientById() throws ServiceException {
+    void testInvalidFindIngredientById() {
         assertThrowsExactly(ServiceException.class,
                 () -> ingredientService.findIngredientById("dajdnas"),
                 INGREDIENT_ID_EXCEPTION);

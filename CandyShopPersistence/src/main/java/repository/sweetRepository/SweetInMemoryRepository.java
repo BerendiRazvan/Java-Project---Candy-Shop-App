@@ -1,9 +1,11 @@
 package repository.sweetRepository;
 
 
+import builder.SweetBuilder;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import exception.BuildException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,19 +59,15 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public void generateSweets(IngredientRepository ingredientRepository) {
+    public void generateSweets(IngredientRepository ingredientRepository) throws BuildException {
+        SweetBuilder sweetBuilder = new SweetBuilder();
         List<Ingredient> ingredientList = ingredientRepository.findAll();
         int noOfSweets = SWEETS_TO_GENERATE;
         while (noOfSweets != 0) {
             Optional<Long> id = generateSweetId();
             Optional<SweetType> sweetType = randomSweetType();
-            if (id.isPresent()&&sweetType.isPresent()) {
-                sweetList.add(Sweet.builder()
-                        .id(id.get())
-                        .ingredientsList(randomRecipe(ingredientList))
-                        .sweetType(sweetType.get())
-                        .price(0)
-                        .build());
+            if (id.isPresent() && sweetType.isPresent()) {
+                sweetList.add(sweetBuilder.build(id.get(), randomRecipe(ingredientList), sweetType.get(), 0));
                 noOfSweets--;
             } else throw new RuntimeException("Error: generateSweetId");
         }

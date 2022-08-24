@@ -1,7 +1,9 @@
 package repository.customerRepository;
 
+import builder.CustomerBuilder;
+import builder.LocationBuilder;
 import domain.Customer;
-import domain.location.Location;
+import exception.BuildException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -82,77 +84,30 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
-    public void generateCustomers() {
+    public void generateCustomers() throws BuildException {
+        LocationBuilder locationBuilder = new LocationBuilder();
+        CustomerBuilder customerBuilder = new CustomerBuilder();
+
         customerList.addAll(Arrays.asList(
-                Customer.builder()
-                        .id(1)
-                        .firstName("Razvan")
-                        .lastName("Berendi")
-                        .email("br@gmail.com")
-                        .password("12345678")
-                        .phoneNumber("0751578787")
-                        .location(Location.builder()
-                                .country("Romania")
-                                .city("Cluj")
-                                .address("Aleea Rucar nr. 9, Bloc D13, ap. 1")
-                                .build())
-                        .build(),
+                customerBuilder.build(1, "Razvan", "Berendi", "br@gmail.com",
+                        "12345678", "0751578787", locationBuilder.build("Romania", "Cluj",
+                                "Aleea Rucar nr. 9, Bloc D13, ap. 1")),
 
-                Customer.builder()
-                        .id(2)
-                        .firstName("Ana")
-                        .lastName("Pop")
-                        .email("ap@gmail.com")
-                        .password("12345678")
-                        .phoneNumber("0751578709")
-                        .location(Location.builder()
-                                .country("Romania")
-                                .city("Cluj")
-                                .address("Aleea Peana nr. 9, Bloc D19, ap. 2")
-                                .build())
-                        .build(),
+                customerBuilder.build(2, "Ana", "Pop", "ap@gmail.com",
+                        "12345678", "0751578709", locationBuilder.build("Romania", "Cluj",
+                                "Aleea Peana nr. 9, Bloc D19, ap. 2")),
 
-                Customer.builder()
-                        .id(3)
-                        .firstName("Cristian")
-                        .lastName("Popescu")
-                        .email("cp@gmail.com")
-                        .password("12345678")
-                        .phoneNumber("0751572287")
-                        .location(Location.builder()
-                                .country("Romania")
-                                .city("Cluj")
-                                .address("Str. Mehedinti nr. 5, Bloc I3, ap. 1")
-                                .build())
-                        .build(),
+                customerBuilder.build(3, "Cristian", "Popescu", "cp@gmail.com",
+                        "12345678", "0751572287", locationBuilder.build("Romania", "Cluj",
+                                "Str. Mehedinti nr. 5, Bloc I3, ap. 1")),
 
-                Customer.builder()
-                        .id(4)
-                        .firstName("Rares")
-                        .lastName("Marina")
-                        .email("rm@gmail.com")
-                        .password("12345678")
-                        .phoneNumber("0264578787")
-                        .location(Location.builder()
-                                .country("Romania")
-                                .city("Cluj")
-                                .address("Str. Constanta nr. 9, Bloc A2, ap. 3")
-                                .build())
-                        .build(),
+                customerBuilder.build(4, "Rares", "Marina", "rm@gmail.com",
+                        "12345678", "0264578787", locationBuilder.build("Romania", "Cluj",
+                                "Str. Constanta nr. 9, Bloc A2, ap. 3")),
 
-                Customer.builder()
-                        .id(5)
-                        .firstName("Andreea")
-                        .lastName("Staciu")
-                        .email("asasr@gmail.com")
-                        .password("12345678")
-                        .phoneNumber("0721578123")
-                        .location(Location.builder()
-                                .country("Romania")
-                                .city("Cluj")
-                                .address("Str. Memo nr. 10, Casa nr. 15")
-                                .build())
-                        .build()
+                customerBuilder.build(5, "Andreea", "Suciu", "as@gmail.com",
+                        "12345678", "0721578123", locationBuilder.build("Romania", "Cluj",
+                                "Str. Memo nr. 10, Casa nr. 15"))
         ));
     }
 

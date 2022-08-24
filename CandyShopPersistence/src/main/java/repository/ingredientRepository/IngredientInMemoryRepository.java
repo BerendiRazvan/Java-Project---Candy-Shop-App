@@ -1,6 +1,8 @@
 package repository.ingredientRepository;
 
+import builder.IngredientBuilder;
 import domain.sweet.Ingredient;
+import exception.BuildException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,23 +62,24 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     }
 
     @Override
-    public void generateIngredients() {
+    public void generateIngredients() throws BuildException {
+        IngredientBuilder ingredientBuilder = new IngredientBuilder();
         ingredientList.addAll(Arrays.asList(
-                Ingredient.builder().id(1).name("Sugar").price(1.5).amount(23).build(),
-                Ingredient.builder().id(2).name("Milk").price(0.5).amount(21).build(),
-                Ingredient.builder().id(3).name("Flour").price(0.42).amount(30).build(),
-                Ingredient.builder().id(4).name("Chocolate").price(1.75).amount(25).build(),
-                Ingredient.builder().id(5).name("Honey").price(2.05).amount(7).build(),
-                Ingredient.builder().id(6).name("Caramel").price(1.3).amount(17).build(),
-                Ingredient.builder().id(7).name("Whipped cream").price(1).amount(40).build(),
-                Ingredient.builder().id(8).name("Vanilla").price(0.73).amount(8).build(),
-                Ingredient.builder().id(9).name("Strawberries").price(2.51).amount(14).build(),
-                Ingredient.builder().id(10).name("Cacao").price(0.25).amount(5).build(),
-                Ingredient.builder().id(11).name("Peanut butter").price(2.22).amount(7).build(),
-                Ingredient.builder().id(12).name("Coconut").price(2.01).amount(20).build(),
-                Ingredient.builder().id(13).name("Cherry").price(3.17).amount(12).build(),
-                Ingredient.builder().id(14).name("Oreo").price(2.35).amount(32).build(),
-                Ingredient.builder().id(15).name("Ice Cream").price(2.05).amount(10).build()
+                ingredientBuilder.build(1, "Sugar", 1.5, 23),
+                ingredientBuilder.build(2, "Milk", 0.5, 21),
+                ingredientBuilder.build(3, "Flour", 0.42, 30),
+                ingredientBuilder.build(4, "Chocolate", 1.75, 25),
+                ingredientBuilder.build(5, "Honey", 2.05, 7),
+                ingredientBuilder.build(6, "Caramel", 1.3, 17),
+                ingredientBuilder.build(7, "Whipped cream", 1, 40),
+                ingredientBuilder.build(8, "Vanilla", 0.73, 8),
+                ingredientBuilder.build(9, "Strawberries", 2.51, 14),
+                ingredientBuilder.build(10, "Cacao", 0.25, 5),
+                ingredientBuilder.build(11, "Peanut butter", 2.22, 7),
+                ingredientBuilder.build(12, "Coconut", 2.01, 20),
+                ingredientBuilder.build(13, "Cherry", 3.17, 12),
+                ingredientBuilder.build(14, "Oreo", 2.35, 32),
+                ingredientBuilder.build(15, "Ice Cream", 2.05, 10)
         ));
     }
 }

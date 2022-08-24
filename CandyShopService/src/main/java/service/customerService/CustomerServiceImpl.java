@@ -1,7 +1,9 @@
 package service.customerService;
 
+import builder.CustomerBuilder;
 import domain.Customer;
 import domain.location.Location;
+import exception.BuildException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
@@ -9,8 +11,6 @@ import lombok.Builder;
 import repository.customerRepository.CustomerRepository;
 
 import java.util.Optional;
-
-import static service.utils.BuildingObjects.newCustomer;
 
 @Builder
 @AllArgsConstructor
@@ -28,11 +28,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Optional<Customer> createAccount(String firstName, String lastName, String email, String password,
-                                            String phoneNumber, Location customerLocation) throws ServiceException {
+                                            String phoneNumber, Location customerLocation)
+            throws ServiceException, BuildException {
         Optional<Long> id = customerRepository.generateCustomerId();
 
         if (id.isPresent()) {
-            Customer customer = newCustomer(id.get(), firstName, lastName, email, password, phoneNumber, customerLocation);
+            CustomerBuilder customerBuilder = new CustomerBuilder();
+            Customer customer = customerBuilder.build(id.get(), firstName, lastName, email, password, phoneNumber,
+                    customerLocation);
             try {
                 customerRepository.add(customer);
             } catch (RepositoryException e) {

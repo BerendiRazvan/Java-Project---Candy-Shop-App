@@ -1,8 +1,10 @@
 package service.sweetService;
 
+import builder.SweetBuilder;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import exception.BuildException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static service.utils.BuildingObjects.newSweet;
 import static service.utils.Converter.convertStringToInt;
 
 @Builder
@@ -50,13 +51,14 @@ public class SweetServiceImpl implements SweetService {
     }
 
     @Override
-    public Optional<Sweet> createNewSweetWithoutIngredients() throws ServiceException {
+    public Optional<Sweet> createNewSweetWithoutIngredients() throws ServiceException, BuildException {
 
         Optional<Long> id = sweetRepository.generateSweetId();
 
         if (id.isPresent()) {
             try {
-                Sweet sweet = newSweet(id.get(), new ArrayList<>(), SweetType.UNIQUE, SWEET_DEFAULT_PRICE);
+                SweetBuilder sweetBuilder = new SweetBuilder();
+                Sweet sweet = sweetBuilder.build(id.get(), new ArrayList<>(), SweetType.UNIQUE, SWEET_DEFAULT_PRICE);
                 sweetRepository.add(sweet);
                 return Optional.of(sweet);
             } catch (RepositoryException e) {

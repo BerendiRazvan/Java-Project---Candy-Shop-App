@@ -1,11 +1,13 @@
 package repository.orderRepository;
 
 
+import builder.OrderBuilder;
 import domain.Customer;
 import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
+import exception.BuildException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,7 +64,8 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public void generateOrders(Shop shop, SweetRepository sweetRepository,
-                               CustomerRepository customerRepository) {
+                               CustomerRepository customerRepository) throws BuildException {
+        OrderBuilder orderBuilder = new OrderBuilder();
         List<Sweet> sweetList = sweetRepository.findAll();
         List<Customer> customerList = customerRepository.findAll();
         int noOfOrders = ORDERS_TO_GENERATE;
@@ -71,13 +74,7 @@ public class OrderInMemoryRepository implements OrderRepository {
             Optional<OrderType> orderType = randomOrderType();
             Optional<Customer> customer = randomCustomer(customerList);
             if (id.isPresent() && orderType.isPresent() && customer.isPresent()) {
-                orderList.add(Order.builder()
-                        .id(id.get())
-                        .orderedSweets(randomOrder(sweetList))
-                        .orderType(orderType.get())
-                        .customer(customer.get())
-                        .shop(shop)
-                        .build());
+                orderList.add(orderBuilder.build(id.get(), randomOrder(sweetList), orderType.get(), customer.get(), shop));
                 noOfOrders--;
             } else throw new RuntimeException("Error: generateOrderId");
         }

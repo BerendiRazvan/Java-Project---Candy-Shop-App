@@ -1,21 +1,19 @@
 package service.orderService;
 
+import builder.*;
 import domain.Customer;
 import domain.Shop;
-import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
+import exception.BuildException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
-import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
-import repository.orderRepository.OrderInMemoryRepository;
 import repository.orderRepository.OrderRepository;
-import repository.sweetRepository.SweetInMemoryRepository;
 import repository.sweetRepository.SweetRepository;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,56 +36,36 @@ class OrderServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() throws RepositoryException {
-        shop = Shop.builder()
-                .name(SHOP_NAME)
-                .location(Location.builder()
-                        .country(COUNTRY)
-                        .city(CITY)
-                        .address(ADDRESS)
-                        .build())
-                .build();
+    void setUp() throws BuildException {
+        OrderInMemoryRepositoryBuilder orderInMemoryRepositoryBuilder = new OrderInMemoryRepositoryBuilder();
+        IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
+        SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
 
-        customer = Customer.builder()
-                .id(ID)
-                .firstName(FIRST_NAME)
-                .lastName(LAST_NAME)
-                .email(EMAIL)
-                .password(PASSWORD)
-                .phoneNumber(PHONE_NUMBER)
-                .location(Location.builder()
-                        .country(COUNTRY)
-                        .city(CITY)
-                        .address(ADDRESS)
-                        .build())
-                .build();
+        OrderServiceImplBuilder orderServiceImplBuilder = new OrderServiceImplBuilder();
 
-        ingredient = Ingredient.builder()
-                .id(ID)
-                .name(INGREDIENT_NAME)
-                .price(INGREDIENT_PRICE)
-                .amount(AMOUNT)
-                .build();
+        ShopBuilder shopBuilder = new ShopBuilder();
+        CustomerBuilder customerBuilder = new CustomerBuilder();
+        IngredientBuilder ingredientBuilder = new IngredientBuilder();
+        SweetBuilder sweetBuilder = new SweetBuilder();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        LocationBuilder locationBuilder = new LocationBuilder();
 
-        OrderRepository orderRepository = OrderInMemoryRepository.builder()
-                .orderList(new ArrayList<>())
-                .build();
+        shop = shopBuilder.build(SHOP_NAME, locationBuilder.build(COUNTRY, CITY, ADDRESS));
+
+        customer = customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
+                locationBuilder.build(COUNTRY, CITY, ADDRESS));
+
+        ingredient = ingredientBuilder.build(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
+
+        OrderRepository orderRepository = orderInMemoryRepositoryBuilder.build(new ArrayList<>());
 
         try {
-            orderRepository.add(Order.builder()
-                    .id(1)
-                    .orderedSweets(new HashMap<>())
-                    .orderType(OrderType.DELIVERY)
-                    .customer(customer)
-                    .shop(shop)
-                    .build());
+            orderRepository.add(orderBuilder.build(ID, new HashMap<>(), OrderType.DELIVERY, customer, shop));
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
 
-        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
-                .ingredientList(new ArrayList<>())
-                .build();
+        IngredientRepository ingredientRepository = ingredientInMemoryRepositoryBuilder.build(new ArrayList<>());
         ingredientRepository.generateIngredients();
 
         Ingredient ingredient1 = ingredientRepository.findIngredientById(1L).isPresent() ?
@@ -97,23 +75,13 @@ class OrderServiceImplTest {
         Ingredient ingredient3 = ingredientRepository.findIngredientById(3L).isPresent() ?
                 ingredientRepository.findIngredientById(3L).get() : fail();
 
-        sweet = Sweet.builder()
-                .id(ID)
-                .ingredientsList(new ArrayList<>(List.of(ingredient1, ingredient2, ingredient3)))
-                .sweetType(SweetType.DONUT)
-                .price(SWEET_PRICE)
-                .build();
+        sweet = sweetBuilder.build(ID, new ArrayList<>(List.of(ingredient1, ingredient2, ingredient3)), SweetType.DONUT,
+                SWEET_PRICE);
 
-        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
-                .sweetList(new ArrayList<>())
-                .build();
+        SweetRepository sweetRepository = sweetInMemoryRepositoryBuilder.build(new ArrayList<>());
         sweetRepository.generateSweets(ingredientRepository);
 
-        orderService = OrderServiceImpl.builder()
-                .orderRepository(orderRepository)
-                .sweetRepository(sweetRepository)
-                .ingredientRepository(ingredientRepository)
-                .build();
+        orderService = orderServiceImplBuilder.build(orderRepository, sweetRepository, ingredientRepository);
     }
 
     @AfterEach
@@ -128,7 +96,7 @@ class OrderServiceImplTest {
 
 
     @Test
-    void testCreateOrder() throws ServiceException {
+    void testCreateOrder() throws ServiceException, BuildException {
         Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
         if (order.isPresent()) {
             assertEquals(order.get().getCustomer(), customer);
@@ -139,7 +107,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testValidAddToOrder() throws ServiceException {
+    void testValidAddToOrder() throws ServiceException, BuildException {
         Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
         if (order.isPresent()) {
             double moneyMade = orderService.getMoneyMadeToday();
@@ -155,7 +123,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testInvalidAddToOrder() throws ServiceException {
+    void testInvalidAddToOrder() throws ServiceException, BuildException {
         Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
         order.ifPresent(value -> assertThrowsExactly(ServiceException.class,
                 () -> orderService.addToOrder(value, null),
@@ -200,7 +168,7 @@ class OrderServiceImplTest {
 
 
     @Test
-    void testGetAllOrdersInADay() throws ServiceException {
+    void testGetAllOrdersInADay() throws ServiceException, BuildException {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
         orderService.createOrder(customer, OrderType.DELIVERY, shop);
@@ -254,13 +222,13 @@ class OrderServiceImplTest {
         //private method - tested with reflection
 
         //args: Order order, Sweet sweet
-        Method method1 = OrderServiceImpl.class.getDeclaredMethod("addSweetToOrder",
+        Method method = OrderServiceImpl.class.getDeclaredMethod("addSweetToOrder",
                 Order.class, Sweet.class);
-        method1.setAccessible(true);
+        method.setAccessible(true);
 
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().isEmpty());
 
-        method1.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet);
+        method.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet);
 
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
         assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 1);
@@ -272,11 +240,11 @@ class OrderServiceImplTest {
         //private method - tested with reflection
 
         //args: Order order, Sweet sweet, int quantity
-        Method method2 = OrderServiceImpl.class.getDeclaredMethod("addSweetToOrder",
+        Method method = OrderServiceImpl.class.getDeclaredMethod("addSweetToOrder",
                 Order.class, Sweet.class, int.class);
-        method2.setAccessible(true);
+        method.setAccessible(true);
 
-        method2.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet, 5);
+        method.invoke(orderService, orderService.getAllOrdersInADay().get(0), sweet, 5);
 
         assertTrue(orderService.getAllOrdersInADay().get(0).getOrderedSweets().containsKey(sweet));
         assertEquals(orderService.getAllOrdersInADay().get(0).getOrderedSweets().get(sweet), 5);
@@ -284,7 +252,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testAddExtraIngredientToOrderedSweet() throws ServiceException {
+    void testAddExtraIngredientToOrderedSweet() throws ServiceException, BuildException {
         addSweetForTest();
         orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
         orderService.getAllOrdersInADay().get(0)
@@ -301,7 +269,6 @@ class OrderServiceImplTest {
 
     @Test
     void testInvalidAddExtraIngredientToOrderedSweet() {
-        //dupa refactorizare acesta va fi testul pt validare la add/remove/update extra ingr
         assertThrowsExactly(ServiceException.class,
                 () -> orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0),
                         null, ingredient, "2"),
@@ -363,7 +330,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testDeleteExtraIngredientForOrderedSweet() throws ServiceException {
+    void testDeleteExtraIngredientForOrderedSweet() throws ServiceException, BuildException {
         addSweetForTest();
         orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
 

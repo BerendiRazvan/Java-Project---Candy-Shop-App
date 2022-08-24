@@ -1,6 +1,8 @@
+package ui;
+
+import builder.LocationBuilder;
 import domain.Customer;
 import domain.Shop;
-import domain.location.Location;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
@@ -27,6 +29,8 @@ public class OrderSweetUI {
     private OrderService orderService;
     private IngredientService ingredientService;
 
+    private LocationBuilder locationBuilder;
+
     @Builder
     public OrderSweetUI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
                         IngredientService ingredientService) {
@@ -35,6 +39,8 @@ public class OrderSweetUI {
         this.sweetService = sweetService;
         this.orderService = orderService;
         this.ingredientService = ingredientService;
+
+        locationBuilder = new LocationBuilder();
 
         menu = "\nOptions:\n" +
                 "1 - Add sweet to order\n" +
@@ -266,8 +272,8 @@ public class OrderSweetUI {
 
             try {
                 return customerService.createAccount(firstName, lastName, mail, password, phone,
-                        new Location("Romania", "Cluj-Napoca", address));
-            } catch (Exception e) {
+                        locationBuilder.build("Romania", "Cluj-Napoca", address));
+            } catch (CandyShopException e) {
                 System.out.println(e.getMessage());
                 return Optional.empty();
             }

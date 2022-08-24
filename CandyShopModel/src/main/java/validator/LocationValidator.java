@@ -4,8 +4,6 @@ import domain.location.Location;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,19 +12,19 @@ public class LocationValidator {
     private static final int MINIMUM_CITY_LENGTH = 3;
     private static final int MINIMUM_COUNTRY_LENGTH = 3;
 
-    public String validateLocationCountry(String country) {
+    private String validateLocationCountry(String country) {
         if (country.length() < MINIMUM_COUNTRY_LENGTH)
             return "Invalid country!\n";
         return "";
     }
 
-    public String validateLocationCity(String city) {
+    private String validateLocationCity(String city) {
         if (city.length() < MINIMUM_CITY_LENGTH)
             return "Invalid city!\n";
         return "";
     }
 
-    public String validateLocationAddress(String address) {
+    private String validateLocationAddress(String address) {
         if (address.length() < MINIMUM_ADDRESS_LENGTH)
             return "Invalid address!\n";
         return "";
@@ -38,11 +36,20 @@ public class LocationValidator {
 
     public List<String> validateLocation(Location location) {
         if (location == null) return List.of("Location can not be null!");
-        List<String> errors = new ArrayList<>(
-                Arrays.asList(validateLocationCountry(location.getCountry()),
-                        validateLocationCity(location.getCity()),
-                        validateLocationAddress(location.getAddress())));
-        errors.removeAll(Collections.singleton(""));
+        List<String> errors = new ArrayList<>();
+
+        String error = validateLocationCountry(location.getCountry());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateLocationCity(location.getCity());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateLocationAddress(location.getAddress());
+        if (!error.matches(""))
+            errors.add(error);
+
         return errors;
     }
 }

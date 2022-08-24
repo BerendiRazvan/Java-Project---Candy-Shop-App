@@ -6,15 +6,13 @@ import domain.sweet.SweetType;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
 public class SweetValidator {
     private static final double MINIMUM_PRICE_VALUE = 0;
 
-    public String validateSweetType(SweetType sweetType) {
+    private String validateSweetType(SweetType sweetType) {
         if (!(sweetType.equals(SweetType.CAKE) ||
                 sweetType.equals(SweetType.CROISSANT) ||
                 sweetType.equals(SweetType.DONUT) ||
@@ -25,7 +23,7 @@ public class SweetValidator {
         return "";
     }
 
-    public String validateSweetIngredientsList(List<Ingredient> ingredientList) {
+    private String validateSweetIngredientsList(List<Ingredient> ingredientList) {
         for (Ingredient ingredient : ingredientList) {
             IngredientValidator validator = new IngredientValidator();
             if (!validator.isValidIngredient(ingredient))
@@ -34,7 +32,7 @@ public class SweetValidator {
         return "";
     }
 
-    public String validateSweetExtraIngredients(List<Ingredient> extraIngredients) {
+    private String validateSweetExtraIngredients(List<Ingredient> extraIngredients) {
         for (Ingredient ingredient : extraIngredients) {
             IngredientValidator validator = new IngredientValidator();
             if (!validator.isValidIngredient(ingredient))
@@ -43,7 +41,7 @@ public class SweetValidator {
         return "";
     }
 
-    public String validateSweetPrice(double price) {
+    private String validateSweetPrice(double price) {
         if (price < MINIMUM_PRICE_VALUE)
             return "Invalid price!\n";
         return "";
@@ -55,12 +53,24 @@ public class SweetValidator {
 
     public List<String> validateSweet(Sweet sweet) {
         if (sweet == null) return List.of("Sweet can not be null!");
-        List<String> errors = new ArrayList<>(
-                Arrays.asList(validateSweetType(sweet.getSweetType()),
-                        validateSweetIngredientsList(sweet.getIngredientsList()),
-                        validateSweetExtraIngredients(sweet.getExtraIngredients()),
-                        validateSweetPrice(sweet.getPrice())));
-        errors.removeAll(Collections.singleton(""));
+        List<String> errors = new ArrayList<>();
+
+        String error = validateSweetType(sweet.getSweetType());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateSweetIngredientsList(sweet.getIngredientsList());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateSweetExtraIngredients(sweet.getExtraIngredients());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateSweetPrice(sweet.getPrice());
+        if (!error.matches(""))
+            errors.add(error);
+
         return errors;
     }
 }

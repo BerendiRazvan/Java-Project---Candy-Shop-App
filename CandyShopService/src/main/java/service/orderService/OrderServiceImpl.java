@@ -1,11 +1,14 @@
 package service.orderService;
 
+import builder.OrderBuilder;
+import builder.SweetBuilder;
 import domain.Customer;
 import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
+import exception.BuildException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
@@ -20,8 +23,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static service.utils.BuildingObjects.newOrder;
-import static service.utils.BuildingObjects.newSweet;
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
@@ -35,12 +36,14 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException {
+    public Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException,
+            BuildException {
         Optional<Long> id = orderRepository.generateOrderId();
 
         if (id.isPresent()) {
             try {
-                Order order = newOrder(id.get(), orderType, customer, shop);
+                OrderBuilder orderBuilder = new OrderBuilder();
+                Order order = orderBuilder.build(id.get(), new HashMap<>(), orderType, customer, shop);
                 orderRepository.add(order);
                 return Optional.of(order);
             } catch (RepositoryException e) {
@@ -135,14 +138,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addExtraIngredientToOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
-            throws ServiceException {
+            throws ServiceException, BuildException {
         int ingredientAmount = convertStringToInt(amount);
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
 
         Optional<Long> id = sweetRepository.generateSweetId();
         if (id.isPresent()) {
-            Sweet customSweet = newSweet(id.get(), sweet.getIngredientsList(), sweet.getSweetType(), sweet.getPrice());
+            SweetBuilder sweetBuilder = new SweetBuilder();
+            Sweet customSweet = sweetBuilder.build(id.get(), sweet.getIngredientsList(), sweet.getSweetType(), sweet.getPrice());
             customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
 
             updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);

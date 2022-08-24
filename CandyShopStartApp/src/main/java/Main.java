@@ -1,87 +1,71 @@
+import builder.*;
 import domain.Shop;
-import domain.location.Location;
-import repository.customerRepository.CustomerInMemoryRepository;
+import exception.BuildException;
 import repository.customerRepository.CustomerRepository;
-import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
-import repository.orderRepository.OrderInMemoryRepository;
 import repository.orderRepository.OrderRepository;
-import repository.sweetRepository.SweetInMemoryRepository;
 import repository.sweetRepository.SweetRepository;
 import service.customerService.CustomerService;
-import service.customerService.CustomerServiceImpl;
 import service.ingredientService.IngredientService;
-import service.ingredientService.IngredientServiceImpl;
 import service.orderService.OrderService;
-import service.orderService.OrderServiceImpl;
 import service.sweetService.SweetService;
-import service.sweetService.SweetServiceImpl;
+import ui.UI;
 
 import java.util.ArrayList;
 
+
 public class Main {
+
     public static void main(String[] args) {
-        startApp();
+        try {
+            startApp();
+        } catch (BuildException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void startApp() {
+    public static void startApp() throws BuildException {
         System.out.println("\nWELCOME TO THE CANDY SHOP MY FRIEND :)\n");
 
-        Shop shop = Shop.builder()
-                .name("Candy Crush Shop")
-                .location(Location.builder()
-                        .country("Romania")
-                        .city("Cluj-Napoca")
-                        .address("Str. Memorandumului, nr. 10")
-                        .build())
-                .build();
+        ShopBuilder shopBuilder = new ShopBuilder();
+        LocationBuilder locationBuilder = new LocationBuilder();
+
+        Shop shop = shopBuilder.build("Candy Crush Shop", locationBuilder.build("Romania", "Cluj-Napoca",
+                "Str. Memorandumului, nr. 10"));
 
         //Repository
-        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
-                .ingredientList(new ArrayList<>())
-                .build();
+        IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
+        SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
+        CustomerInMemoryRepositoryBuilder customerInMemoryRepositoryBuilder = new CustomerInMemoryRepositoryBuilder();
+        OrderInMemoryRepositoryBuilder orderInMemoryRepositoryBuilder = new OrderInMemoryRepositoryBuilder();
+
+        IngredientRepository ingredientRepository = ingredientInMemoryRepositoryBuilder.build(new ArrayList<>());
         ingredientRepository.generateIngredients();
 
-        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
-                .sweetList(new ArrayList<>())
-                .build();
+        SweetRepository sweetRepository = sweetInMemoryRepositoryBuilder.build(new ArrayList<>());
         sweetRepository.generateSweets(ingredientRepository);
 
-        CustomerRepository customerRepository = CustomerInMemoryRepository.builder()
-                .customerList(new ArrayList<>())
-                .build();
+        CustomerRepository customerRepository = customerInMemoryRepositoryBuilder.build(new ArrayList<>());
         customerRepository.generateCustomers();
 
-        OrderRepository orderRepository = OrderInMemoryRepository.builder()
-                .orderList(new ArrayList<>())
-                .build();
+        OrderRepository orderRepository = orderInMemoryRepositoryBuilder.build(new ArrayList<>());
         orderRepository.generateOrders(shop, sweetRepository, customerRepository);
 
         //Service
-        CustomerService customerService = CustomerServiceImpl.builder()
-                .customerRepository(customerRepository)
-                .build();
-        OrderService orderService = OrderServiceImpl.builder()
-                .orderRepository(orderRepository)
-                .sweetRepository(sweetRepository)
-                .ingredientRepository(ingredientRepository)
-                .build();
-        SweetService sweetService = SweetServiceImpl.builder()
-                .sweetRepository(sweetRepository)
-                .ingredientRepository(ingredientRepository)
-                .build();
-        IngredientService ingredientService = IngredientServiceImpl.builder()
-                .ingredientRepository(ingredientRepository)
-                .build();
+        CustomerServiceImplBuilder customerServiceImplBuilder = new CustomerServiceImplBuilder();
+        OrderServiceImplBuilder orderServiceImplBuilder = new OrderServiceImplBuilder();
+        SweetServiceImplBuilder sweetServiceImplBuilder = new SweetServiceImplBuilder();
+        IngredientServiceImplBuilder ingredientServiceImplBuilder = new IngredientServiceImplBuilder();
 
-        //UI
-        UI appUI = UI.builder()
-                .shop(shop)
-                .customerService(customerService)
-                .sweetService(sweetService)
-                .orderService(orderService)
-                .ingredientService(ingredientService)
-                .build();
+        CustomerService customerService = customerServiceImplBuilder.build(customerRepository);
+        OrderService orderService = orderServiceImplBuilder.build(orderRepository, sweetRepository, ingredientRepository);
+        SweetService sweetService = sweetServiceImplBuilder.build(sweetRepository, ingredientRepository);
+        IngredientService ingredientService = ingredientServiceImplBuilder.build(ingredientRepository);
+
+        //ui.UI
+        UIBuilder uiBuilder = new UIBuilder();
+
+        UI appUI = uiBuilder.build(shop, customerService, sweetService, orderService, ingredientService);
         appUI.show();
 
 

@@ -1,5 +1,9 @@
+package ui;
+
+import builder.OrderSweetUIBuilder;
 import domain.Shop;
 import domain.sweet.Ingredient;
+import exception.BuildException;
 import exception.CandyShopException;
 import lombok.Builder;
 import service.customerService.CustomerService;
@@ -41,7 +45,7 @@ public class UI {
     }
 
 
-    public void show() {
+    public void show() throws BuildException {
         label:
         while (true) {
             printShopInfo();
@@ -72,15 +76,11 @@ public class UI {
 
     }
 
-    private void optionOrderSweets() {
+    private void optionOrderSweets() throws BuildException {
         printShopSweets();
-        OrderSweetUI orderSweetUI = OrderSweetUI.builder()
-                .shop(shop)
-                .customerService(customerService)
-                .sweetService(sweetService)
-                .orderService(orderService)
-                .ingredientService(ingredientService)
-                .build();
+        OrderSweetUIBuilder orderSweetUIBuilder = new OrderSweetUIBuilder();
+        OrderSweetUI orderSweetUI = orderSweetUIBuilder.build(shop, customerService, sweetService, orderService,
+                ingredientService);
         orderSweetUI.show();
     }
 
