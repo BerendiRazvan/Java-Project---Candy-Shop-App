@@ -5,7 +5,7 @@ import builder.SweetBuilder;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -98,7 +98,7 @@ public class SweetInMemoryRepository implements SweetRepository {
     }
 
     @Override
-    public void generateSweets(IngredientRepository ingredientRepository) throws BuildException {
+    public void generateSweets(IngredientRepository ingredientRepository) throws ValidationException {
         LOGGER.info("GenerateSweets - started");
         SweetBuilder sweetBuilder = new SweetBuilder();
         List<Ingredient> ingredientList = ingredientRepository.findAll();

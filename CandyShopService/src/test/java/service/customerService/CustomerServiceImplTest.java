@@ -3,7 +3,7 @@ package service.customerService;
 import builder.*;
 import domain.Customer;
 import domain.location.Location;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
 import repository.customerRepository.CustomerRepository;
@@ -30,7 +30,7 @@ class CustomerServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() throws BuildException {
+    void setUp() throws ValidationException {
         CustomerInMemoryRepositoryBuilder customerInMemoryRepositoryBuilder = new CustomerInMemoryRepositoryBuilder();
 
         CustomerServiceImplBuilder customerServiceImplBuilder = new CustomerServiceImplBuilder();
@@ -84,7 +84,7 @@ class CustomerServiceImplTest {
 
 
     @Test
-    void testValidCreateAccount() throws ServiceException, BuildException {
+    void testValidCreateAccount() throws ServiceException, ValidationException {
         Optional<Customer> customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                 PASSWORD, PHONE_NUMBER, location);
         if (customer.isPresent()) {
@@ -100,7 +100,7 @@ class CustomerServiceImplTest {
 
     @Test
     void testInvalidCreateAccount() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com", PASSWORD,
                         "1234", location),
                 CUSTOMER_PHONE_NUMBER_EXCEPTION);
@@ -108,12 +108,12 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForFirstName() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, "", LAST_NAME, EMAIL, PASSWORD,
                         PHONE_NUMBER, location)),
                 CUSTOMER_FIRST_NAME_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, "Razvan1234", LAST_NAME, EMAIL,
                         PASSWORD, PHONE_NUMBER, location)),
                 CUSTOMER_FIRST_NAME_EXCEPTION);
@@ -121,12 +121,12 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForLastName() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, "", EMAIL, PASSWORD,
                         PHONE_NUMBER, location)),
                 CUSTOMER_LAST_NAME_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, "B3r3ndi", EMAIL,
                         PASSWORD, PHONE_NUMBER, location)),
                 CUSTOMER_LAST_NAME_EXCEPTION);
@@ -134,22 +134,22 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForEmail() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "", PASSWORD,
                         PHONE_NUMBER, location)),
                 CUSTOMER_EMAIL_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "razvan.gmail.com",
                         PASSWORD, PHONE_NUMBER, location)),
                 CUSTOMER_EMAIL_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "@gmail.com",
                         PASSWORD, PHONE_NUMBER, location)),
                 CUSTOMER_EMAIL_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "gmail.com@",
                         PASSWORD, PHONE_NUMBER, location)),
                 CUSTOMER_EMAIL_EXCEPTION);
@@ -157,12 +157,12 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForPassword() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, "",
                         PHONE_NUMBER, location)),
                 CUSTOMER_PASSWORD_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, "1234",
                         PHONE_NUMBER, location)),
                 CUSTOMER_PASSWORD_EXCEPTION);
@@ -170,22 +170,22 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForPhoneNumber() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
                         "", location)),
                 CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
                         "12e456789w", location)),
                 CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
                         "09872", location)),
                 CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
                         "098123132372", location)),
                 CUSTOMER_PHONE_NUMBER_EXCEPTION);
@@ -193,12 +193,12 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForLocation() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
                         PHONE_NUMBER, locationBuilder.build(COUNTRY, CITY, ""))),
                 CUSTOMER_ADDRESS_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
                         PHONE_NUMBER, locationBuilder.build(COUNTRY, CITY, "aicia"))),
                 CUSTOMER_ADDRESS_EXCEPTION);
@@ -206,21 +206,21 @@ class CustomerServiceImplTest {
 
     @Test
     void testCustomerValidationForMultipleFields() {
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, "", EMAIL, "",
                         "", location)),
                 CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_PASSWORD_EXCEPTION +
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, "", "", EMAIL, PASSWORD,
                         "", location)),
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        assertThrowsExactly(BuildException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> validator.validateCustomer(customerBuilder.build(ID, "", "", EMAIL, PASSWORD,
                         "", locationBuilder.build("Romania", "Cluj", ""))),
                 CUSTOMER_FIRST_NAME_EXCEPTION +
@@ -232,7 +232,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void testCustomerValidationForValidCustomer() throws BuildException {
+    void testCustomerValidationForValidCustomer() throws ValidationException {
         List<String> errors;
 
         errors = validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME,

@@ -1,7 +1,7 @@
 package builder;
 
 import domain.Shop;
-import exception.BuildException;
+import exception.ValidationException;
 import lombok.NoArgsConstructor;
 import service.customerService.CustomerService;
 import service.ingredientService.IngredientService;
@@ -12,7 +12,7 @@ import ui.UI;
 @NoArgsConstructor
 public class UIBuilder {
     public UI build(Shop shop, CustomerService customerService, SweetService sweetService, OrderService
-            orderService, IngredientService ingredientService) throws BuildException {
+            orderService, IngredientService ingredientService) throws ValidationException {
         return UI.builder()
                 .shop(shop)
                 .customerService(customerService)

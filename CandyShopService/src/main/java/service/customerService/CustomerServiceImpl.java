@@ -3,7 +3,7 @@ package service.customerService;
 import builder.CustomerBuilder;
 import domain.Customer;
 import domain.location.Location;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
@@ -37,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<Customer> createAccount(String firstName, String lastName, String email, String password,
                                             String phoneNumber, Location customerLocation)
-            throws ServiceException, BuildException {
+            throws ServiceException, ValidationException {
         LOGGER.info("Create account for customer with first name: {}, last name: {}, email: {}, password = ******, " +
                         "phone number = {}, address = {} - started", firstName, lastName, email, phoneNumber,
                 customerLocation.getAddress());

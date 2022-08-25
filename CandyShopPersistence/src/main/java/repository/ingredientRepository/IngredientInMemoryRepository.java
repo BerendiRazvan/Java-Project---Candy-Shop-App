@@ -2,7 +2,7 @@ package repository.ingredientRepository;
 
 import builder.IngredientBuilder;
 import domain.sweet.Ingredient;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -81,7 +81,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     }
 
     @Override
-    public void generateIngredients() throws BuildException {
+    public void generateIngredients() throws ValidationException {
         LOGGER.info("GenerateIngredients - started");
         IngredientBuilder ingredientBuilder = new IngredientBuilder();
         ingredientList.addAll(Arrays.asList(

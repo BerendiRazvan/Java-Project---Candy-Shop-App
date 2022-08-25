@@ -3,7 +3,7 @@ package service.ingredientService;
 import builder.IngredientInMemoryRepositoryBuilder;
 import builder.IngredientServiceImplBuilder;
 import domain.sweet.Ingredient;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
 import repository.ingredientRepository.IngredientRepository;
@@ -27,7 +27,7 @@ class IngredientServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() throws BuildException {
+    void setUp() throws ValidationException {
         IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
 
         IngredientServiceImplBuilder ingredientServiceImplBuilder = new IngredientServiceImplBuilder();

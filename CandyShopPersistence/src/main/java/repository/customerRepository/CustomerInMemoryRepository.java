@@ -3,7 +3,7 @@ package repository.customerRepository;
 import builder.CustomerBuilder;
 import builder.LocationBuilder;
 import domain.Customer;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -108,7 +108,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     }
 
     @Override
-    public void generateCustomers() throws BuildException {
+    public void generateCustomers() throws ValidationException {
         LOGGER.info("GenerateCustomers - started");
         LocationBuilder locationBuilder = new LocationBuilder();
         CustomerBuilder customerBuilder = new CustomerBuilder();

@@ -4,7 +4,7 @@ import builder.*;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
@@ -33,7 +33,7 @@ class SweetServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() throws BuildException {
+    void setUp() throws ValidationException {
         SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
         IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
 
@@ -49,9 +49,9 @@ class SweetServiceImplTest {
         try {
             sweetRepository.add(sweetBuilder.build(ID,
                     Arrays.asList(
-                            ingredientBuilder.build(1, "Sugar", 1.5),
-                            ingredientBuilder.build(2, "Milk", 1),
-                            ingredientBuilder.build(3, "Flour", 0.75)),
+                            ingredientBuilder.build(1, "Sugar", 1.5, 1),
+                            ingredientBuilder.build(2, "Milk", 1, 1),
+                            ingredientBuilder.build(3, "Flour", 0.75, 1)),
                     SweetType.DONUT, 5));
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
@@ -78,16 +78,16 @@ class SweetServiceImplTest {
     }
 
     @Test
-    void testValidFindSweetById() throws ServiceException, BuildException {
+    void testValidFindSweetById() throws ServiceException, ValidationException {
         Optional<Sweet> sweet = sweetService.findSweetById(String.valueOf(1L));
         if (sweet.isPresent()) {
             assertEquals(sweet.get().getId(), 1L);
             assertEquals(sweet.get().getSweetType(), SweetType.DONUT);
             assertEquals(sweet.get().getPrice(), 5);
             assertEquals(sweet.get().getIngredientsList().toString(), new ArrayList<>(List.of(
-                    ingredientBuilder.build(1, "Sugar", 1.5),
-                    ingredientBuilder.build(2, "Milk", 1),
-                    ingredientBuilder.build(3, "Flour", 0.75))).toString());
+                    ingredientBuilder.build(1, "Sugar", 1.5, 1),
+                    ingredientBuilder.build(2, "Milk", 1, 1),
+                    ingredientBuilder.build(3, "Flour", 0.75, 1))).toString());
             assertEquals(sweet.get().getExtraIngredients(), new ArrayList<>());
         } else fail("Sweet findSweetById failed");
     }
@@ -103,7 +103,7 @@ class SweetServiceImplTest {
     }
 
     @Test
-    void testCreateEmptySweet() throws ServiceException, BuildException {
+    void testCreateEmptySweet() throws ServiceException, ValidationException {
         Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
         if (sweet.isPresent()) {
             assertEquals(sweet.get().getSweetType(), SweetType.UNIQUE);
@@ -117,7 +117,7 @@ class SweetServiceImplTest {
     }
 
     @Test
-    void testValidAddIngredientToSweet() throws ServiceException, BuildException {
+    void testValidAddIngredientToSweet() throws ServiceException, ValidationException {
         Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
         if (sweet.isPresent()) {
             assertEquals(sweet.get().getIngredientsList().size(), 0);
@@ -129,7 +129,7 @@ class SweetServiceImplTest {
     }
 
     @Test
-    void testValidAddAllIngredientsToSweet() throws ServiceException, BuildException {
+    void testValidAddAllIngredientsToSweet() throws ServiceException, ValidationException {
         Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
         if (sweet.isPresent()) {
             assertEquals(sweet.get().getIngredientsList().size(), 0);
@@ -153,7 +153,7 @@ class SweetServiceImplTest {
 
 
     @Test
-    void testInvalidAddAllIngredientsToSweet() throws ServiceException, BuildException {
+    void testInvalidAddAllIngredientsToSweet() throws ServiceException, ValidationException {
         Optional<Sweet> sweet = sweetService.createNewSweetWithoutIngredients();
         if (sweet.isPresent()) {
             assertEquals(sweet.get().getIngredientsList().size(), 0);

@@ -5,7 +5,7 @@ import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
-import exception.BuildException;
+import exception.ValidationException;
 import lombok.NoArgsConstructor;
 import validator.OrderValidator;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class OrderBuilder {
     public Order build(long id, Map<Sweet, Integer> orderedSweets, OrderType orderType, Customer customer, Shop shop)
-            throws BuildException {
+            throws ValidationException {
         Order order = Order.builder()
                 .id(id)
                 .orderedSweets(orderedSweets)
@@ -27,7 +27,7 @@ public class OrderBuilder {
         if (validator.isValidOrder(order))
             return order;
         else
-            throw new BuildException(validator.validateOrder(order).stream()
+            throw new ValidationException(validator.validateOrder(order).stream()
                     .reduce("", (result, error) -> result + error));
     }
 }

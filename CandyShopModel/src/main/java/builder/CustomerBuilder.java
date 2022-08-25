@@ -2,14 +2,14 @@ package builder;
 
 import domain.Customer;
 import domain.location.Location;
-import exception.BuildException;
+import exception.ValidationException;
 import lombok.NoArgsConstructor;
 import validator.CustomerValidator;
 
 @NoArgsConstructor
 public class CustomerBuilder {
     public Customer build(long id, String firstName, String lastName, String email, String password,
-                          String phoneNumber, Location customerLocation) throws BuildException {
+                          String phoneNumber, Location customerLocation) throws ValidationException {
         Customer customer = Customer.builder()
                 .id(id)
                 .firstName(firstName)
@@ -24,7 +24,7 @@ public class CustomerBuilder {
         if (validator.isValidCustomer(customer))
             return customer;
         else
-            throw new BuildException(validator.validateCustomer(customer).stream()
+            throw new ValidationException(validator.validateCustomer(customer).stream()
                     .reduce("", (result, error) -> result + error));
     }
 }

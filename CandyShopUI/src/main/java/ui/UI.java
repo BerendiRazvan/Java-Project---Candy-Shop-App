@@ -3,7 +3,7 @@ package ui;
 import builder.OrderSweetUIBuilder;
 import domain.Shop;
 import domain.sweet.Ingredient;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.CandyShopException;
 import lombok.Builder;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class UI {
     }
 
 
-    public void show() throws BuildException {
+    public void show() throws ValidationException {
         LOGGER.info("Show - started");
         label:
         while (true) {
@@ -80,7 +80,7 @@ public class UI {
         LOGGER.info("Show - finished");
     }
 
-    private void optionOrderSweets() throws BuildException {
+    private void optionOrderSweets() throws ValidationException {
         LOGGER.info("OptionOrderSweets - started");
         printShopSweets();
         OrderSweetUIBuilder orderSweetUIBuilder = new OrderSweetUIBuilder();

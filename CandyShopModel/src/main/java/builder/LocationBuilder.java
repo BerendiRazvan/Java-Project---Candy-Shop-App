@@ -1,13 +1,13 @@
 package builder;
 
 import domain.location.Location;
-import exception.BuildException;
+import exception.ValidationException;
 import lombok.NoArgsConstructor;
 import validator.LocationValidator;
 
 @NoArgsConstructor
 public class LocationBuilder {
-    public Location build(String country, String city, String address) throws BuildException {
+    public Location build(String country, String city, String address) throws ValidationException {
         Location location = Location.builder()
                 .country(country)
                 .city(city)
@@ -18,7 +18,7 @@ public class LocationBuilder {
         if (validator.isValidLocation(location))
             return location;
         else
-            throw new BuildException(validator.validateLocation(location).stream()
+            throw new ValidationException(validator.validateLocation(location).stream()
                     .reduce("", (result, error) -> result + error));
     }
 }

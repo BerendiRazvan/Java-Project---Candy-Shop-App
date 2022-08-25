@@ -8,7 +8,7 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException,
-            BuildException {
+            ValidationException {
         LOGGER.info("CreateOrder order with customer, order type = {} and shop - started", orderType);
         Optional<Long> id = orderRepository.generateOrderId();
 
@@ -169,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addExtraIngredientToOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
-            throws ServiceException, BuildException {
+            throws ServiceException, ValidationException {
         LOGGER.info("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - started", amount);
         int ingredientAmount = convertStringToInt(amount);
 

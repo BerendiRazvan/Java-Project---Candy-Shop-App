@@ -1,6 +1,6 @@
 import builder.*;
 import domain.Shop;
-import exception.BuildException;
+import exception.ValidationException;
 import repository.customerRepository.CustomerRepository;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
@@ -19,12 +19,12 @@ public class Main {
     public static void main(String[] args) {
         try {
             startApp();
-        } catch (BuildException e) {
+        } catch (ValidationException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void startApp() throws BuildException {
+    public static void startApp() throws ValidationException {
         System.out.println("\nWELCOME TO THE CANDY SHOP MY FRIEND :)\n");
 
         ShopBuilder shopBuilder = new ShopBuilder();

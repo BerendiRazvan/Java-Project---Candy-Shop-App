@@ -8,7 +8,7 @@ import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
@@ -36,7 +36,7 @@ class OrderServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() throws BuildException {
+    void setUp() throws ValidationException {
         OrderInMemoryRepositoryBuilder orderInMemoryRepositoryBuilder = new OrderInMemoryRepositoryBuilder();
         IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
         SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
@@ -96,7 +96,7 @@ class OrderServiceImplTest {
 
 
     @Test
-    void testCreateOrder() throws ServiceException, BuildException {
+    void testCreateOrder() throws ServiceException, ValidationException {
         Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
         if (order.isPresent()) {
             assertEquals(order.get().getCustomer(), customer);
@@ -107,7 +107,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testValidAddToOrder() throws ServiceException, BuildException {
+    void testValidAddToOrder() throws ServiceException, ValidationException {
         Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
         if (order.isPresent()) {
             double moneyMade = orderService.getMoneyMadeToday();
@@ -123,7 +123,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testInvalidAddToOrder() throws ServiceException, BuildException {
+    void testInvalidAddToOrder() throws ServiceException, ValidationException {
         Optional<Order> order = orderService.createOrder(customer, OrderType.DELIVERY, shop);
         order.ifPresent(value -> assertThrowsExactly(ServiceException.class,
                 () -> orderService.addToOrder(value, null),
@@ -168,7 +168,7 @@ class OrderServiceImplTest {
 
 
     @Test
-    void testGetAllOrdersInADay() throws ServiceException, BuildException {
+    void testGetAllOrdersInADay() throws ServiceException, ValidationException {
         assertEquals(orderService.getAllOrdersInADay().size(), 1);
 
         orderService.createOrder(customer, OrderType.DELIVERY, shop);
@@ -252,7 +252,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testAddExtraIngredientToOrderedSweet() throws ServiceException, BuildException {
+    void testAddExtraIngredientToOrderedSweet() throws ServiceException, ValidationException {
         addSweetForTest();
         orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
         orderService.getAllOrdersInADay().get(0)
@@ -330,7 +330,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testDeleteExtraIngredientForOrderedSweet() throws ServiceException, BuildException {
+    void testDeleteExtraIngredientForOrderedSweet() throws ServiceException, ValidationException {
         addSweetForTest();
         orderService.addExtraIngredientToOrderedSweet(orderService.getAllOrdersInADay().get(0), sweet, ingredient, "2");
 

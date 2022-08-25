@@ -4,7 +4,7 @@ import builder.SweetBuilder;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.sweet.SweetType;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
@@ -55,7 +55,7 @@ public class SweetServiceImpl implements SweetService {
     }
 
     @Override
-    public Optional<Sweet> createNewSweetWithoutIngredients() throws ServiceException, BuildException {
+    public Optional<Sweet> createNewSweetWithoutIngredients() throws ServiceException, ValidationException {
         LOGGER.info("CreateNewSweetWithoutIngredients - started");
         Optional<Long> id = sweetRepository.generateSweetId();
 

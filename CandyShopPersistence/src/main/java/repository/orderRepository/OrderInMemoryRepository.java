@@ -7,7 +7,7 @@ import domain.Shop;
 import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Sweet;
-import exception.BuildException;
+import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -105,7 +105,7 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public void generateOrders(Shop shop, SweetRepository sweetRepository,
-                               CustomerRepository customerRepository) throws BuildException {
+                               CustomerRepository customerRepository) throws ValidationException {
         LOGGER.info("GenerateOrders - started");
         OrderBuilder orderBuilder = new OrderBuilder();
         List<Sweet> sweetList = sweetRepository.findAll();
