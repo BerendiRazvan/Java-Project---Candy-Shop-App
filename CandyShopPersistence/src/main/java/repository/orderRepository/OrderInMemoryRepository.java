@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
 import repository.sweetRepository.SweetRepository;
 
@@ -22,7 +21,7 @@ import java.util.*;
 @Builder
 @AllArgsConstructor
 public class OrderInMemoryRepository implements OrderRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderInMemoryRepository.class);
 
     private static final int ORDERS_TO_GENERATE = 7;
     private List<Order> orderList;
@@ -42,13 +41,13 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public void update(Long id, Order order) throws RepositoryException {
-        LOGGER.info("Update order with id ({}) - started", id);
+        LOGGER.info("Update order with id = {} - started", id);
         Optional<Order> orderToUpdate = findOrderById(id);
         if (orderToUpdate.isPresent()) {
             orderList.set(orderList.indexOf(orderToUpdate.get()), order);
-            LOGGER.info("Update order with id ({}) - finished", id);
+            LOGGER.info("Update order with id = {} - finished", id);
         } else {
-            LOGGER.warn("Update order with id ({}) to - exception occurred -> {}", id,
+            LOGGER.warn("Update order with id = {} to - exception occurred -> {}", id,
                     "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
@@ -56,13 +55,13 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        LOGGER.info("Delete order with id ({}) - started", id);
+        LOGGER.info("Delete order with id = {} - started", id);
         Optional<Order> orderToRemove = findOrderById(id);
         if (orderToRemove.isPresent()) {
             orderList.remove(orderToRemove.get());
-            LOGGER.info("Delete order with id ({}) - finished", id);
+            LOGGER.info("Delete order with id = {} - finished", id);
         } else {
-            LOGGER.warn("Delete order with id ({}) - exception occurred -> {}", id, "This element does not exist!");
+            LOGGER.warn("Delete order with id = {} - exception occurred -> {}", id, "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
     }
@@ -75,7 +74,7 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public Optional<Order> findOrderById(Long id) {
-        LOGGER.info("FindOrderById order with id ({}) - called", id);
+        LOGGER.info("FindOrderById for order with id = {} - called", id);
         return orderList.stream()
                 .filter(order -> id == order.getId())
                 .findFirst();

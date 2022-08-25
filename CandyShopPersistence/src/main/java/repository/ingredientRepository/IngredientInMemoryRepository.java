@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.customerRepository.CustomerInMemoryRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 public class IngredientInMemoryRepository implements IngredientRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngredientInMemoryRepository.class);
     private List<Ingredient> ingredientList;
 
     @Override
@@ -34,13 +33,13 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public void update(Long id, Ingredient ingredient) throws RepositoryException {
-        LOGGER.info("Update ingredient with id ({}) - started", id);
+        LOGGER.info("Update ingredient with id = {} - started", id);
         Optional<Ingredient> ingredientToUpdate = findIngredientById(id);
         if (ingredientToUpdate.isPresent()) {
             ingredientList.set(ingredientList.indexOf(ingredientToUpdate.get()), ingredient);
-            LOGGER.info("Update ingredient with id ({}) - finished", id);
+            LOGGER.info("Update ingredient with id = {} - finished", id);
         } else {
-            LOGGER.warn("Update ingredient with id ({}) - exception occurred -> {}", id,
+            LOGGER.warn("Update ingredient with id = {} - exception occurred -> {}", id,
                     "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
@@ -48,13 +47,13 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        LOGGER.info("Delete ingredient with id ({}) - started", id);
+        LOGGER.info("Delete ingredient with id = {} - started", id);
         Optional<Ingredient> ingredientToRemove = findIngredientById(id);
         if (ingredientToRemove.isPresent()) {
             ingredientList.remove(ingredientToRemove.get());
-            LOGGER.info("Delete ingredient with id ({}) - finished", id);
+            LOGGER.info("Delete ingredient with id = {} - finished", id);
         } else {
-            LOGGER.warn("Delete ingredient with id ({}) - exception occurred -> {}", id, "This element does not exist!");
+            LOGGER.warn("Delete ingredient with id = {} - exception occurred -> {}", id, "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
     }
@@ -67,7 +66,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public Optional<Ingredient> findIngredientById(Long id) {
-        LOGGER.info("FindIngredientById ingredient with id ({}) - called", id);
+        LOGGER.info("FindIngredientById for ingredient with id = {} - called", id);
         return ingredientList.stream()
                 .filter(ingredient -> id == ingredient.getId())
                 .findFirst();
@@ -75,7 +74,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
 
     @Override
     public Optional<Ingredient> findIngredientByName(String name) {
-        LOGGER.info("FindIngredientByName ingredient with name ({}) - called", name);
+        LOGGER.info("FindIngredientByName for ingredient with name = {} - called", name);
         return ingredientList.stream()
                 .filter(ingredient -> name.equalsIgnoreCase(ingredient.getName()))
                 .findFirst();

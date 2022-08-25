@@ -36,13 +36,13 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public void update(Long id, Customer customer) throws RepositoryException {
-        LOGGER.info("Update customer with id ({}) - started", id);
+        LOGGER.info("Update customer with id = {} - started", id);
         Optional<Customer> customerToUpdate = findCustomerById(id);
         if (customerToUpdate.isPresent()) {
             customerList.set(customerList.indexOf(customerToUpdate.get()), customer);
-            LOGGER.info("Update customer with id ({}) - finished", id);
+            LOGGER.info("Update customer with id = {} - finished", id);
         } else {
-            LOGGER.warn("Update customer with id ({}) to - exception occurred -> {}", id,
+            LOGGER.warn("Update customer with id = {} to - exception occurred -> {}", id,
                     "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
@@ -50,13 +50,13 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        LOGGER.info("Delete customer with id ({}) - started", id);
+        LOGGER.info("Delete customer with id = {} - started", id);
         Optional<Customer> customerToRemove = findCustomerById(id);
         if (customerToRemove.isPresent()) {
             customerList.remove(customerToRemove.get());
-            LOGGER.info("Delete customer with id ({}) - finished", id);
+            LOGGER.info("Delete customer with id = {} - finished", id);
         } else {
-            LOGGER.warn("Delete customer with id ({}) - exception occurred -> {}", id, "This element does not exist!");
+            LOGGER.warn("Delete customer with id = {} - exception occurred -> {}", id, "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
     }
@@ -69,7 +69,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public Optional<Customer> findCustomerByEmail(String email) {
-        LOGGER.info("FindCustomerByEmail customer with email ({}) - called", email);
+        LOGGER.info("FindCustomerByEmail for customer with email = {} - called", email);
         return customerList.stream()
                 .filter(customer -> email.equals(customer.getEmail()))
                 .findFirst();
@@ -77,7 +77,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public Optional<Customer> findCustomerById(Long id) {
-        LOGGER.info("FindCustomerById customer with id ({}) - called", id);
+        LOGGER.info("FindCustomerById for customer with id = {} - called", id);
         return customerList.stream()
                 .filter(customer -> id == customer.getId())
                 .findFirst();

@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.customerRepository.CustomerInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.*;
@@ -19,7 +18,7 @@ import java.util.*;
 @Builder
 @AllArgsConstructor
 public class SweetInMemoryRepository implements SweetRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SweetInMemoryRepository.class);
 
     private static final int SWEETS_TO_GENERATE = 15;
     private List<Sweet> sweetList;
@@ -38,13 +37,13 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public void update(Long id, Sweet sweet) throws RepositoryException {
-        LOGGER.info("Update sweet with id ({}) - started", id);
+        LOGGER.info("Update sweet with id = {} - started", id);
         Optional<Sweet> sweetToUpdate = findSweetById(id);
         if (sweetToUpdate.isPresent()) {
             sweetList.set(sweetList.indexOf(sweetToUpdate.get()), sweet);
-            LOGGER.info("Update sweet with id ({}) - finished", id);
+            LOGGER.info("Update sweet with id = {} - finished", id);
         } else {
-            LOGGER.warn("Update sweet with id ({}) - exception occurred -> {}", id,
+            LOGGER.warn("Update sweet with id = {} - exception occurred -> {}", id,
                     "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
@@ -52,13 +51,13 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        LOGGER.info("Delete sweet with id ({}) - started", id);
+        LOGGER.info("Delete sweet with id = {} - started", id);
         Optional<Sweet> sweetToDelete = findSweetById(id);
         if (sweetToDelete.isPresent()) {
             sweetList.remove(sweetToDelete.get());
-            LOGGER.info("Delete sweet with id ({}) - finished", id);
+            LOGGER.info("Delete sweet with id = {} - finished", id);
         } else {
-            LOGGER.warn("Delete sweet with id ({}) - exception occurred -> {}", id, "This element does not exist!");
+            LOGGER.warn("Delete sweet with id = {} - exception occurred -> {}", id, "This element does not exist!");
             throw new RepositoryException("This element does not exist!");
         }
     }
@@ -71,7 +70,7 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     @Override
     public Optional<Sweet> findSweetById(Long id) {
-        LOGGER.info("FindSweetById sweet with id ({}) - called", id);
+        LOGGER.info("FindSweetById for sweet with id = {} - called", id);
         return sweetList.stream()
                 .filter(sweet -> id == sweet.getId())
                 .findFirst();

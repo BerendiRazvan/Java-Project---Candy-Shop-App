@@ -9,6 +9,8 @@ import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import exception.CandyShopException;
 import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.customerService.CustomerService;
 import service.ingredientService.IngredientService;
 import service.orderService.OrderService;
@@ -18,7 +20,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class OrderSweetUI {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderSweetUI.class);
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final String expressionVerification = "^(([a-zA-Z ]*)(,)(\\d*)(;))*$";
     private final Shop shop;
@@ -55,6 +57,7 @@ public class OrderSweetUI {
 
 
     public void show() {
+        LOGGER.info("Show - started");
         Customer customer = null;
         while (customer == null) {
             Optional<Customer> customerOptional = loginOption();
@@ -121,9 +124,11 @@ public class OrderSweetUI {
         } catch (CandyShopException e) {
             System.out.println("Error: " + e.getMessage());
         }
+        LOGGER.info("Show - finished");
     }
 
     private void option1(Order order) {
+        LOGGER.info("Option1 - started");
         System.out.print("Choose a sweet (enter sweet id): ");
         String sweetId = SCANNER.nextLine().toUpperCase();
         try {
@@ -136,9 +141,11 @@ public class OrderSweetUI {
             System.out.println("Oh no, we failed to add your sweet :(");
             System.out.println(e.getMessage());
         }
+        LOGGER.info("Option1 - finished");
     }
 
     private void option2(Order order) {
+        LOGGER.info("Option2 - started");
         System.out.println("Available ingredients:");
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
@@ -164,9 +171,11 @@ public class OrderSweetUI {
         } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
+        LOGGER.info("Option2 - finished");
     }
 
     private void option3(Order order) {
+        LOGGER.info("Option3 - started");
         System.out.println("Available ingredients:");
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
@@ -192,9 +201,11 @@ public class OrderSweetUI {
         } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
+        LOGGER.info("Option3 - finished");
     }
 
     private void option4(Order order) {
+        LOGGER.info("Option4 - started");
         System.out.println("Available ingredients:");
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
@@ -218,9 +229,11 @@ public class OrderSweetUI {
         } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
+        LOGGER.info("Option4 - finished");
     }
 
     private void option5(Order order) {
+        LOGGER.info("Option5 - started");
         System.out.println("\nAvailable ingredients:");
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
         try {
@@ -241,42 +254,61 @@ public class OrderSweetUI {
         } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
+        LOGGER.info("Option5 - finished");
     }
 
 
     private Optional<Customer> loginOption() {
+        LOGGER.info("LoginOption - started");
         System.out.println("\nAuthentication");
         System.out.print("Mail = ");
         String mail = SCANNER.nextLine();
 
-        if (customerService.checkIfEmailExists(mail)) {
-            System.out.print("Password = ");
-            String password = SCANNER.nextLine();
-            try {
-                return customerService.login(mail, password);
-            } catch (CandyShopException e) {
-                System.out.println(e.getMessage());
-                return Optional.empty();
-            }
-        } else {
-            System.out.print("First name = ");
-            String firstName = SCANNER.nextLine();
-            System.out.print("Last name = ");
-            String lastName = SCANNER.nextLine();
-            System.out.print("Your password = ");
-            String password = SCANNER.nextLine();
-            System.out.print("Phone number = ");
-            String phone = SCANNER.nextLine();
-            System.out.print("Address (street, number, building) = ");
-            String address = SCANNER.nextLine();
+        Optional<Customer> customer;
+        if (customerService.checkIfEmailExists(mail))
+            customer = login(mail);
+        else
+            customer = createAccount(mail);
 
-            try {
-                return customerService.createAccount(firstName, lastName, mail, password, phone,
-                        locationBuilder.build("Romania", "Cluj-Napoca", address));
-            } catch (CandyShopException e) {
-                System.out.println(e.getMessage());
-                return Optional.empty();
-            }
+        LOGGER.info("LoginOption - finished");
+        return customer;
+    }
+
+    private Optional<Customer> login(String mail) {
+        LOGGER.info("Login for email = {} - started", mail);
+        System.out.print("Password = ");
+        String password = SCANNER.nextLine();
+        try {
+            LOGGER.info("Login for email = {} - finished", mail);
+            return customerService.login(mail, password);
+        } catch (CandyShopException e) {
+            System.out.println(e.getMessage());
+            LOGGER.warn("Login for email = {} - exception occurred -> {} (login)", mail, e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private Optional<Customer> createAccount(String mail) {
+        LOGGER.info("CreateAccount for email = {} - started", mail);
+        System.out.print("First name = ");
+        String firstName = SCANNER.nextLine();
+        System.out.print("Last name = ");
+        String lastName = SCANNER.nextLine();
+        System.out.print("Your password = ");
+        String password = SCANNER.nextLine();
+        System.out.print("Phone number = ");
+        String phone = SCANNER.nextLine();
+        System.out.print("Address (street, number, building) = ");
+        String address = SCANNER.nextLine();
+
+        try {
+            LOGGER.info("CreateAccount for email = {} - finished", mail);
+            return customerService.createAccount(firstName, lastName, mail, password, phone,
+                    locationBuilder.build("Romania", "Cluj-Napoca", address));
+        } catch (CandyShopException e) {
+            System.out.println(e.getMessage());
+            LOGGER.warn("CreateAccount for email = {} - exception occurred -> {} (create account)", mail, e.getMessage());
+            return Optional.empty();
         }
     }
 }

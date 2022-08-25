@@ -6,6 +6,8 @@ import domain.sweet.Ingredient;
 import exception.BuildException;
 import exception.CandyShopException;
 import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.customerService.CustomerService;
 import service.ingredientService.IngredientService;
 import service.orderService.OrderService;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 
 public class UI {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UI.class);
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private static final Scanner SCANNER = new Scanner(System.in);
     private final Shop shop;
@@ -46,6 +49,7 @@ public class UI {
 
 
     public void show() throws BuildException {
+        LOGGER.info("Show - started");
         label:
         while (true) {
             printShopInfo();
@@ -73,18 +77,21 @@ public class UI {
             }
 
         }
-
+        LOGGER.info("Show - finished");
     }
 
     private void optionOrderSweets() throws BuildException {
+        LOGGER.info("OptionOrderSweets - started");
         printShopSweets();
         OrderSweetUIBuilder orderSweetUIBuilder = new OrderSweetUIBuilder();
         OrderSweetUI orderSweetUI = orderSweetUIBuilder.build(shop, customerService, sweetService, orderService,
                 ingredientService);
         orderSweetUI.show();
+        LOGGER.info("OptionOrderSweets - finished");
     }
 
     private void optionPrintOrderDetails() {
+        LOGGER.info("OptionPrintOrderDetails - started");
         System.out.print("Enter order number to print details: ");
         String orderNumber = SCANNER.nextLine();
 
@@ -94,9 +101,11 @@ public class UI {
         } catch (CandyShopException e) {
             System.out.println(e.getMessage());
         }
+        LOGGER.info("OptionPrintOrderDetails - finished");
     }
 
     private void optionViewOrdersAndProfitForADay() {
+        LOGGER.info("OptionViewOrdersAndProfitForADay - started");
         System.out.println("\nToday's orders: " + LocalDateTime.now().format(DateTimeFormatter
                 .ofPattern("EEEE, dd.MM.yyyy")));
         orderService.getAllOrdersInADay()
@@ -108,9 +117,11 @@ public class UI {
                 .forEach(System.out::println);
         System.out.print("Money made today: " + df.format(orderService.getMoneyMadeToday()) + "$\n" +
                 "Actual profit made today: " + df.format(orderService.getProfitMadeToday()) + "$\n");
+        LOGGER.info("OptionViewOrdersAndProfitForADay - finished");
     }
 
     private void printShopInfo() {
+        LOGGER.info("PrintShopInfo - started");
         System.out.println("\n\n" + "-".repeat(100) + "\n" +
                 "\t".repeat(10) + shop.getName() +
                 "\n" + "-".repeat(100) + "\n");
@@ -126,9 +137,11 @@ public class UI {
         ingredientService.showAllIngredientsInStock().forEach(System.out::println);
 
         System.out.println("\n" + "-".repeat(100) + "\n");
+        LOGGER.info("PrintShopInfo - finished");
     }
 
     private void printShopSweets() {
+        LOGGER.info("PrintShopSweets - started");
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
@@ -141,5 +154,6 @@ public class UI {
                     .forEach(ingredient -> System.out.print(ingredient + ", "));
         }
         System.out.println("\n" + "-".repeat(100) + "\n");
+        LOGGER.info("PrintShopSweets - finished");
     }
 }

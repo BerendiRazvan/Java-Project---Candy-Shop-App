@@ -13,6 +13,8 @@ import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repository.ingredientRepository.IngredientRepository;
 import repository.orderRepository.OrderRepository;
 import repository.sweetRepository.SweetRepository;
@@ -29,6 +31,7 @@ import static service.utils.Converter.convertStringToLong;
 @Builder
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private OrderRepository orderRepository;
     private SweetRepository sweetRepository;
@@ -38,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException,
             BuildException {
+        LOGGER.info("CreateOrder order with customer, order type = {} and shop - started", orderType);
         Optional<Long> id = orderRepository.generateOrderId();
 
         if (id.isPresent()) {
@@ -45,16 +49,24 @@ public class OrderServiceImpl implements OrderService {
                 OrderBuilder orderBuilder = new OrderBuilder();
                 Order order = orderBuilder.build(id.get(), new HashMap<>(), orderType, customer, shop);
                 orderRepository.add(order);
+                LOGGER.info("CreateOrder order with customer, order type = {} and shop - finished", orderType);
                 return Optional.of(order);
             } catch (RepositoryException e) {
+                LOGGER.warn("CreateOrder order with customer, order type = {} and shop - exception occurred -> {}",
+                        orderType, e.getMessage());
                 throw new ServiceException(e.getMessage());
             }
-        } else throw new RuntimeException("Error: generateOrderId");
+        } else {
+            LOGGER.error("CreateOrder order with customer, order type = {} sand shop - exception occurred -> {}",
+                    orderType, "Error: generateOrderId");
+            throw new RuntimeException("Error: generateOrderId");
+        }
     }
 
 
     @Override
     public void addToOrder(Order order, Sweet newSweet) throws ServiceException {
+        LOGGER.info("AddToOrder for order and sweet - started");
         if (newSweet == null) throw new ServiceException("Invalid sweet id!");
         else {
             Optional<Order> updateOrder = orderRepository.findOrderById(order.getId());
@@ -65,37 +77,52 @@ public class OrderServiceImpl implements OrderService {
                     addSweetToOrder(updateOrder.get(), newSweet);
                     orderRepository.update(order.getId(), updateOrder.get());
                 } catch (RepositoryException e) {
+                    LOGGER.warn("AddToOrder for order and sweet - exception occurred -> {}", e.getMessage());
                     throw new ServiceException(e.getMessage());
                 }
-            } else throw new ServiceException("Invalid sweet id!");
+            } else {
+                LOGGER.warn("AddToOrder for order and sweet - exception occurred -> {}", "Invalid sweet id!");
+                throw new ServiceException("Invalid sweet id!");
+            }
         }
+        LOGGER.info("AddToOrder for order and sweet - finished");
     }
 
 
     @Override
     public StringBuilder getOrderDetails(String orderId) throws ServiceException {
+        LOGGER.info("GetOrderDetails for order with id = {} - started", orderId);
         long id = convertStringToLong(orderId);
 
         Optional<Order> orderById = orderRepository.findOrderById(id);
         if (orderById.isPresent()) {
+            LOGGER.info("GetOrderDetails for order with id = {} - finished", orderId);
             return new StringBuilder(orderById.get() +
                     "TOTAL TO PAY: " + df.format(getFinalOrderPrice(orderById.get())) + "$" +
                     "\n" + "-".repeat(100) + "\n");
-        } else throw new ServiceException("Invalid order number/id!");
+        } else {
+            LOGGER.warn("GetOrderDetails for order with id = {} - exception occurred -> {}", orderId,
+                    "Invalid order number/id!");
+            throw new ServiceException("Invalid order number/id!");
+        }
     }
 
     @Override
     public void removeOrder(long idOrder) throws ServiceException {
+        LOGGER.info("RemoveOrder for order with id = {} - started", idOrder);
         try {
             orderRepository.delete(idOrder);
         } catch (RepositoryException e) {
+            LOGGER.warn("RemoveOrder for order with id = {} - exception occurred -> {}", idOrder, e.getMessage());
             throw new ServiceException(e.getMessage());
         }
+        LOGGER.info("RemoveOrder for order with id = {} - finished", idOrder);
     }
 
 
     @Override
     public List<Order> getAllOrdersInADay() {
+        LOGGER.info("GetAllOrdersInADay - called");
         return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime()
@@ -107,6 +134,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public double getMoneyMadeToday() {
+        LOGGER.info("GetMoneyMadeToday - called");
         return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime()
@@ -118,6 +146,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public double getProfitMadeToday() {
+        LOGGER.info("GetProfitMadeToday - called");
         return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getOrderDateTime()
@@ -128,17 +157,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public double getFinalOrderPrice(Order order) {
+        LOGGER.info("GetFinalOrderPrice - started");
         Map<Sweet, Integer> orderedSweets = order.getOrderedSweets();
         double totalToPay = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
             totalToPay += orderedSweets.get(sweet) * sweet.getPrice();
         }
+        LOGGER.info("GetFinalOrderPrice - finished");
         return totalToPay;
     }
 
     @Override
     public void addExtraIngredientToOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
             throws ServiceException, BuildException {
+        LOGGER.info("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - started", amount);
         int ingredientAmount = convertStringToInt(amount);
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
@@ -157,14 +189,22 @@ public class OrderServiceImpl implements OrderService {
             try {
                 sweetRepository.add(customSweet);
             } catch (RepositoryException e) {
+                LOGGER.warn("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - exception " +
+                        "occurred -> {}", amount, e.getMessage());
                 throw new ServiceException(e.getMessage());
             }
-        } else throw new RuntimeException("Error: generateSweetId");
+        } else {
+            LOGGER.error("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - exception " +
+                    "occurred -> {}", amount, "Error: generateSweetId");
+            throw new RuntimeException("Error: generateSweetId");
+        }
+        LOGGER.info("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - finished", amount);
     }
 
     @Override
     public void updateExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
             throws ServiceException {
+        LOGGER.info("UpdateExtraIngredientForOrderedSweet for order, sweet, ingredient and amount = {} - started", amount);
         int ingredientAmount = convertStringToInt(amount);
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
@@ -173,13 +213,18 @@ public class OrderServiceImpl implements OrderService {
         try {
             sweetRepository.update(sweet.getId(), sweet);
         } catch (RepositoryException e) {
+            LOGGER.warn("UpdateExtraIngredientForOrderedSweet for order, sweet, ingredient and amount = {} - exception " +
+                    "occurred -> {}", amount, e.getMessage());
             throw new ServiceException(e.getMessage());
         }
+        LOGGER.info("UpdateExtraIngredientForOrderedSweet for order, sweet, ingredient and amount = {} - finished", amount);
     }
 
     @Override
     public void deleteExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient)
             throws ServiceException {
+        LOGGER.info("DeleteExtraIngredientForOrderedSweet for order, sweet and ingredient - started");
+
         extraIngredientValidation(order, sweet, ingredient);
 
         updateExtraIngredientFromSweet(sweet, ingredient, 0);
@@ -187,12 +232,16 @@ public class OrderServiceImpl implements OrderService {
         try {
             sweetRepository.update(sweet.getId(), sweet);
         } catch (RepositoryException e) {
+            LOGGER.warn("DeleteExtraIngredientForOrderedSweet for order, sweet and ingredient - exception occurred -> {}",
+                    e.getMessage());
             throw new ServiceException(e.getMessage());
         }
+        LOGGER.info("DeleteExtraIngredientForOrderedSweet for order, sweet and ingredient - finished");
     }
 
     private void updateExtraIngredientFromSweet(Sweet sweet, Ingredient ingredient, int ingredientAmount)
             throws ServiceException {
+        LOGGER.info("UpdateExtraIngredientFromSweet for sweet, ingredient and amount = {} - started", ingredientAmount);
         int actualAmount = getExtraIngredientAmountFromSweet(sweet, ingredient);
         while (actualAmount - ingredientAmount != 0) {
             if (actualAmount < ingredientAmount) {
@@ -205,27 +254,33 @@ public class OrderServiceImpl implements OrderService {
                 actualAmount--;
             }
         }
+        LOGGER.info("UpdateExtraIngredientFromSweet for sweet, ingredient and amount = {} - finished", ingredientAmount);
     }
 
     private void extraIngredientValidationWithAmount(Order order, Sweet sweet, Ingredient ingredient, int amount)
             throws ServiceException {
+        LOGGER.info("ExtraIngredientValidationWithAmount for order, sweet, ingredient and amount = {} - started", amount);
         extraIngredientValidation(order, sweet, ingredient);
         if (amount > ingredient.getAmount())
             throw new ServiceException("Invalid amount!");
         if (amount < 1)
             throw new ServiceException("Invalid amount!");
+        LOGGER.info("ExtraIngredientValidationWithAmount for order, sweet, ingredient and amount = {} - finished", amount);
     }
 
     private void extraIngredientValidation(Order order, Sweet sweet, Ingredient ingredient)
             throws ServiceException {
+        LOGGER.info("ExtraIngredientValidation for order, sweet and ingredient - started");
         if (sweet == null) throw new ServiceException("Invalid sweet!");
         if (ingredient == null) throw new ServiceException("Invalid ingredient!");
         if (order.getOrderedSweets().get(sweet) == null)
             throw new ServiceException("The sweet was not ordered!");
+        LOGGER.info("ExtraIngredientValidation for order, sweet and ingredient - finished");
     }
 
 
     private int getExtraIngredientAmountFromSweet(Sweet sweet, Ingredient ingredient) {
+        LOGGER.info("GetExtraIngredientAmountFromSweet for sweet and ingredient - called");
         return (int) sweet.getExtraIngredients()
                 .stream()
                 .filter(i -> i == ingredient)
@@ -233,62 +288,83 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void updateShopStockAfterAddToOrder(List<Ingredient> ingredientList) throws ServiceException {
+        LOGGER.info("UpdateShopStockAfterAddToOrder for ingredientList - started");
         for (Ingredient ingredient : ingredientList) {
             try {
                 decreasesIngredientsStock(ingredient);
             } catch (ServiceException e) {
+                LOGGER.warn("UpdateShopStockAfterAddToOrder for ingredientList - exception occurred -> {}", e.getMessage());
                 throw new ServiceException(e.getMessage());
             }
         }
+        LOGGER.info("UpdateShopStockAfterAddToOrder for ingredientList - finished");
     }
 
     private void decreasesIngredientsStock(Ingredient ingredient) throws ServiceException {
+        LOGGER.info("DecreasesIngredientsStock for ingredient - started");
         int updatedAmount = ingredient.getAmount() - 1;
-        if (updatedAmount < 0)
+        if (updatedAmount < 0) {
+            LOGGER.warn("DecreasesIngredientsStock for ingredient - exception occurred -> {}",
+                    "Invalid amount for this ingredient");
             throw new ServiceException("Invalid amount for this ingredient");
+        }
         ingredient.setAmount(updatedAmount);
         try {
             ingredientRepository.update(ingredient.getId(), ingredient);
         } catch (RepositoryException e) {
+            LOGGER.warn("DecreasesIngredientsStock for ingredient - exception occurred -> {}", e.getMessage());
             throw new ServiceException(e.getMessage());
         }
+        LOGGER.info("DecreasesIngredientsStock for ingredient - finished");
     }
 
     private void increaseIngredientsStock(Ingredient ingredient) throws ServiceException {
+        LOGGER.info("IncreaseIngredientsStock for ingredient - started");
         int updatedAmount = ingredient.getAmount() + 1;
         ingredient.setAmount(updatedAmount);
         try {
             ingredientRepository.update(ingredient.getId(), ingredient);
         } catch (RepositoryException e) {
+            LOGGER.warn("IncreaseIngredientsStock for ingredient - exception occurred -> {}", e.getMessage());
             throw new ServiceException(e.getMessage());
         }
+        LOGGER.info("IncreaseIngredientsStock for ingredient - finished");
     }
 
     private void addSweetToOrder(Order order, Sweet sweet) {
+        LOGGER.info("AddSweetToOrder for order and sweet - started");
         order.getOrderedSweets().merge(sweet, 1, Integer::sum);
+        LOGGER.info("AddSweetToOrder for order and sweet - finished");
     }
 
 
     private void addSweetToOrder(Order order, Sweet sweet, int quantity) {
+        LOGGER.info("AddSweetToOrder for order, sweet and quantity = {} - started", quantity);
         order.getOrderedSweets().merge(sweet, quantity, Integer::sum);
+        LOGGER.info("AddSweetToOrder for order, sweet and quantity = {} - finished", quantity);
     }
 
 
     private void removeSweetFromOrder(Order order, Sweet sweet) {
+        LOGGER.info("RemoveSweetFromOrder for order and sweet - started");
         order.getOrderedSweets().merge(sweet, -1, Integer::sum);
-        if (order.getOrderedSweets().get(sweet) == 0) order.getOrderedSweets().remove(sweet);
+        if (order.getOrderedSweets().get(sweet) == 0)
+            order.getOrderedSweets().remove(sweet);
+        LOGGER.info("RemoveSweetFromOrder for order and sweet - finished");
     }
 
     private double getProfit(Map<Sweet, Integer> orderedSweets) {
+        LOGGER.info("GetProfit for orderedSweets - started");
         double profit = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
             profit += sweet.getPrice() - sweet.getExtraPrice() - priceForIngredients(sweet.getIngredientsList());
         }
-
+        LOGGER.info("GetProfit for orderedSweets - finished");
         return profit;
     }
 
     private double priceForIngredients(List<Ingredient> ingredientsList) {
+        LOGGER.info("PriceForIngredients for ingredientsList - called");
         return ingredientsList
                 .stream()
                 .mapToDouble(Ingredient::getPrice)
