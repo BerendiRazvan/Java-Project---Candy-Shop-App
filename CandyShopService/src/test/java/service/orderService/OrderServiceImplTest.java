@@ -12,8 +12,11 @@ import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
+import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
+import repository.orderRepository.OrderInMemoryRepository;
 import repository.orderRepository.OrderRepository;
+import repository.sweetRepository.SweetInMemoryRepository;
 import repository.sweetRepository.SweetRepository;
 
 import java.lang.reflect.InvocationTargetException;
@@ -37,12 +40,6 @@ class OrderServiceImplTest {
 
     @BeforeEach
     void setUp() throws ValidationException {
-        OrderInMemoryRepositoryBuilder orderInMemoryRepositoryBuilder = new OrderInMemoryRepositoryBuilder();
-        IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
-        SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
-
-        OrderServiceImplBuilder orderServiceImplBuilder = new OrderServiceImplBuilder();
-
         ShopBuilder shopBuilder = new ShopBuilder();
         CustomerBuilder customerBuilder = new CustomerBuilder();
         IngredientBuilder ingredientBuilder = new IngredientBuilder();
@@ -57,7 +54,7 @@ class OrderServiceImplTest {
 
         ingredient = ingredientBuilder.build(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
 
-        OrderRepository orderRepository = orderInMemoryRepositoryBuilder.build(new ArrayList<>());
+        OrderRepository orderRepository = new OrderInMemoryRepository(new ArrayList<>());
 
         try {
             orderRepository.add(orderBuilder.build(ID, new HashMap<>(), OrderType.DELIVERY, customer, shop));
@@ -65,8 +62,7 @@ class OrderServiceImplTest {
             throw new RuntimeException(e);
         }
 
-        IngredientRepository ingredientRepository = ingredientInMemoryRepositoryBuilder.build(new ArrayList<>());
-        ingredientRepository.generateIngredients();
+        IngredientRepository ingredientRepository = new IngredientInMemoryRepository();
 
         Ingredient ingredient1 = ingredientRepository.findIngredientById(1L).isPresent() ?
                 ingredientRepository.findIngredientById(1L).get() : fail();
@@ -78,10 +74,8 @@ class OrderServiceImplTest {
         sweet = sweetBuilder.build(ID, new ArrayList<>(List.of(ingredient1, ingredient2, ingredient3)), SweetType.DONUT,
                 SWEET_PRICE);
 
-        SweetRepository sweetRepository = sweetInMemoryRepositoryBuilder.build(new ArrayList<>());
-        sweetRepository.generateSweets(ingredientRepository);
-
-        orderService = orderServiceImplBuilder.build(orderRepository, sweetRepository, ingredientRepository);
+        SweetRepository sweetRepository = new SweetInMemoryRepository(ingredientRepository);
+        orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
     }
 
     @AfterEach
@@ -113,12 +107,12 @@ class OrderServiceImplTest {
             double moneyMade = orderService.getMoneyMadeToday();
             orderService.addToOrder(order.get(), sweet);
 
-            assertEquals(moneyMade + sweet.getPrice(), orderService.getMoneyMadeToday());
+            assertEquals(moneyMade + sweet.getTotalPrice(), orderService.getMoneyMadeToday());
 
             orderService.addToOrder(order.get(), sweet);
             orderService.addToOrder(order.get(), sweet);
 
-            assertEquals(moneyMade + sweet.getPrice() * 3, orderService.getMoneyMadeToday());
+            assertEquals(moneyMade + sweet.getTotalPrice() * 3, orderService.getMoneyMadeToday());
         } else fail("Order addToOrder failed");
     }
 

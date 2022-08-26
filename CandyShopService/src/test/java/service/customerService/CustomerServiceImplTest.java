@@ -6,6 +6,7 @@ import domain.location.Location;
 import exception.ValidationException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
+import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
 import validator.CustomerValidator;
 
@@ -31,21 +32,15 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     void setUp() throws ValidationException {
-        CustomerInMemoryRepositoryBuilder customerInMemoryRepositoryBuilder = new CustomerInMemoryRepositoryBuilder();
-
-        CustomerServiceImplBuilder customerServiceImplBuilder = new CustomerServiceImplBuilder();
+        validator = new CustomerValidator();
 
         customerBuilder = new CustomerBuilder();
         locationBuilder = new LocationBuilder();
 
-        validator = new CustomerValidator();
-
         location = locationBuilder.build(COUNTRY, CITY, ADDRESS);
 
-        CustomerRepository customerRepository = customerInMemoryRepositoryBuilder.build(new ArrayList<>());
-        customerRepository.generateCustomers();
-
-        customerService = customerServiceImplBuilder.build(customerRepository);
+        CustomerRepository customerRepository = new CustomerInMemoryRepository();
+        customerService = new CustomerServiceImpl(customerRepository);
     }
 
     @AfterEach

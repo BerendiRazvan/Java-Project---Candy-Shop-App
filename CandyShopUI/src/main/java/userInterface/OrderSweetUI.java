@@ -1,4 +1,4 @@
-package ui;
+package userInterface;
 
 import builder.LocationBuilder;
 import domain.Customer;
@@ -8,7 +8,6 @@ import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import exception.CandyShopException;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.customerService.CustomerService;
@@ -33,7 +32,6 @@ public class OrderSweetUI {
 
     private LocationBuilder locationBuilder;
 
-    @Builder
     public OrderSweetUI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
                         IngredientService ingredientService) {
         this.shop = shop;

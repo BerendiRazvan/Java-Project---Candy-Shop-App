@@ -12,24 +12,6 @@ public class LocationValidator {
     private static final int MINIMUM_CITY_LENGTH = 3;
     private static final int MINIMUM_COUNTRY_LENGTH = 3;
 
-    private String validateLocationCountry(String country) {
-        if (country.length() < MINIMUM_COUNTRY_LENGTH)
-            return "Invalid country!\n";
-        return "";
-    }
-
-    private String validateLocationCity(String city) {
-        if (city.length() < MINIMUM_CITY_LENGTH)
-            return "Invalid city!\n";
-        return "";
-    }
-
-    private String validateLocationAddress(String address) {
-        if (address.length() < MINIMUM_ADDRESS_LENGTH)
-            return "Invalid address!\n";
-        return "";
-    }
-
     public boolean isValidLocation(Location location) {
         return validateLocation(location).isEmpty();
     }
@@ -51,5 +33,23 @@ public class LocationValidator {
             errors.add(error);
 
         return errors;
+    }
+
+    private String validateLocationCountry(String country) {
+        if (country.length() < MINIMUM_COUNTRY_LENGTH)
+            return "Invalid country!\n";
+        return "";
+    }
+
+    private String validateLocationCity(String city) {
+        if (city.length() < MINIMUM_CITY_LENGTH)
+            return "Invalid city!\n";
+        return "";
+    }
+
+    private String validateLocationAddress(String address) {
+        if (address.length() < MINIMUM_ADDRESS_LENGTH)
+            return "Invalid address!\n";
+        return "";
     }
 }

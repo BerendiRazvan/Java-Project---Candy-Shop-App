@@ -7,6 +7,7 @@ import exception.ValidationException;
 import lombok.NoArgsConstructor;
 import validator.SweetValidator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class SweetBuilder {
         Sweet sweet = Sweet.builder()
                 .id(id)
                 .ingredientsList(ingredientList)
+                .extraIngredients(new ArrayList<>())
                 .sweetType(sweetType)
                 .price(price)
                 .build();

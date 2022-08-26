@@ -10,7 +10,6 @@ import domain.sweet.Sweet;
 import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.customerRepository.CustomerRepository;
@@ -18,13 +17,21 @@ import repository.sweetRepository.SweetRepository;
 
 import java.util.*;
 
-@Builder
 @AllArgsConstructor
 public class OrderInMemoryRepository implements OrderRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderInMemoryRepository.class);
 
     private static final int ORDERS_TO_GENERATE = 7;
     private List<Order> orderList;
+
+    public OrderInMemoryRepository(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) {
+        this(new ArrayList<>());
+        try {
+            generateOrders(shop, sweetRepository, customerRepository);
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @Override
@@ -103,9 +110,8 @@ public class OrderInMemoryRepository implements OrderRepository {
         }
     }
 
-    @Override
-    public void generateOrders(Shop shop, SweetRepository sweetRepository,
-                               CustomerRepository customerRepository) throws ValidationException {
+    private void generateOrders(Shop shop, SweetRepository sweetRepository,
+                                CustomerRepository customerRepository) throws ValidationException {
         LOGGER.info("GenerateOrders - started");
         OrderBuilder orderBuilder = new OrderBuilder();
         List<Sweet> sweetList = sweetRepository.findAll();

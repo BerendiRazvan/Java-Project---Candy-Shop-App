@@ -12,6 +12,37 @@ import java.util.*;
 public class OrderValidator {
     private static final int MINIMUM_AMOUNT_OF_ORDERED_SWEETS_VALUE = 1;
 
+    public boolean isValidOrder(Order order) {
+        return validateOrder(order).isEmpty();
+    }
+
+    public List<String> validateOrder(Order order) {
+        if (order == null) return List.of("Order can not be null!");
+        List<String> errors = new ArrayList<>();
+
+        String error = validateOrderOrderedSweet(order.getOrderedSweets());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateOrderCustomer(order.getCustomer());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateOrderShop(order.getShop());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateOrderDateTime(order.getOrderDateTime());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateOrderType(order.getOrderType());
+        if (!error.matches(""))
+            errors.add(error);
+
+        return errors;
+    }
+
     private String validateOrderOrderedSweet(Map<Sweet, Integer> orderedSweets) {
         for (Sweet sweet : orderedSweets.keySet()) {
             SweetValidator sweetValidator = new SweetValidator();
@@ -47,36 +78,5 @@ public class OrderValidator {
         if (!(orderType.equals(OrderType.DELIVERY) || orderType.equals(OrderType.PICKUP)))
             return "Invalid order type!\n";
         return "";
-    }
-
-    public boolean isValidOrder(Order order) {
-        return validateOrder(order).isEmpty();
-    }
-
-    public List<String> validateOrder(Order order) {
-        if (order == null) return List.of("Order can not be null!");
-        List<String> errors = new ArrayList<>();
-
-        String error = validateOrderOrderedSweet(order.getOrderedSweets());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateOrderCustomer(order.getCustomer());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateOrderShop(order.getShop());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateOrderDateTime(order.getOrderDateTime());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateOrderType(order.getOrderType());
-        if (!error.matches(""))
-            errors.add(error);
-
-        return errors;
     }
 }

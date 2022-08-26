@@ -7,14 +7,12 @@ import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.customerRepository.CustomerRepository;
 
 import java.util.Optional;
 
-@Builder
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);

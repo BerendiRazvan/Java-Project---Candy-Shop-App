@@ -11,19 +11,6 @@ import java.util.List;
 public class ShopValidator {
     private static final String SHOP_NAME_VALIDATION_REGULAR_EXPRESSION = "[a-zA-Z ]+";
 
-    private String validateShopName(String name) {
-        if (name.equals("") || !name.matches(SHOP_NAME_VALIDATION_REGULAR_EXPRESSION))
-            return "Invalid name!\n";
-        return "";
-    }
-
-    private String validateShopLocation(Location location) {
-        LocationValidator validator = new LocationValidator();
-        if (!validator.isValidLocation(location))
-            return "Invalid location!\n";
-        return "";
-    }
-
     public boolean isValidShop(Shop shop) {
         return validateShop(shop).isEmpty();
     }
@@ -41,5 +28,18 @@ public class ShopValidator {
             errors.add(error);
 
         return errors;
+    }
+
+    private String validateShopName(String name) {
+        if (name.equals("") || !name.matches(SHOP_NAME_VALIDATION_REGULAR_EXPRESSION))
+            return "Invalid name!\n";
+        return "";
+    }
+
+    private String validateShopLocation(Location location) {
+        LocationValidator validator = new LocationValidator();
+        if (!validator.isValidLocation(location))
+            return "Invalid location!\n";
+        return "";
     }
 }

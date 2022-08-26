@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 
 @Builder
-@AllArgsConstructor
 @Data
 public class Ingredient {
     private long id;

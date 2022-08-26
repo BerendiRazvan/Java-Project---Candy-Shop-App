@@ -6,21 +6,28 @@ import domain.Customer;
 import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-
-@Builder
 @AllArgsConstructor
 public class CustomerInMemoryRepository implements CustomerRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
     private List<Customer> customerList;
+
+    public CustomerInMemoryRepository() {
+        this(new ArrayList<>());
+        try {
+            generateCustomers();
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void add(Customer customer) throws RepositoryException {
@@ -107,8 +114,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
         }
     }
 
-    @Override
-    public void generateCustomers() throws ValidationException {
+    private void generateCustomers() throws ValidationException {
         LOGGER.info("GenerateCustomers - started");
         LocationBuilder locationBuilder = new LocationBuilder();
         CustomerBuilder customerBuilder = new CustomerBuilder();

@@ -8,7 +8,9 @@ import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import org.junit.jupiter.api.*;
+import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
+import repository.sweetRepository.SweetInMemoryRepository;
 import repository.sweetRepository.SweetRepository;
 
 
@@ -34,17 +36,12 @@ class SweetServiceImplTest {
 
     @BeforeEach
     void setUp() throws ValidationException {
-        SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
-        IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
-
-        SweetServiceImplBuilder sweetServiceImplBuilder = new SweetServiceImplBuilder();
-
         ingredientBuilder = new IngredientBuilder();
         sweetBuilder = new SweetBuilder();
 
         ingredient = ingredientBuilder.build(ID, INGREDIENT_NAME, INGREDIENT_PRICE, AMOUNT);
 
-        SweetRepository sweetRepository = sweetInMemoryRepositoryBuilder.build(new ArrayList<>());
+        SweetRepository sweetRepository = new SweetInMemoryRepository(new ArrayList<>());
 
         try {
             sweetRepository.add(sweetBuilder.build(ID,
@@ -57,10 +54,8 @@ class SweetServiceImplTest {
             throw new RuntimeException(e);
         }
 
-        IngredientRepository ingredientRepository = ingredientInMemoryRepositoryBuilder.build(new ArrayList<>());
-        ingredientRepository.generateIngredients();
-
-        sweetService = sweetServiceImplBuilder.build(sweetRepository, ingredientRepository);
+        IngredientRepository ingredientRepository = new IngredientInMemoryRepository();
+        sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
     }
 
     @AfterEach
@@ -83,7 +78,7 @@ class SweetServiceImplTest {
         if (sweet.isPresent()) {
             assertEquals(sweet.get().getId(), 1L);
             assertEquals(sweet.get().getSweetType(), SweetType.DONUT);
-            assertEquals(sweet.get().getPrice(), 5);
+            assertEquals(sweet.get().getTotalPrice(), 5);
             assertEquals(sweet.get().getIngredientsList().toString(), new ArrayList<>(List.of(
                     ingredientBuilder.build(1, "Sugar", 1.5, 1),
                     ingredientBuilder.build(2, "Milk", 1, 1),
@@ -110,7 +105,7 @@ class SweetServiceImplTest {
             assertEquals(sweet.get().getId(), ID + 1);
             assertEquals(sweet.get().getOriginalPrice(), SWEET_DEFAULT_PRICE);
             assertEquals(sweet.get().getExtraPrice(), 0);
-            assertEquals(sweet.get().getPrice(), SWEET_DEFAULT_PRICE);
+            assertEquals(sweet.get().getTotalPrice(), SWEET_DEFAULT_PRICE);
             assertTrue(sweet.get().getExtraIngredients().isEmpty());
             assertTrue(sweet.get().getIngredientsList().isEmpty());
         } else fail("Sweet createEmptySweet failed");

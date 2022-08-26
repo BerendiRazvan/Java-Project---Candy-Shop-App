@@ -14,5 +14,4 @@ public interface CustomerRepository extends Repository<Long, Customer> {
 
     Optional<Long> generateCustomerId();
 
-    void generateCustomers() throws ValidationException;
 }

@@ -13,8 +13,5 @@ import java.util.Optional;
 public interface OrderRepository extends Repository<Long, Order> {
     Optional<Order> findOrderById(Long id);
 
-    void generateOrders(Shop shop, SweetRepository sweetRepository,
-                        CustomerRepository customerRepository) throws ValidationException;
-
     Optional<Long> generateOrderId();
 }

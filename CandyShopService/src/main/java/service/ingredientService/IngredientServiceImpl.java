@@ -3,7 +3,6 @@ package service.ingredientService;
 import domain.sweet.Ingredient;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.ingredientRepository.IngredientRepository;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 
 import static service.utils.Converter.convertStringToLong;
 
-@Builder
 @AllArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
     private static final Logger LOGGER = LoggerFactory.getLogger(IngredientServiceImpl.class);

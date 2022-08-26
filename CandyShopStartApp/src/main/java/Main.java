@@ -1,18 +1,25 @@
 import builder.*;
 import domain.Shop;
 import exception.ValidationException;
+import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
+import repository.ingredientRepository.IngredientInMemoryRepository;
 import repository.ingredientRepository.IngredientRepository;
+import repository.orderRepository.OrderInMemoryRepository;
 import repository.orderRepository.OrderRepository;
+import repository.sweetRepository.SweetInMemoryRepository;
 import repository.sweetRepository.SweetRepository;
 import service.customerService.CustomerService;
+import service.customerService.CustomerServiceImpl;
 import service.ingredientService.IngredientService;
+import service.ingredientService.IngredientServiceImpl;
 import service.orderService.OrderService;
+import service.orderService.OrderServiceImpl;
 import service.sweetService.SweetService;
-import ui.UI;
+import service.sweetService.SweetServiceImpl;
+import userInterface.UI;
 
 import java.util.ArrayList;
-
 
 public class Main {
 
@@ -34,40 +41,20 @@ public class Main {
                 "Str. Memorandumului, nr. 10"));
 
         //Repository
-        IngredientInMemoryRepositoryBuilder ingredientInMemoryRepositoryBuilder = new IngredientInMemoryRepositoryBuilder();
-        SweetInMemoryRepositoryBuilder sweetInMemoryRepositoryBuilder = new SweetInMemoryRepositoryBuilder();
-        CustomerInMemoryRepositoryBuilder customerInMemoryRepositoryBuilder = new CustomerInMemoryRepositoryBuilder();
-        OrderInMemoryRepositoryBuilder orderInMemoryRepositoryBuilder = new OrderInMemoryRepositoryBuilder();
-
-        IngredientRepository ingredientRepository = ingredientInMemoryRepositoryBuilder.build(new ArrayList<>());
-        ingredientRepository.generateIngredients();
-
-        SweetRepository sweetRepository = sweetInMemoryRepositoryBuilder.build(new ArrayList<>());
-        sweetRepository.generateSweets(ingredientRepository);
-
-        CustomerRepository customerRepository = customerInMemoryRepositoryBuilder.build(new ArrayList<>());
-        customerRepository.generateCustomers();
-
-        OrderRepository orderRepository = orderInMemoryRepositoryBuilder.build(new ArrayList<>());
-        orderRepository.generateOrders(shop, sweetRepository, customerRepository);
+        IngredientRepository ingredientRepository = new IngredientInMemoryRepository();
+        SweetRepository sweetRepository = new SweetInMemoryRepository(ingredientRepository);
+        CustomerRepository customerRepository = new CustomerInMemoryRepository();
+        OrderRepository orderRepository = new OrderInMemoryRepository(shop, sweetRepository, customerRepository);
 
         //Service
-        CustomerServiceImplBuilder customerServiceImplBuilder = new CustomerServiceImplBuilder();
-        OrderServiceImplBuilder orderServiceImplBuilder = new OrderServiceImplBuilder();
-        SweetServiceImplBuilder sweetServiceImplBuilder = new SweetServiceImplBuilder();
-        IngredientServiceImplBuilder ingredientServiceImplBuilder = new IngredientServiceImplBuilder();
+        CustomerService customerService = new CustomerServiceImpl(customerRepository);
+        OrderService orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
+        SweetService sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
+        IngredientService ingredientService = new IngredientServiceImpl(ingredientRepository);
 
-        CustomerService customerService = customerServiceImplBuilder.build(customerRepository);
-        OrderService orderService = orderServiceImplBuilder.build(orderRepository, sweetRepository, ingredientRepository);
-        SweetService sweetService = sweetServiceImplBuilder.build(sweetRepository, ingredientRepository);
-        IngredientService ingredientService = ingredientServiceImplBuilder.build(ingredientRepository);
-
-        //ui.UI
-        UIBuilder uiBuilder = new UIBuilder();
-
-        UI appUI = uiBuilder.build(shop, customerService, sweetService, orderService, ingredientService);
+        //UI
+        UI appUI = new UI(shop, customerService, sweetService, orderService, ingredientService);
         appUI.show();
-
 
         System.out.println("\nSEE YOU LATER, ALLIGATOR! :)\n");
     }

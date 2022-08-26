@@ -8,7 +8,6 @@ import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.ingredientRepository.IngredientRepository;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
-@Builder
 @AllArgsConstructor
 public class SweetServiceImpl implements SweetService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweetServiceImpl.class);
@@ -85,7 +83,7 @@ public class SweetServiceImpl implements SweetService {
             if (updateSweet.isPresent()) {
                 while (amount != 0) {
                     updateSweet.get().getIngredientsList().add(newIngredient);
-                    updateSweet.get().setPrice(customSweet.getPrice() + newIngredient.getPrice());
+                    updateSweet.get().setPrice(customSweet.getTotalPrice() + newIngredient.getPrice());
                     amount--;
                 }
                 try {

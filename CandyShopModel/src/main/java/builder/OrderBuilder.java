@@ -9,6 +9,7 @@ import exception.ValidationException;
 import lombok.NoArgsConstructor;
 import validator.OrderValidator;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @NoArgsConstructor
@@ -19,6 +20,8 @@ public class OrderBuilder {
                 .id(id)
                 .orderedSweets(orderedSweets)
                 .orderType(orderType)
+                .orderDateTime(LocalDateTime.now())
+                .waitingTime(LocalDateTime.now().plusMinutes(orderType.getMinimumWaitingTime()))
                 .customer(customer)
                 .shop(shop)
                 .build();

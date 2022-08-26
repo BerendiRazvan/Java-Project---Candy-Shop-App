@@ -10,24 +10,6 @@ public class IngredientValidator {
     private static final double MINIMUM_PRICE_VALUE = 0;
     private static final int MINIMUM_AMOUNT_VALUE = 0;
 
-    private String validateIngredientName(String name) {
-        if (name.equals("") || !name.matches(WORD_VALIDATION_REGULAR_EXPRESSION))
-            return "Invalid name!\n";
-        return "";
-    }
-
-    private String validateIngredientPrice(double price) {
-        if (price < MINIMUM_PRICE_VALUE)
-            return "Invalid price!\n";
-        return "";
-    }
-
-    private String validateIngredientAmount(int amount) {
-        if (amount < MINIMUM_AMOUNT_VALUE)
-            return "Invalid amount!\n";
-        return "";
-    }
-
     public boolean isValidIngredient(Ingredient ingredient) {
         return validateIngredient(ingredient).isEmpty();
     }
@@ -50,5 +32,23 @@ public class IngredientValidator {
 
 
         return errors;
+    }
+
+    private String validateIngredientName(String name) {
+        if (name.equals("") || !name.matches(WORD_VALIDATION_REGULAR_EXPRESSION))
+            return "Invalid name!\n";
+        return "";
+    }
+
+    private String validateIngredientPrice(double price) {
+        if (price < MINIMUM_PRICE_VALUE)
+            return "Invalid price!\n";
+        return "";
+    }
+
+    private String validateIngredientAmount(int amount) {
+        if (amount < MINIMUM_AMOUNT_VALUE)
+            return "Invalid amount!\n";
+        return "";
     }
 }

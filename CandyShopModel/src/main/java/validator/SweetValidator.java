@@ -12,6 +12,33 @@ import java.util.List;
 public class SweetValidator {
     private static final double MINIMUM_PRICE_VALUE = 0;
 
+    public boolean isValidSweet(Sweet sweet) {
+        return validateSweet(sweet).isEmpty();
+    }
+
+    public List<String> validateSweet(Sweet sweet) {
+        if (sweet == null) return List.of("Sweet can not be null!");
+        List<String> errors = new ArrayList<>();
+
+        String error = validateSweetType(sweet.getSweetType());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateSweetIngredientsList(sweet.getIngredientsList());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateSweetExtraIngredients(sweet.getExtraIngredients());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateSweetPrice(sweet.getTotalPrice());
+        if (!error.matches(""))
+            errors.add(error);
+
+        return errors;
+    }
+
     private String validateSweetType(SweetType sweetType) {
         if (!(sweetType.equals(SweetType.CAKE) ||
                 sweetType.equals(SweetType.CROISSANT) ||
@@ -45,32 +72,5 @@ public class SweetValidator {
         if (price < MINIMUM_PRICE_VALUE)
             return "Invalid price!\n";
         return "";
-    }
-
-    public boolean isValidSweet(Sweet sweet) {
-        return validateSweet(sweet).isEmpty();
-    }
-
-    public List<String> validateSweet(Sweet sweet) {
-        if (sweet == null) return List.of("Sweet can not be null!");
-        List<String> errors = new ArrayList<>();
-
-        String error = validateSweetType(sweet.getSweetType());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateSweetIngredientsList(sweet.getIngredientsList());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateSweetExtraIngredients(sweet.getExtraIngredients());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateSweetPrice(sweet.getPrice());
-        if (!error.matches(""))
-            errors.add(error);
-
-        return errors;
     }
 }

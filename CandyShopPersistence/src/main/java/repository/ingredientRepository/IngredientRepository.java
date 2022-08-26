@@ -12,6 +12,4 @@ public interface IngredientRepository extends Repository<Long, Ingredient> {
 
     Optional<Ingredient> findIngredientByName(String name);
 
-    void generateIngredients() throws ValidationException;
-
 }

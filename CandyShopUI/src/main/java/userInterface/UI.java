@@ -1,11 +1,9 @@
-package ui;
+package userInterface;
 
-import builder.OrderSweetUIBuilder;
 import domain.Shop;
 import domain.sweet.Ingredient;
 import exception.ValidationException;
 import exception.CandyShopException;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.customerService.CustomerService;
@@ -31,7 +29,6 @@ public class UI {
     private OrderService orderService;
     private IngredientService ingredientService;
 
-    @Builder
     public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
               IngredientService ingredientService) {
         this.shop = shop;
@@ -48,7 +45,7 @@ public class UI {
     }
 
 
-    public void show() throws ValidationException {
+    public void show() {
         LOGGER.info("Show - started");
         label:
         while (true) {
@@ -80,12 +77,10 @@ public class UI {
         LOGGER.info("Show - finished");
     }
 
-    private void optionOrderSweets() throws ValidationException {
+    private void optionOrderSweets() {
         LOGGER.info("OptionOrderSweets - started");
         printShopSweets();
-        OrderSweetUIBuilder orderSweetUIBuilder = new OrderSweetUIBuilder();
-        OrderSweetUI orderSweetUI = orderSweetUIBuilder.build(shop, customerService, sweetService, orderService,
-                ingredientService);
+        OrderSweetUI orderSweetUI = new OrderSweetUI(shop, customerService, sweetService, orderService, ingredientService);
         orderSweetUI.show();
         LOGGER.info("OptionOrderSweets - finished");
     }
@@ -129,7 +124,7 @@ public class UI {
         System.out.println("Available sweets: \n");
         for (var sweet : sweetService.getAvailableSweets())
             System.out.println("(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
-                    df.format(sweet.getPrice()) + "$");
+                    df.format(sweet.getTotalPrice()) + "$");
 
         System.out.println("\n" + "-".repeat(100) + "\n");
 
@@ -146,7 +141,7 @@ public class UI {
         System.out.print("Available sweets:");
         for (var sweet : sweetService.getAvailableSweets()) {
             System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
-                    df.format(sweet.getPrice()) + "$\nRecipe: ");
+                    df.format(sweet.getTotalPrice()) + "$\nRecipe: ");
             sweet.getIngredientsList()
                     .stream()
                     .map(Ingredient::getName)

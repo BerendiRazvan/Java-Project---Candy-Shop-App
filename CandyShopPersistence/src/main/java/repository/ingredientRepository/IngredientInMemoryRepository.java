@@ -5,19 +5,27 @@ import domain.sweet.Ingredient;
 import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Builder
 @AllArgsConstructor
 public class IngredientInMemoryRepository implements IngredientRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(IngredientInMemoryRepository.class);
     private List<Ingredient> ingredientList;
+
+    public IngredientInMemoryRepository() {
+        this(new ArrayList<>());
+        try {
+            generateIngredients();
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void add(Ingredient ingredient) throws RepositoryException {
@@ -80,8 +88,8 @@ public class IngredientInMemoryRepository implements IngredientRepository {
                 .findFirst();
     }
 
-    @Override
-    public void generateIngredients() throws ValidationException {
+
+    private void generateIngredients() throws ValidationException {
         LOGGER.info("GenerateIngredients - started");
         IngredientBuilder ingredientBuilder = new IngredientBuilder();
         ingredientList.addAll(Arrays.asList(

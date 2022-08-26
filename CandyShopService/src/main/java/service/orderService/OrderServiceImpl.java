@@ -12,7 +12,6 @@ import exception.ValidationException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.ingredientRepository.IngredientRepository;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 import static service.utils.Converter.convertStringToInt;
 import static service.utils.Converter.convertStringToLong;
 
-@Builder
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
@@ -161,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Sweet, Integer> orderedSweets = order.getOrderedSweets();
         double totalToPay = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
-            totalToPay += orderedSweets.get(sweet) * sweet.getPrice();
+            totalToPay += orderedSweets.get(sweet) * sweet.getTotalPrice();
         }
         LOGGER.info("GetFinalOrderPrice - finished");
         return totalToPay;
@@ -178,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
         Optional<Long> id = sweetRepository.generateSweetId();
         if (id.isPresent()) {
             SweetBuilder sweetBuilder = new SweetBuilder();
-            Sweet customSweet = sweetBuilder.build(id.get(), sweet.getIngredientsList(), sweet.getSweetType(), sweet.getPrice());
+            Sweet customSweet = sweetBuilder.build(id.get(), sweet.getIngredientsList(), sweet.getSweetType(), sweet.getTotalPrice());
             customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
 
             updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);
@@ -357,7 +355,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("GetProfit for orderedSweets - started");
         double profit = 0;
         for (Sweet sweet : orderedSweets.keySet()) {
-            profit += sweet.getPrice() - sweet.getExtraPrice() - priceForIngredients(sweet.getIngredientsList());
+            profit += sweet.getTotalPrice() - sweet.getExtraPrice() - priceForIngredients(sweet.getIngredientsList());
         }
         LOGGER.info("GetProfit for orderedSweets - finished");
         return profit;

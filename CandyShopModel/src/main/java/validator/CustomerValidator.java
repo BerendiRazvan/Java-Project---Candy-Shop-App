@@ -15,6 +15,41 @@ public class CustomerValidator {
     private static final int MINIMUM_PASSWORD_LENGTH = 6;
     private static final int PHONE_NUMBER_LENGTH = 10;
 
+    public boolean isValidCustomer(Customer customer) {
+        return validateCustomer(customer).isEmpty();
+    }
+
+    public List<String> validateCustomer(Customer customer) {
+        if (customer == null) return List.of("Customer can not be null!");
+        List<String> errors = new ArrayList<>();
+
+        String error = validateCustomerFirstName(customer.getFirstName());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateCustomerLastName(customer.getLastName());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateCustomerEmail(customer.getEmail());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateCustomerPassword(customer.getPassword());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateCustomerPhoneNumber(customer.getPhoneNumber());
+        if (!error.matches(""))
+            errors.add(error);
+
+        error = validateCustomerLocation(customer.getLocation());
+        if (!error.matches(""))
+            errors.add(error);
+
+        return errors;
+    }
+
     private String validateCustomerFirstName(String firstName) {
         if (firstName.equals("") || !firstName.matches(WORD_VALIDATION_REGULAR_EXPRESSION))
             return "Invalid first name!\n";
@@ -50,40 +85,5 @@ public class CustomerValidator {
         if (!validator.isValidLocation(location))
             return "Invalid address!\n";
         return "";
-    }
-
-    public boolean isValidCustomer(Customer customer) {
-        return validateCustomer(customer).isEmpty();
-    }
-
-    public List<String> validateCustomer(Customer customer) {
-        if (customer == null) return List.of("Customer can not be null!");
-        List<String> errors = new ArrayList<>();
-
-        String error = validateCustomerFirstName(customer.getFirstName());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateCustomerLastName(customer.getLastName());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateCustomerEmail(customer.getEmail());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateCustomerPassword(customer.getPassword());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateCustomerPhoneNumber(customer.getPhoneNumber());
-        if (!error.matches(""))
-            errors.add(error);
-
-        error = validateCustomerLocation(customer.getLocation());
-        if (!error.matches(""))
-            errors.add(error);
-
-        return errors;
     }
 }

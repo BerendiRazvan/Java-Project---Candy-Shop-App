@@ -8,20 +8,27 @@ import domain.sweet.SweetType;
 import exception.ValidationException;
 import exception.RepositoryException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repository.ingredientRepository.IngredientRepository;
 
 import java.util.*;
 
-@Builder
 @AllArgsConstructor
 public class SweetInMemoryRepository implements SweetRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweetInMemoryRepository.class);
 
     private static final int SWEETS_TO_GENERATE = 15;
     private List<Sweet> sweetList;
+
+    public SweetInMemoryRepository(IngredientRepository ingredientRepository) {
+        this(new ArrayList<>());
+        try {
+            generateSweets(ingredientRepository);
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void add(Sweet sweet) throws RepositoryException {
@@ -97,8 +104,7 @@ public class SweetInMemoryRepository implements SweetRepository {
         }
     }
 
-    @Override
-    public void generateSweets(IngredientRepository ingredientRepository) throws ValidationException {
+    private void generateSweets(IngredientRepository ingredientRepository) throws ValidationException {
         LOGGER.info("GenerateSweets - started");
         SweetBuilder sweetBuilder = new SweetBuilder();
         List<Ingredient> ingredientList = ingredientRepository.findAll();
