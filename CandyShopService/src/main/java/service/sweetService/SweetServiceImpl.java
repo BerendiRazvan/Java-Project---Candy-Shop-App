@@ -70,7 +70,7 @@ public class SweetServiceImpl implements SweetService {
             }
         } else {
             LOGGER.error("CreateNewSweetWithoutIngredients - exception occurred -> {}", "Error: generateSweetId");
-            throw new RuntimeException("Error: generateSweetId");
+            throw new ServiceException("Error: generateSweetId");
         }
     }
 

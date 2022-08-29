@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             LOGGER.error("CreateOrder order with customer, order type = {} sand shop - exception occurred -> {}",
                     orderType, "Error: generateOrderId");
-            throw new RuntimeException("Error: generateOrderId");
+            throw new ServiceException("Error: generateOrderId");
         }
     }
 
@@ -194,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             LOGGER.error("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - exception " +
                     "occurred -> {}", amount, "Error: generateSweetId");
-            throw new RuntimeException("Error: generateSweetId");
+            throw new ServiceException("Error: generateSweetId");
         }
         LOGGER.info("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - finished", amount);
     }

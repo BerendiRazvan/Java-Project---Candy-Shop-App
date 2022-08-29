@@ -62,7 +62,7 @@ public class CustomerServiceImpl implements CustomerService {
             LOGGER.error("Create account for customer with first name: {}, last name: {}, email: {}, password = ******, " +
                             "phone number = {}, address = {} - exception occurred -> {}", firstName, lastName, email,
                     phoneNumber, customerLocation.getAddress(), "Error: generateCustomerId");
-            throw new RuntimeException("Error: generateCustomerId");
+            throw new ServiceException("Error: generateCustomerId");
         }
     }
 
