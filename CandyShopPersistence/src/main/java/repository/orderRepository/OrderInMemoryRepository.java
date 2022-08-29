@@ -24,7 +24,7 @@ public class OrderInMemoryRepository implements OrderRepository {
     private static final int ORDERS_TO_GENERATE = 7;
     private List<Order> orderList;
 
-    public OrderInMemoryRepository(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) {
+    public OrderInMemoryRepository(Shop shop, SweetRepository sweetRepository, CustomerRepository customerRepository) throws ValidationException {
         this(new ArrayList<>());
         generateOrders(shop, sweetRepository, customerRepository);
     }
@@ -107,28 +107,23 @@ public class OrderInMemoryRepository implements OrderRepository {
     }
 
     private void generateOrders(Shop shop, SweetRepository sweetRepository,
-                                CustomerRepository customerRepository) {
+                                CustomerRepository customerRepository) throws ValidationException {
         LOGGER.info("GenerateOrders - started");
         OrderBuilder orderBuilder = new OrderBuilder();
         List<Sweet> sweetList = sweetRepository.findAll();
         List<Customer> customerList = customerRepository.findAll();
         int noOfOrders = ORDERS_TO_GENERATE;
-        try {
-            while (noOfOrders != 0) {
-                Optional<Long> id = generateOrderId();
-                Optional<OrderType> orderType = randomOrderType();
-                Optional<Customer> customer = randomCustomer(customerList);
-                if (id.isPresent() && orderType.isPresent() && customer.isPresent()) {
-                    orderList.add(orderBuilder.build(id.get(), randomOrder(sweetList), orderType.get(), customer.get(), shop));
-                    noOfOrders--;
-                } else {
-                    LOGGER.warn("Error: generateOrderId");
-                    throw new RuntimeException("Error: generateOrderId");
-                }
+        while (noOfOrders != 0) {
+            Optional<Long> id = generateOrderId();
+            Optional<OrderType> orderType = randomOrderType();
+            Optional<Customer> customer = randomCustomer(customerList);
+            if (id.isPresent() && orderType.isPresent() && customer.isPresent()) {
+                orderList.add(orderBuilder.build(id.get(), randomOrder(sweetList), orderType.get(), customer.get(), shop));
+                noOfOrders--;
+            } else {
+                LOGGER.warn("Error: generateOrderId");
+                throw new RuntimeException("Error: generateOrderId");
             }
-        } catch (ValidationException e) {
-            System.out.println("Unfinished generation due to: " + e.getMessage());
-            LOGGER.error("GenerateCustomers - exception occurred -> {}", e.getMessage());
         }
         LOGGER.info("GenerateOrders - finished");
     }

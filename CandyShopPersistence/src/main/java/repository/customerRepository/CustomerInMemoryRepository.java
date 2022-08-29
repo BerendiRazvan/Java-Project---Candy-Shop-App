@@ -20,7 +20,7 @@ public class CustomerInMemoryRepository implements CustomerRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInMemoryRepository.class);
     private List<Customer> customerList;
 
-    public CustomerInMemoryRepository() {
+    public CustomerInMemoryRepository() throws ValidationException {
         this(new ArrayList<>());
         generateCustomers();
     }
@@ -110,37 +110,32 @@ public class CustomerInMemoryRepository implements CustomerRepository {
         }
     }
 
-    private void generateCustomers() {
+    private void generateCustomers() throws ValidationException {
         LOGGER.info("GenerateCustomers - started");
         LocationBuilder locationBuilder = new LocationBuilder();
         CustomerBuilder customerBuilder = new CustomerBuilder();
 
-        try {
-            customerList.addAll(Arrays.asList(
-                    customerBuilder.build(1, "Razvan", "Berendi", "br@gmail.com",
-                            "12345678", "0751578787", locationBuilder.build("Romania", "Cluj",
-                                    "Aleea Rucar nr. 9, Bloc D13, ap. 1")),
+        customerList.addAll(Arrays.asList(
+                customerBuilder.build(1, "Razvan", "Berendi", "br@gmail.com",
+                        "12345678", "0751578787", locationBuilder.build("Romania", "Cluj",
+                                "Aleea Rucar nr. 9, Bloc D13, ap. 1")),
 
-                    customerBuilder.build(2, "Ana", "Pop", "ap@gmail.com",
-                            "12345678", "0751578709", locationBuilder.build("Romania", "Cluj",
-                                    "Aleea Peana nr. 9, Bloc D19, ap. 2")),
+                customerBuilder.build(2, "Ana", "Pop", "ap@gmail.com",
+                        "12345678", "0751578709", locationBuilder.build("Romania", "Cluj",
+                                "Aleea Peana nr. 9, Bloc D19, ap. 2")),
 
-                    customerBuilder.build(3, "Cristian", "Popescu", "cp@gmail.com",
-                            "12345678", "0751572287", locationBuilder.build("Romania", "Cluj",
-                                    "Str. Mehedinti nr. 5, Bloc I3, ap. 1")),
+                customerBuilder.build(3, "Cristian", "Popescu", "cp@gmail.com",
+                        "12345678", "0751572287", locationBuilder.build("Romania", "Cluj",
+                                "Str. Mehedinti nr. 5, Bloc I3, ap. 1")),
 
-                    customerBuilder.build(4, "Rares", "Marina", "rm@gmail.com",
-                            "12345678", "0264578787", locationBuilder.build("Romania", "Cluj",
-                                    "Str. Constanta nr. 9, Bloc A2, ap. 3")),
+                customerBuilder.build(4, "Rares", "Marina", "rm@gmail.com",
+                        "12345678", "0264578787", locationBuilder.build("Romania", "Cluj",
+                                "Str. Constanta nr. 9, Bloc A2, ap. 3")),
 
-                    customerBuilder.build(5, "Andreea", "Suciu", "as@gmail.com",
-                            "12345678", "0721578123", locationBuilder.build("Romania", "Cluj",
-                                    "Str. Memo nr. 10, Casa nr. 15"))
-            ));
-        } catch (ValidationException e) {
-            System.out.println("Unfinished generation due to: " + e.getMessage());
-            LOGGER.error("GenerateCustomers - exception occurred -> {}", e.getMessage());
-        }
+                customerBuilder.build(5, "Andreea", "Suciu", "as@gmail.com",
+                        "12345678", "0721578123", locationBuilder.build("Romania", "Cluj",
+                                "Str. Memo nr. 10, Casa nr. 15"))
+        ));
         LOGGER.info("GenerateCustomers - finished");
     }
 

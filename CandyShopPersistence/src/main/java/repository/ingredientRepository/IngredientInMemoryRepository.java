@@ -18,7 +18,7 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(IngredientInMemoryRepository.class);
     private List<Ingredient> ingredientList;
 
-    public IngredientInMemoryRepository() {
+    public IngredientInMemoryRepository() throws ValidationException {
         this(new ArrayList<>());
         generateIngredients();
     }
@@ -85,31 +85,27 @@ public class IngredientInMemoryRepository implements IngredientRepository {
     }
 
 
-    private void generateIngredients() {
+    private void generateIngredients() throws ValidationException {
         LOGGER.info("GenerateIngredients - started");
         IngredientBuilder ingredientBuilder = new IngredientBuilder();
-        try {
-            ingredientList.addAll(Arrays.asList(
-                    ingredientBuilder.build(1, "Sugar", 1.5, 23),
-                    ingredientBuilder.build(2, "Milk", 0.5, 21),
-                    ingredientBuilder.build(3, "Flour", 0.42, 30),
-                    ingredientBuilder.build(4, "Chocolate", 1.75, 25),
-                    ingredientBuilder.build(5, "Honey", 2.05, 7),
-                    ingredientBuilder.build(6, "Caramel", 1.3, 17),
-                    ingredientBuilder.build(7, "Whipped cream", 1, 40),
-                    ingredientBuilder.build(8, "Vanilla", 0.73, 8),
-                    ingredientBuilder.build(9, "Strawberries", 2.51, 14),
-                    ingredientBuilder.build(10, "Cacao", 0.25, 5),
-                    ingredientBuilder.build(11, "Peanut butter", 2.22, 7),
-                    ingredientBuilder.build(12, "Coconut", 2.01, 20),
-                    ingredientBuilder.build(13, "Cherry", 3.17, 12),
-                    ingredientBuilder.build(14, "Oreo", 2.35, 32),
-                    ingredientBuilder.build(15, "Ice Cream", 2.05, 10)
-            ));
-        } catch (ValidationException e) {
-            System.out.println("Unfinished generation due to: " + e.getMessage());
-            LOGGER.error("GenerateCustomers - exception occurred -> {}", e.getMessage());
-        }
+
+        ingredientList.addAll(Arrays.asList(
+                ingredientBuilder.build(1, "Sugar", 1.5, 23),
+                ingredientBuilder.build(2, "Milk", 0.5, 21),
+                ingredientBuilder.build(3, "Flour", 0.42, 30),
+                ingredientBuilder.build(4, "Chocolate", 1.75, 25),
+                ingredientBuilder.build(5, "Honey", 2.05, 7),
+                ingredientBuilder.build(6, "Caramel", 1.3, 17),
+                ingredientBuilder.build(7, "Whipped cream", 1, 40),
+                ingredientBuilder.build(8, "Vanilla", 0.73, 8),
+                ingredientBuilder.build(9, "Strawberries", 2.51, 14),
+                ingredientBuilder.build(10, "Cacao", 0.25, 5),
+                ingredientBuilder.build(11, "Peanut butter", 2.22, 7),
+                ingredientBuilder.build(12, "Coconut", 2.01, 20),
+                ingredientBuilder.build(13, "Cherry", 3.17, 12),
+                ingredientBuilder.build(14, "Oreo", 2.35, 32),
+                ingredientBuilder.build(15, "Ice Cream", 2.05, 10)
+        ));
         LOGGER.info("GenerateIngredients - finished");
     }
 }
