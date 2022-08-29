@@ -23,11 +23,7 @@ public class SweetInMemoryRepository implements SweetRepository {
 
     public SweetInMemoryRepository(IngredientRepository ingredientRepository) {
         this(new ArrayList<>());
-        try {
-            generateSweets(ingredientRepository);
-        } catch (ValidationException e) {
-            throw new RuntimeException(e);
-        }
+        generateSweets(ingredientRepository);
     }
 
     @Override
@@ -104,21 +100,26 @@ public class SweetInMemoryRepository implements SweetRepository {
         }
     }
 
-    private void generateSweets(IngredientRepository ingredientRepository) throws ValidationException {
+    private void generateSweets(IngredientRepository ingredientRepository) {
         LOGGER.info("GenerateSweets - started");
         SweetBuilder sweetBuilder = new SweetBuilder();
         List<Ingredient> ingredientList = ingredientRepository.findAll();
         int noOfSweets = SWEETS_TO_GENERATE;
-        while (noOfSweets != 0) {
-            Optional<Long> id = generateSweetId();
-            Optional<SweetType> sweetType = randomSweetType();
-            if (id.isPresent() && sweetType.isPresent()) {
-                sweetList.add(sweetBuilder.build(id.get(), randomRecipe(ingredientList), sweetType.get(), 0));
-                noOfSweets--;
-            } else {
-                LOGGER.warn("Error: generateSweetId");
-                throw new RuntimeException("Error: generateSweetId");
+        try {
+            while (noOfSweets != 0) {
+                Optional<Long> id = generateSweetId();
+                Optional<SweetType> sweetType = randomSweetType();
+                if (id.isPresent() && sweetType.isPresent()) {
+                    sweetList.add(sweetBuilder.build(id.get(), randomRecipe(ingredientList), sweetType.get(), 0));
+                    noOfSweets--;
+                } else {
+                    LOGGER.warn("Error: generateSweetId");
+                    throw new RuntimeException("Error: generateSweetId");
+                }
             }
+        } catch (ValidationException e) {
+            System.out.println("Unfinished generation due to: " + e.getMessage());
+            LOGGER.error("GenerateCustomers - exception occurred -> {}", e.getMessage());
         }
         sweetList.forEach(sweet -> sweet.setPrice(generatePrice(sweet.getIngredientsList())));
         LOGGER.info("GenerateSweets - finished");

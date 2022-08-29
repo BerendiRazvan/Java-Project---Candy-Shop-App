@@ -10,7 +10,6 @@ import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
 import validator.CustomerValidator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -2,7 +2,6 @@ package userInterface;
 
 import domain.Shop;
 import domain.sweet.Ingredient;
-import exception.ValidationException;
 import exception.CandyShopException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
