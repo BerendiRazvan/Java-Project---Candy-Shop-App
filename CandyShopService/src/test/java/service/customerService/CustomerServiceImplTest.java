@@ -1,15 +1,16 @@
 package service.customerService;
 
+import builder.*;
 import domain.Customer;
 import domain.location.Location;
+import exception.ValidationException;
+import exception.ServiceException;
 import org.junit.jupiter.api.*;
 import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
-import service.exception.ServiceException;
+import validator.CustomerValidator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,7 +19,10 @@ import static service.ConstantValues.*;
 
 class CustomerServiceImplTest {
     private CustomerService customerService;
+    private CustomerValidator validator;
     private Location location;
+    private CustomerBuilder customerBuilder;
+    private LocationBuilder locationBuilder;
 
     @BeforeAll
     static void setUpAll() {
@@ -26,21 +30,16 @@ class CustomerServiceImplTest {
     }
 
     @BeforeEach
-    void setUp() {
-        location = Location.builder()
-                .country(COUNTRY)
-                .city(CITY)
-                .address(ADDRESS)
-                .build();
+    void setUp() throws ValidationException {
+        validator = new CustomerValidator();
 
-        CustomerRepository customerRepository = CustomerInMemoryRepository.builder()
-                .customerList(new ArrayList<>())
-                .build();
-        customerRepository.generateCustomers();
+        customerBuilder = new CustomerBuilder();
+        locationBuilder = new LocationBuilder();
 
-        customerService = CustomerServiceImpl.builder()
-                .customerRepository(customerRepository)
-                .build();
+        location = locationBuilder.build(COUNTRY, CITY, ADDRESS);
+
+        CustomerRepository customerRepository = new CustomerInMemoryRepository();
+        customerService = new CustomerServiceImpl(customerRepository);
     }
 
     @AfterEach
@@ -79,7 +78,7 @@ class CustomerServiceImplTest {
 
 
     @Test
-    void testValidCreateAccount() throws ServiceException {
+    void testValidCreateAccount() throws ServiceException, ValidationException {
         Optional<Customer> customer = customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
                 PASSWORD, PHONE_NUMBER, location);
         if (customer.isPresent()) {
@@ -95,128 +94,129 @@ class CustomerServiceImplTest {
 
     @Test
     void testInvalidCreateAccount() {
-        assertThrowsExactly(ServiceException.class,
+        assertThrowsExactly(ValidationException.class,
                 () -> customerService.createAccount(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com", PASSWORD,
                         "1234", location),
                 CUSTOMER_PHONE_NUMBER_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForFirstName() throws InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException {
-        String errors;
+    void testCustomerValidationForFirstName() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, "", LAST_NAME, EMAIL, PASSWORD,
+                        PHONE_NUMBER, location)),
+                CUSTOMER_FIRST_NAME_EXCEPTION);
 
-        errors = getCustomerValidation("", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_FIRST_NAME_EXCEPTION);
-
-        errors = getCustomerValidation("Razvan1234", FIRST_NAME, EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_FIRST_NAME_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, "Razvan1234", LAST_NAME, EMAIL,
+                        PASSWORD, PHONE_NUMBER, location)),
+                CUSTOMER_FIRST_NAME_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForLastName() throws NoSuchMethodException, SecurityException,
-            InvocationTargetException, IllegalAccessException {
-        String errors;
+    void testCustomerValidationForLastName() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, "", EMAIL, PASSWORD,
+                        PHONE_NUMBER, location)),
+                CUSTOMER_LAST_NAME_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_LAST_NAME_EXCEPTION);
-
-        errors = getCustomerValidation(FIRST_NAME, "B3r3ndi", EMAIL, PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_LAST_NAME_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, "B3r3ndi", EMAIL,
+                        PASSWORD, PHONE_NUMBER, location)),
+                CUSTOMER_LAST_NAME_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForEmail() throws NoSuchMethodException, SecurityException,
-            InvocationTargetException, IllegalAccessException {
-        String errors;
+    void testCustomerValidationForEmail() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "", PASSWORD,
+                        PHONE_NUMBER, location)),
+                CUSTOMER_EMAIL_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "razvan.gmail.com",
+                        PASSWORD, PHONE_NUMBER, location)),
+                CUSTOMER_EMAIL_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "razvan.gmail.com", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "@gmail.com",
+                        PASSWORD, PHONE_NUMBER, location)),
+                CUSTOMER_EMAIL_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "@gmail.com", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
-
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "gmail.com@", PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_EMAIL_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, "gmail.com@",
+                        PASSWORD, PHONE_NUMBER, location)),
+                CUSTOMER_EMAIL_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForPassword() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
-        String errors;
+    void testCustomerValidationForPassword() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, "",
+                        PHONE_NUMBER, location)),
+                CUSTOMER_PASSWORD_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "", PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_PASSWORD_EXCEPTION);
-
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, "1234", PHONE_NUMBER, location);
-        assertEquals(errors, CUSTOMER_PASSWORD_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, "1234",
+                        PHONE_NUMBER, location)),
+                CUSTOMER_PASSWORD_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForPhoneNumber() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
+    void testCustomerValidationForPhoneNumber() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                        "", location)),
+                CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        String errors;
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                        "12e456789w", location)),
+                CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "", location);
-        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                        "09872", location)),
+                CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "12e456789w", location);
-        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
-
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "09872", location);
-        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
-
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, "098123132372", location);
-        assertEquals(errors, CUSTOMER_PHONE_NUMBER_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                        "098123132372", location)),
+                CUSTOMER_PHONE_NUMBER_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForLocation() throws NoSuchMethodException, SecurityException, InvocationTargetException,
-            IllegalAccessException {
-        String errors;
+    void testCustomerValidationForLocation() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                        PHONE_NUMBER, locationBuilder.build(COUNTRY, CITY, ""))),
+                CUSTOMER_ADDRESS_EXCEPTION);
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                Location.builder()
-                        .country(COUNTRY)
-                        .city(CITY)
-                        .address("")
-                        .build());
-        assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
-
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
-                Location.builder()
-                        .country(COUNTRY)
-                        .city(CITY)
-                        .address("aproape")
-                        .build());
-        assertEquals(errors, CUSTOMER_ADDRESS_EXCEPTION);
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD,
+                        PHONE_NUMBER, locationBuilder.build(COUNTRY, CITY, "aicia"))),
+                CUSTOMER_ADDRESS_EXCEPTION);
     }
 
     @Test
-    void testCustomerValidationForMultipleFields() throws NoSuchMethodException, SecurityException,
-            InvocationTargetException, IllegalAccessException {
-
-        String errors;
-
-        errors = getCustomerValidation(FIRST_NAME, "", EMAIL, "", "", location);
-        assertEquals(errors,
+    void testCustomerValidationForMultipleFields() {
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, "", EMAIL, "",
+                        "", location)),
                 CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_PASSWORD_EXCEPTION +
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation("", "", EMAIL, PASSWORD, "", location);
-        assertEquals(errors,
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, "", "", EMAIL, PASSWORD,
+                        "", location)),
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_PHONE_NUMBER_EXCEPTION);
 
-        errors = getCustomerValidation("", "", "", "", "",
-                new Location("Romania", "Cluj", ""));
-        assertEquals(errors,
+        assertThrowsExactly(ValidationException.class,
+                () -> validator.validateCustomer(customerBuilder.build(ID, "", "", EMAIL, PASSWORD,
+                        "", locationBuilder.build("Romania", "Cluj", ""))),
                 CUSTOMER_FIRST_NAME_EXCEPTION +
                         CUSTOMER_LAST_NAME_EXCEPTION +
                         CUSTOMER_EMAIL_EXCEPTION +
@@ -226,20 +226,19 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void testCustomerValidationForValidCustomer() throws NoSuchMethodException, SecurityException,
-            InvocationTargetException, IllegalAccessException {
-        String errors;
+    void testCustomerValidationForValidCustomer() throws ValidationException {
+        List<String> errors;
 
-        errors = getCustomerValidation(FIRST_NAME, LAST_NAME, "berendi.rav2001@gmail.com",
-                PASSWORD, PHONE_NUMBER, location);
-        assertEquals(errors, "");
+        errors = validator.validateCustomer(customerBuilder.build(ID, FIRST_NAME, LAST_NAME,
+                "berendi.rav2001@gmail.com", PASSWORD, PHONE_NUMBER, location));
+        assertTrue(errors.isEmpty());
     }
 
 
     @Test
     void testValidCheckIfEmailExists() {
         assertTrue(customerService.checkIfEmailExists("br@gmail.com"));
-        assertTrue(customerService.checkIfEmailExists("asasr@gmail.com"));
+        assertTrue(customerService.checkIfEmailExists("as@gmail.com"));
         assertTrue(customerService.checkIfEmailExists("br@gmail.com"));
         assertTrue(customerService.checkIfEmailExists("br@gmail.com"));
     }
@@ -255,19 +254,6 @@ class CustomerServiceImplTest {
         assertFalse(customerService.checkIfEmailExists("1234br@gmail.com"));
         assertFalse(customerService.checkIfEmailExists(" "));
         assertFalse(customerService.checkIfEmailExists(" br@gmail.com "));
-    }
-
-    private String getCustomerValidation(String firstName, String lastName, String email, String password,
-                                         String phoneNumber, Location location) throws NoSuchMethodException,
-            SecurityException, InvocationTargetException, IllegalAccessException {
-        //private method - tested with reflection
-
-        //args: String firstName, String lastName, String email, String password, String phoneNumber, Location location
-        Method method = CustomerServiceImpl.class.getDeclaredMethod("customerValidation",
-                String.class, String.class, String.class, String.class, String.class, Location.class);
-        method.setAccessible(true);
-
-        return (String) method.invoke(customerService, firstName, lastName, email, password, phoneNumber, location);
     }
 
 }

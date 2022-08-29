@@ -1,46 +1,52 @@
 package service.ingredientService;
 
 import domain.sweet.Ingredient;
+import exception.ServiceException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repository.ingredientRepository.IngredientRepository;
-import service.exception.ServiceException;
+
 
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Builder
+import static service.utils.Converter.convertStringToLong;
+
 @AllArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngredientServiceImpl.class);
+
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     private IngredientRepository ingredientRepository;
 
-
     @Override
     public List<Ingredient> getAllIngredients() {
+        LOGGER.info("GetAllIngredients - called");
         return ingredientRepository.findAll();
     }
 
     @Override
     public Optional<Ingredient> findIngredientById(String ingredientId) throws ServiceException {
-        long id;
-        try {
-            id = Long.parseLong(ingredientId);
-        } catch (Exception e) {
+        LOGGER.info("FindIngredientById for ingredient with id = {} - started", ingredientId);
+        long id = convertStringToLong(ingredientId);
+        Optional<Ingredient> ingredient = ingredientRepository.findIngredientById(id);
+        if (ingredient.isPresent()) {
+            LOGGER.info("FindIngredientById for ingredient with id = {} - finished", ingredientId);
+            return ingredient;
+        } else {
+            LOGGER.warn("FindIngredientById for ingredient with id = {} - exception occurred -> {} ", ingredientId,
+                    "Invalid ingredient id!");
             throw new ServiceException("Invalid ingredient id!");
         }
-        Optional<Ingredient> ingredient = ingredientRepository.findIngredientById(id);
-        if (ingredient.isPresent())
-            return ingredient;
-        else
-            throw new ServiceException("Invalid ingredient id!");
     }
 
     @Override
     public List<String> showAllIngredientsInStock() {
+        LOGGER.info("ShowAllIngredientsInStock - called");
         return ingredientRepository.findAll()
                 .stream()
                 .filter(ingredient -> ingredient.getAmount() > 0)
@@ -49,14 +55,19 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     private StringBuilder getIngredientDetails(Ingredient ingredient) {
+        LOGGER.info("GetIngredientDetails for ingredient - started");
         StringBuilder ingredientDetails = new StringBuilder("(Id:" + ingredient.getId() + ") " +
                 ingredient.getName() +
                 ",\tPrice: " + df.format(ingredient.getPrice()) + "$" +
                 "\tStock: " + ingredient.getAmount());
 
-        if (ingredient.getAmount() > 10)
+        if (ingredient.getAmount() > 10) {
+            LOGGER.info("GetIngredientDetails for ingredient - started");
             return ingredientDetails;
-        else
+        }
+        else {
+            LOGGER.info("GetIngredientDetails for ingredient - started");
             return ingredientDetails.append("\t(reduced quantity in shop stock)");
+        }
     }
 }

@@ -1,6 +1,7 @@
 package repository.customerRepository;
 
 import domain.Customer;
+import exception.ValidationException;
 import repository.Repository;
 
 import java.util.Optional;
@@ -13,5 +14,4 @@ public interface CustomerRepository extends Repository<Long, Customer> {
 
     Optional<Long> generateCustomerId();
 
-    void generateCustomers();
 }

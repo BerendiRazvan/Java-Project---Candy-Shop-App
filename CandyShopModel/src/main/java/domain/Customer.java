@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 
 @Builder
-@AllArgsConstructor
 @Data
 public class Customer {
     private long id;

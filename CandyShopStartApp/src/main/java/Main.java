@@ -1,5 +1,10 @@
+import builder.*;
 import domain.Shop;
-import domain.location.Location;
+import exception.CandyShopException;
+import exception.ValidationException;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repository.customerRepository.CustomerInMemoryRepository;
 import repository.customerRepository.CustomerRepository;
 import repository.ingredientRepository.IngredientInMemoryRepository;
@@ -16,74 +21,50 @@ import service.orderService.OrderService;
 import service.orderService.OrderServiceImpl;
 import service.sweetService.SweetService;
 import service.sweetService.SweetServiceImpl;
-
-import java.util.ArrayList;
+import userInterface.UI;
 
 public class Main {
-    public static void main(String[] args) {
-        startApp();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String[] args) throws CandyShopException {
+        try {
+            LOGGER.info("Application - started");
+            startApp();
+            LOGGER.info("Application - finished");
+        } catch (ValidationException e) {
+            LOGGER.error("Application - exception occurred -> {}", e.getMessage());
+            throw new CandyShopException(e.getMessage());
+        }
     }
 
-    public static void startApp() {
+    public static void startApp() throws ValidationException {
         System.out.println("\nWELCOME TO THE CANDY SHOP MY FRIEND :)\n");
 
-        Shop shop = Shop.builder()
-                .name("Candy Crush Shop")
-                .location(Location.builder()
-                        .country("Romania")
-                        .city("Cluj-Napoca")
-                        .address("Str. Memorandumului, nr. 10")
-                        .build())
-                .build();
+        ShopBuilder shopBuilder = new ShopBuilder();
+        LocationBuilder locationBuilder = new LocationBuilder();
+
+        Shop shop = shopBuilder.build("Candy Crush Shop", locationBuilder.build("Romania", "Cluj-Napoca",
+                "Str. Memorandumului, nr. 10"));
+        LOGGER.info("Shop initialized - started");
 
         //Repository
-        IngredientRepository ingredientRepository = IngredientInMemoryRepository.builder()
-                .ingredientList(new ArrayList<>())
-                .build();
-        ingredientRepository.generateIngredients();
-
-        SweetRepository sweetRepository = SweetInMemoryRepository.builder()
-                .sweetList(new ArrayList<>())
-                .build();
-        sweetRepository.generateSweets(ingredientRepository);
-
-        CustomerRepository customerRepository = CustomerInMemoryRepository.builder()
-                .customerList(new ArrayList<>())
-                .build();
-        customerRepository.generateCustomers();
-
-        OrderRepository orderRepository = OrderInMemoryRepository.builder()
-                .orderList(new ArrayList<>())
-                .build();
-        orderRepository.generateOrders(shop, sweetRepository, customerRepository);
+        IngredientRepository ingredientRepository = new IngredientInMemoryRepository();
+        SweetRepository sweetRepository = new SweetInMemoryRepository(ingredientRepository);
+        CustomerRepository customerRepository = new CustomerInMemoryRepository();
+        OrderRepository orderRepository = new OrderInMemoryRepository(shop, sweetRepository, customerRepository);
+        LOGGER.info("Repositories initialized");
 
         //Service
-        CustomerService customerService = CustomerServiceImpl.builder()
-                .customerRepository(customerRepository)
-                .build();
-        OrderService orderService = OrderServiceImpl.builder()
-                .orderRepository(orderRepository)
-                .sweetRepository(sweetRepository)
-                .ingredientRepository(ingredientRepository)
-                .build();
-        SweetService sweetService = SweetServiceImpl.builder()
-                .sweetRepository(sweetRepository)
-                .ingredientRepository(ingredientRepository)
-                .build();
-        IngredientService ingredientService = IngredientServiceImpl.builder()
-                .ingredientRepository(ingredientRepository)
-                .build();
+        CustomerService customerService = new CustomerServiceImpl(customerRepository);
+        OrderService orderService = new OrderServiceImpl(orderRepository, sweetRepository, ingredientRepository);
+        SweetService sweetService = new SweetServiceImpl(sweetRepository, ingredientRepository);
+        IngredientService ingredientService = new IngredientServiceImpl(ingredientRepository);
+        LOGGER.info("Services initialized");
 
         //UI
-        UI appUI = UI.builder()
-                .shop(shop)
-                .customerService(customerService)
-                .sweetService(sweetService)
-                .orderService(orderService)
-                .ingredientService(ingredientService)
-                .build();
+        UI appUI = new UI(shop, customerService, sweetService, orderService, ingredientService);
         appUI.show();
-
+        LOGGER.info("UI initialized");
 
         System.out.println("\nSEE YOU LATER, ALLIGATOR! :)\n");
     }

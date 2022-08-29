@@ -6,14 +6,15 @@ import domain.order.Order;
 import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
-import service.exception.ServiceException;
+import exception.ValidationException;
+import exception.ServiceException;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
 
-    Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException;
+    Optional<Order> createOrder(Customer customer, OrderType orderType, Shop shop) throws ServiceException, ValidationException;
 
     void addToOrder(Order order, Sweet newSweet) throws ServiceException;
 
@@ -30,7 +31,7 @@ public interface OrderService {
     double getFinalOrderPrice(Order order);
 
     void addExtraIngredientToOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
-            throws ServiceException;
+            throws ServiceException, ValidationException;
 
     void updateExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient, String amount)
             throws ServiceException;

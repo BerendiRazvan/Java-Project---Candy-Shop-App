@@ -1,7 +1,7 @@
 package service.ingredientService;
 
 import domain.sweet.Ingredient;
-import service.exception.ServiceException;
+import exception.ServiceException;
 
 import java.util.List;
 import java.util.Optional;
