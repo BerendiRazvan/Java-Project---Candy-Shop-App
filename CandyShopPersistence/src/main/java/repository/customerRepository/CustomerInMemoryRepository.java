@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,21 +87,10 @@ public class CustomerInMemoryRepository implements CustomerRepository {
 
     @Override
     public Optional<Long> generateCustomerId() {
-        //the temporary method
-        //it will no longer be needed after we add a db because the id will be automatically generated
-
         LOGGER.info("GenerateCustomerId - started");
-
         long id = 1;
         while (true) {
-            boolean ok = true;
-            for (var c : customerList)
-                if (c.getId() == id) {
-                    ok = false;
-                    break;
-                }
-
-            if (ok) {
+            if (findCustomerById(id).isEmpty()) {
                 LOGGER.info("GenerateCustomerId - finished");
                 return Optional.of(id);
             }

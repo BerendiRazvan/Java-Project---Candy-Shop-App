@@ -14,17 +14,17 @@
         </encoder>
     </appender>
 
-<!--    <root name="log_info" level="INFO">-->
-<!--        <appender-ref ref="FILE"/>-->
-<!--        <appender-ref ref="STDOUT"/>-->
-<!--    </root>-->
-<!--    <root name="log_warn" level="WARN">-->
-<!--        <appender-ref ref="FILE"/>-->
-<!--        <appender-ref ref="STDOUT"/>-->
-<!--    </root>-->
+    <!--    <root name="log_info" level="INFO">-->
+    <!--        <appender-ref ref="FILE"/>-->
+    <!--        <appender-ref ref="STDOUT"/>-->
+    <!--    </root>-->
+    <!--    <root name="log_warn" level="WARN">-->
+    <!--        <appender-ref ref="FILE"/>-->
+    <!--        <appender-ref ref="STDOUT"/>-->
+    <!--    </root>-->
     <root level="debug">
         <appender-ref ref="FILE"/>
-<!--        <appender-ref ref="STDOUT"/>-->
+        <!--        <appender-ref ref="STDOUT"/>-->
     </root>
 
 </configuration>

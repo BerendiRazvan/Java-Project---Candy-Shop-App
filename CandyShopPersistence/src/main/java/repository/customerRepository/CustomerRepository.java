@@ -1,7 +1,6 @@
 package repository.customerRepository;
 
 import domain.Customer;
-import exception.ValidationException;
 import repository.Repository;
 
 import java.util.Optional;

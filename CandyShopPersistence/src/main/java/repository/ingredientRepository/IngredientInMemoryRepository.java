@@ -84,7 +84,6 @@ public class IngredientInMemoryRepository implements IngredientRepository {
                 .findFirst();
     }
 
-
     private void generateIngredients() throws ValidationException {
         LOGGER.info("GenerateIngredients - started");
         IngredientBuilder ingredientBuilder = new IngredientBuilder();
@@ -107,5 +106,18 @@ public class IngredientInMemoryRepository implements IngredientRepository {
                 ingredientBuilder.build(15, "Ice Cream", 2.05, 10)
         ));
         LOGGER.info("GenerateIngredients - finished");
+    }
+
+    @Override
+    public Optional<Long> generateIngredientId() {
+        LOGGER.info("GenerateIngredientId - started");
+        long id = 1;
+        while (true) {
+            if (findIngredientById(id).isEmpty()) {
+                LOGGER.info("GenerateIngredientId - finished");
+                return Optional.of(id);
+            }
+            id++;
+        }
     }
 }

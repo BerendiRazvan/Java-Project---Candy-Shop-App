@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum SweetType {
-    CAKE("Cake"), WAFFLES("Waffles"), CROISSANT("Croissant"), DONUT("Donut"), HOMEMADE_CHOCOLATE("Homemade Chocolate"),
+    CAKE("Cake"), WAFFLES("Waffles"), CROISSANT("Croissant"),
+    DONUT("Donut"), HOMEMADE_CHOCOLATE("Homemade Chocolate"),
     UNIQUE("Custom sweet");
 
     private @Getter final String name;

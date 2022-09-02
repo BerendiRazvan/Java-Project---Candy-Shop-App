@@ -85,20 +85,10 @@ public class OrderInMemoryRepository implements OrderRepository {
 
     @Override
     public Optional<Long> generateOrderId() {
-        //the temporary method
-        //it will no longer be needed after we add a db because the id will be automatically generated
-
         LOGGER.info("GenerateOrderId - started");
-
         long id = 1;
         while (true) {
-            boolean ok = true;
-            for (var o : orderList)
-                if (o.getId() == id) {
-                    ok = false;
-                    break;
-                }
-            if (ok) {
+            if (findOrderById(id).isEmpty()) {
                 LOGGER.info("GenerateOrderId - finished");
                 return Optional.of(id);
             }

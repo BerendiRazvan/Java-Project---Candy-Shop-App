@@ -82,17 +82,9 @@ public class SweetInMemoryRepository implements SweetRepository {
     @Override
     public Optional<Long> generateSweetId() {
         LOGGER.info("GenerateSweetId - started");
-
         long id = 1;
         while (true) {
-            boolean ok = true;
-            for (var s : sweetList)
-                if (s.getId() == id) {
-                    ok = false;
-                    break;
-                }
-
-            if (ok) {
+            if (findSweetById(id).isEmpty()) {
                 LOGGER.info("GenerateSweetId - finished");
                 return Optional.of(id);
             }

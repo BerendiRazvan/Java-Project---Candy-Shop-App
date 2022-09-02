@@ -2,9 +2,7 @@ package repository.sweetRepository;
 
 
 import domain.sweet.Sweet;
-import exception.ValidationException;
 import repository.Repository;
-import repository.ingredientRepository.IngredientRepository;
 
 import java.util.Optional;
 

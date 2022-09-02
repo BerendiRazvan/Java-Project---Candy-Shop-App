@@ -9,8 +9,9 @@ import validator.ShopValidator;
 
 @NoArgsConstructor
 public class ShopBuilder {
-    public Shop build(String name, Location location) throws ValidationException {
+    public Shop build(long id, String name, Location location) throws ValidationException {
         Shop shop = Shop.builder()
+                .id(id)
                 .name(name)
                 .location(location)
                 .build();

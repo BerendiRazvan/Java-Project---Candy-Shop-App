@@ -8,7 +8,6 @@ import domain.order.OrderType;
 import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import exception.CandyShopException;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.customerService.CustomerService;
@@ -68,7 +67,7 @@ public class OrderSweetUI {
         System.out.println(customer);
 
         OrderType orderType = OrderType.DELIVERY;
-        System.out.print("\nYour order will be delivered to you, do you want delivery with pickup?\nAnswer (Yes/No):");
+        System.out.print("\nYour order will be delivered to you, do you want order with pickup?\nAnswer (Yes/No):");
 
         String deliveryOpt = SCANNER.nextLine().toUpperCase();
 
