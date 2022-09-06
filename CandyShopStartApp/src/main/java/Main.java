@@ -29,8 +29,6 @@ import userInterface.UI;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import static userInterface.UI.persistenceOptionForDataBase;
-
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -63,6 +61,9 @@ public class Main {
                 "Str. Memorandumului, nr. 10"));
         LOGGER.info("Shop initialized");
 
+        //UI
+        UI appUI = new UI(shop);
+
         //Repository
         IngredientRepository ingredientRepository;
         SweetRepository sweetRepository;
@@ -72,7 +73,7 @@ public class Main {
 
         while (true) {
             try {
-                if (persistenceOptionForDataBase()) {
+                if (appUI.persistenceOptionForDataBase()) {
                     //Data Base Repository
                     ingredientRepository = new IngredientDataBaseRepository(entityManagerFactory);
                     sweetRepository = new SweetDataBaseRepository(entityManagerFactory);
@@ -101,7 +102,7 @@ public class Main {
         LOGGER.info("Services initialized");
 
         //UI
-        UI appUI = new UI(shop, customerService, sweetService, orderService, ingredientService);
+        appUI = new UI(shop, customerService, sweetService, orderService, ingredientService);
         appUI.show();
         LOGGER.info("UI initialized");
 
