@@ -36,6 +36,8 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws CandyShopException {
+        System.out.println("\nWELCOME TO THE CANDY SHOP MY FRIEND :)\n");
+
         try {
             LOGGER.info("Application - started");
             startApp();
@@ -44,13 +46,14 @@ public class Main {
             LOGGER.error("Application - exception occurred -> {}", e.getMessage());
             throw new CandyShopException(e.getMessage());
         }
+
+        System.out.println("\nSEE YOU LATER, ALLIGATOR! :)\n");
     }
 
     public static void startApp() throws CandyShopException {
         EntityManagerFactory entityManagerFactory;
         entityManagerFactory = Persistence.createEntityManagerFactory("JavaSummerPractice2022");
 
-        System.out.println("\nWELCOME TO THE CANDY SHOP MY FRIEND :)\n");
         LOGGER.info("EntityManagerFactory initialized");
 
         ShopBuilder shopBuilder = new ShopBuilder();
@@ -67,11 +70,9 @@ public class Main {
         OrderRepository orderRepository;
         LOGGER.info("Repositories created");
 
-
         while (true) {
             try {
-                boolean isDataBasePersistence = persistenceOptionForDataBase();
-                if (isDataBasePersistence) {
+                if (persistenceOptionForDataBase()) {
                     //Data Base Repository
                     ingredientRepository = new IngredientDataBaseRepository(entityManagerFactory);
                     sweetRepository = new SweetDataBaseRepository(entityManagerFactory);
@@ -88,7 +89,7 @@ public class Main {
                 LOGGER.info("In Memory Repositories initialized");
                 break;
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                LOGGER.warn("Invalid option for repositories persistence initialization");
             }
         }
 
@@ -105,6 +106,5 @@ public class Main {
         LOGGER.info("UI initialized");
 
         entityManagerFactory.close();
-        System.out.println("\nSEE YOU LATER, ALLIGATOR! :)\n");
     }
 }
