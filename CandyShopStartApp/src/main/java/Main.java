@@ -28,9 +28,8 @@ import userInterface.UI;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.*;
 
-import static userInterface.UI.persistenceOption;
+import static userInterface.UI.persistenceOptionForDataBase;
 
 
 public class Main {
@@ -47,7 +46,7 @@ public class Main {
         }
     }
 
-    public static void startApp() throws ValidationException {
+    public static void startApp() throws CandyShopException {
         EntityManagerFactory entityManagerFactory;
         entityManagerFactory = Persistence.createEntityManagerFactory("JavaSummerPractice2022");
 
@@ -70,17 +69,17 @@ public class Main {
 
 
         while (true) {
-            String option = persistenceOption();
-            if (option.equalsIgnoreCase("DataBase")) {
-                //Data Base Repository
-                ingredientRepository = new IngredientDataBaseRepository(entityManagerFactory);
-                sweetRepository = new SweetDataBaseRepository(entityManagerFactory);
-                customerRepository = new CustomerDataBaseRepository(entityManagerFactory);
-                orderRepository = new OrderDataBaseRepository(entityManagerFactory);
-                LOGGER.info("Data Base Repositories initialized");
-                break;
-            }
-            if (option.equalsIgnoreCase("Memory")) {
+            try {
+                boolean isDataBasePersistence = persistenceOptionForDataBase();
+                if (isDataBasePersistence) {
+                    //Data Base Repository
+                    ingredientRepository = new IngredientDataBaseRepository(entityManagerFactory);
+                    sweetRepository = new SweetDataBaseRepository(entityManagerFactory);
+                    customerRepository = new CustomerDataBaseRepository(entityManagerFactory);
+                    orderRepository = new OrderDataBaseRepository(entityManagerFactory);
+                    LOGGER.info("Data Base Repositories initialized");
+                    break;
+                }
                 //In Memory Repository - with data generation
                 ingredientRepository = new IngredientInMemoryRepository();
                 sweetRepository = new SweetInMemoryRepository(ingredientRepository);
@@ -88,8 +87,9 @@ public class Main {
                 orderRepository = new OrderInMemoryRepository(shop, sweetRepository, customerRepository);
                 LOGGER.info("In Memory Repositories initialized");
                 break;
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
-
         }
 
         //Service

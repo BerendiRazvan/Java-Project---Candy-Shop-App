@@ -43,9 +43,14 @@ public class UI {
                 "X - Exit";
     }
 
-    public static String persistenceOption(){
+    public static boolean persistenceOptionForDataBase() throws CandyShopException {
         System.out.print("Enter persistence Memory/DataBase: ");
-        return SCANNER.nextLine();
+        String option = SCANNER.nextLine();
+        if(option.equalsIgnoreCase("DataBase"))
+            return true;
+        if(option.equalsIgnoreCase("Memory"))
+            return false;
+        else throw new CandyShopException("Invalid option");
     }
 
 
