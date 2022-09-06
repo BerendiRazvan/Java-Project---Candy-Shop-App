@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class IngredientDataBaseRepository implements IngredientRepository {
-    private EntityManagerFactory entityManagerFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(IngredientDataBaseRepository.class);
+    private EntityManagerFactory entityManagerFactory;
 
     public IngredientDataBaseRepository(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -56,10 +56,8 @@ public class IngredientDataBaseRepository implements IngredientRepository {
             entityTransaction = entityManager.getTransaction();
             entityTransaction.begin();
             ingredientToUpdate = entityManager.find(Ingredient.class, id);
-            ingredientToUpdate.setName(ingredient.getName());
-            ingredientToUpdate.setPrice(ingredient.getPrice());
-            ingredientToUpdate.setAmount(ingredient.getAmount());
-            entityManager.persist(ingredientToUpdate);
+            setUpIngredient(ingredientToUpdate, ingredient);
+            entityManager.merge(ingredientToUpdate);
             entityTransaction.commit();
             LOGGER.info("Update ingredient with id = {} - transaction committed", id);
         } catch (Exception ex) {
@@ -168,5 +166,11 @@ public class IngredientDataBaseRepository implements IngredientRepository {
             }
             id++;
         }
+    }
+
+    private void setUpIngredient(Ingredient ingredientToUpdate, Ingredient ingredient) {
+        ingredientToUpdate.setName(ingredient.getName());
+        ingredientToUpdate.setPrice(ingredient.getPrice());
+        ingredientToUpdate.setAmount(ingredient.getAmount());
     }
 }

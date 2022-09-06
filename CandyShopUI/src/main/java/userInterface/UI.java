@@ -43,6 +43,11 @@ public class UI {
                 "X - Exit";
     }
 
+    public static String persistenceOption(){
+        System.out.print("Enter persistence Memory/DataBase: ");
+        return SCANNER.nextLine();
+    }
+
 
     public void show() {
         LOGGER.info("Show - started");

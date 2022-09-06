@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.OneToOne;
-import java.io.Serializable;
 
 @Builder
 @Data
@@ -19,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "SHOPS")
-public class Shop implements Serializable {
+public class Shop {
     @Id
     @Column(name = "ID", unique = true)
     private long id;

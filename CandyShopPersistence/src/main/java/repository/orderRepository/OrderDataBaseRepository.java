@@ -15,9 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class OrderDataBaseRepository implements OrderRepository {
-
-    private static EntityManagerFactory entityManagerFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderDataBaseRepository.class);
+    private static EntityManagerFactory entityManagerFactory;
 
     public OrderDataBaseRepository(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -57,12 +56,8 @@ public class OrderDataBaseRepository implements OrderRepository {
             entityTransaction = entityManager.getTransaction();
             entityTransaction.begin();
             orderToUpdate = entityManager.find(Order.class, id);
-            orderToUpdate.setOrderedSweets(order.getOrderedSweets());
-            orderToUpdate.setOrderType(order.getOrderType());
-            orderToUpdate.setWaitingTime(order.getWaitingTime());
-            orderToUpdate.setCustomer(order.getCustomer());
-            orderToUpdate.setShop(order.getShop());
-            entityManager.persist(orderToUpdate);
+            setUpOrder(orderToUpdate, order);
+            entityManager.merge(orderToUpdate);
             entityTransaction.commit();
             LOGGER.info("Update order with id = {} - transaction committed", id);
         } catch (Exception ex) {
@@ -152,5 +147,13 @@ public class OrderDataBaseRepository implements OrderRepository {
             }
             id++;
         }
+    }
+
+    private void setUpOrder(Order orderToUpdate, Order order) {
+        orderToUpdate.setOrderedSweets(order.getOrderedSweets());
+        orderToUpdate.setOrderType(order.getOrderType());
+        orderToUpdate.setWaitingTime(order.getWaitingTime());
+        orderToUpdate.setCustomer(order.getCustomer());
+        orderToUpdate.setShop(order.getShop());
     }
 }

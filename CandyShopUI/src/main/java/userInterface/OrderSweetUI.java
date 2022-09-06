@@ -242,7 +242,6 @@ public class OrderSweetUI {
                 try {
                     sweetService.addAllIngredientsToSweet(customSweet.get(), ingredients);
                     orderService.addToOrder(order, customSweet.get());
-                    System.out.println(customSweet.get());
                     System.out.println("Sweet added, yummy :)");
                 } catch (CandyShopException e) {
                     System.out.println(e.getMessage());

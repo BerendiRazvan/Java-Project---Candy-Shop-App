@@ -16,7 +16,6 @@ import javax.persistence.AccessType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import java.io.Serializable;
 
 @Builder
 @Data
@@ -26,11 +25,11 @@ import java.io.Serializable;
 @Table(name = "CUSTOMERS")
 @NamedQueries({
         @NamedQuery(name = Customer.FIND_ALL, query = "SELECT c FROM Customer c ORDER BY c.id"),
-        @NamedQuery(name = Customer.FIND_BY_ID, query = "SELECT c FROM Customer c WHERE c.id = :customerId ORDER BY c.id"),
-        @NamedQuery(name = Customer.FIND_BY_EMAIL, query = "SELECT c FROM Customer c WHERE c.email = :customerEmail ORDER BY c.id")
+        @NamedQuery(name = Customer.FIND_BY_ID, query = "SELECT c FROM Customer c WHERE c.id = :customerId"),
+        @NamedQuery(name = Customer.FIND_BY_EMAIL, query = "SELECT c FROM Customer c WHERE c.email = :customerEmail")
 })
 @Access(AccessType.FIELD)
-public class Customer implements Serializable {
+public class Customer {
     public static final String FIND_ALL = "Customer.findAll";
     public static final String FIND_BY_ID = "Customer.findById";
     public static final String FIND_BY_EMAIL = "Customer.findByEmail";

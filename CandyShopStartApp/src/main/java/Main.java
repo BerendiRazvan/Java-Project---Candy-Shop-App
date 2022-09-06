@@ -30,6 +30,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.*;
 
+import static userInterface.UI.persistenceOption;
+
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -55,7 +57,7 @@ public class Main {
         ShopBuilder shopBuilder = new ShopBuilder();
         LocationBuilder locationBuilder = new LocationBuilder();
 
-        Shop shop = shopBuilder.build(1L,"Candy Crush Shop", locationBuilder.build("Romania", "Cluj-Napoca",
+        Shop shop = shopBuilder.build(1L, "Candy Crush Shop", locationBuilder.build("Romania", "Cluj-Napoca",
                 "Str. Memorandumului, nr. 10"));
         LOGGER.info("Shop initialized");
 
@@ -66,25 +68,28 @@ public class Main {
         OrderRepository orderRepository;
         LOGGER.info("Repositories created");
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter persistence Memory(default)/DataBase: ");
 
-        if (scanner.nextLine().equalsIgnoreCase("DataBase")) {
-            //Data Base Repository
-            ingredientRepository = new IngredientDataBaseRepository(entityManagerFactory);
-            sweetRepository = new SweetDataBaseRepository(entityManagerFactory);
-            customerRepository = new CustomerDataBaseRepository(entityManagerFactory);
-            orderRepository = new OrderDataBaseRepository(entityManagerFactory);
-            LOGGER.info("Data Base Repositories initialized");
-            System.out.println("The application will use the Data Base");
-        } else {
-            //In Memory Repository - with data generation
-            ingredientRepository = new IngredientInMemoryRepository();
-            sweetRepository = new SweetInMemoryRepository(ingredientRepository);
-            customerRepository = new CustomerInMemoryRepository();
-            orderRepository = new OrderInMemoryRepository(shop, sweetRepository, customerRepository);
-            LOGGER.info("In Memory Repositories initialized");
-            System.out.println("The application will use the memory");
+        while (true) {
+            String option = persistenceOption();
+            if (option.equalsIgnoreCase("DataBase")) {
+                //Data Base Repository
+                ingredientRepository = new IngredientDataBaseRepository(entityManagerFactory);
+                sweetRepository = new SweetDataBaseRepository(entityManagerFactory);
+                customerRepository = new CustomerDataBaseRepository(entityManagerFactory);
+                orderRepository = new OrderDataBaseRepository(entityManagerFactory);
+                LOGGER.info("Data Base Repositories initialized");
+                break;
+            }
+            if (option.equalsIgnoreCase("Memory")) {
+                //In Memory Repository - with data generation
+                ingredientRepository = new IngredientInMemoryRepository();
+                sweetRepository = new SweetInMemoryRepository(ingredientRepository);
+                customerRepository = new CustomerInMemoryRepository();
+                orderRepository = new OrderInMemoryRepository(shop, sweetRepository, customerRepository);
+                LOGGER.info("In Memory Repositories initialized");
+                break;
+            }
+
         }
 
         //Service

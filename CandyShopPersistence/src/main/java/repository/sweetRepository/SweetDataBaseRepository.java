@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class SweetDataBaseRepository implements SweetRepository {
-    private static EntityManagerFactory entityManagerFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(SweetDataBaseRepository.class);
+    private static EntityManagerFactory entityManagerFactory;
 
     public SweetDataBaseRepository(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -56,11 +56,8 @@ public class SweetDataBaseRepository implements SweetRepository {
             entityTransaction = entityManager.getTransaction();
             entityTransaction.begin();
             sweetToUpdate = entityManager.find(Sweet.class, id);
-            sweetToUpdate.setSweetType(sweet.getSweetType());
-            sweetToUpdate.setPrice(sweet.getPrice());
-            sweetToUpdate.setIngredientsList(sweet.getIngredientsList());
-            sweetToUpdate.setExtraIngredients(sweet.getExtraIngredients());
-            entityManager.persist(sweetToUpdate);
+            setUpSweet(sweetToUpdate, sweet);
+            entityManager.merge(sweetToUpdate);
             entityTransaction.commit();
             LOGGER.info("Update sweet with id = {} - transaction committed", id);
         } catch (Exception ex) {
@@ -150,5 +147,12 @@ public class SweetDataBaseRepository implements SweetRepository {
             }
             id++;
         }
+    }
+
+    private void setUpSweet(Sweet sweetToUpdate, Sweet sweet) {
+        sweetToUpdate.setSweetType(sweet.getSweetType());
+        sweetToUpdate.setPrice(sweet.getPrice());
+        sweetToUpdate.setIngredientsList(sweet.getIngredientsList());
+        sweetToUpdate.setExtraIngredients(sweet.getExtraIngredients());
     }
 }

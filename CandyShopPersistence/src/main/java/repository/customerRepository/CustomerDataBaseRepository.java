@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class CustomerDataBaseRepository implements CustomerRepository {
-    private EntityManagerFactory entityManagerFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDataBaseRepository.class);
+    private EntityManagerFactory entityManagerFactory;
 
     public CustomerDataBaseRepository(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -57,12 +57,8 @@ public class CustomerDataBaseRepository implements CustomerRepository {
             entityTransaction = entityManager.getTransaction();
             entityTransaction.begin();
             customerToUpdate = entityManager.find(Customer.class, id);
-            customerToUpdate.setFirstName(customer.getFirstName());
-            customerToUpdate.setLastName(customer.getLastName());
-            customerToUpdate.setEmail(customer.getEmail());
-            customerToUpdate.setPassword(customer.getPassword());
-            customerToUpdate.setPhoneNumber(customer.getPhoneNumber());
-            entityManager.persist(customerToUpdate);
+            setUpCustomer(customerToUpdate, customer);
+            entityManager.merge(customerToUpdate);
             entityTransaction.commit();
             LOGGER.info("Update customer with id = {} - transaction committed", id);
         } catch (Exception ex) {
@@ -171,5 +167,13 @@ public class CustomerDataBaseRepository implements CustomerRepository {
             }
             id++;
         }
+    }
+
+    private void setUpCustomer(Customer customerToUpdate, Customer customer) {
+        customerToUpdate.setFirstName(customer.getFirstName());
+        customerToUpdate.setLastName(customer.getLastName());
+        customerToUpdate.setEmail(customer.getEmail());
+        customerToUpdate.setPassword(customer.getPassword());
+        customerToUpdate.setPhoneNumber(customer.getPhoneNumber());
     }
 }

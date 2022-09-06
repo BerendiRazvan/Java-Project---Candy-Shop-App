@@ -82,8 +82,8 @@ public class SweetServiceImpl implements SweetService {
             Optional<Sweet> updateSweet = sweetRepository.findSweetById(customSweet.getId());
             if (updateSweet.isPresent()) {
                 while (amount != 0) {
+                    updateSweet.get().setPrice(updateSweet.get().getPrice() + newIngredient.getPrice());
                     updateSweet.get().getIngredientsList().add(newIngredient);
-                    updateSweet.get().setPrice(customSweet.getTotalPrice() + newIngredient.getPrice());
                     amount--;
                 }
                 try {

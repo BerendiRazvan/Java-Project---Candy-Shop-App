@@ -2,7 +2,6 @@ package domain.order;
 
 import domain.Customer;
 import domain.Shop;
-import domain.sweet.Ingredient;
 import domain.sweet.Sweet;
 import domain.utils.LocalDateTimeConverter;
 import lombok.AllArgsConstructor;
@@ -24,13 +23,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 import javax.persistence.Convert;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static domain.utils.OrderPrintingFormatter.formatForPrintingOrderedSweets;
 
 @Builder
 @Data
@@ -40,10 +38,10 @@ import java.util.stream.Collectors;
 @Table(name = "ORDERS")
 @NamedQueries({
         @NamedQuery(name = Order.FIND_ALL, query = "SELECT o FROM Order o ORDER BY o.id"),
-        @NamedQuery(name = Order.FIND_BY_ID, query = "SELECT o FROM Order o WHERE o.id = :orderId ORDER BY o.id")
+        @NamedQuery(name = Order.FIND_BY_ID, query = "SELECT o FROM Order o WHERE o.id = :orderId")
 })
 @Access(AccessType.FIELD)
-public class Order implements Serializable {
+public class Order {
     public static final String FIND_ALL = "Order.findAll";
     public static final String FIND_BY_ID = "Order.findById";
     private static final DecimalFormat df = new DecimalFormat("0.00");
@@ -78,45 +76,10 @@ public class Order implements Serializable {
                 "\n\nCandy Shop: " + shop.getName() +
                 "\n" + shop.getLocation() +
                 "\n" + "-".repeat(100) + "\n" +
-                "Ordered:\n" + formatForPrintingOrderedSweets() +
+                "Ordered:\n" + formatForPrintingOrderedSweets(orderedSweets) +
                 "\n" + "-".repeat(100) + "\n" +
                 "YOUR ORDER WILL READY FOR " + orderType.toString() + " AT: " +
                 waitingTime.format(DateTimeFormatter.ofPattern("EEE dd.MM.yyyy HH:mm")) +
                 "\n" + "-".repeat(100) + "\n";
     }
-
-    private String formatForPrintingOrderedSweets() {
-        StringBuilder orderedSweetsInfo = new StringBuilder();
-        for (Sweet sweet : orderedSweets.keySet())
-            orderedSweetsInfo.append(formatForPrintingSweet(sweet));
-        return orderedSweetsInfo.toString();
-    }
-
-    private String formatForPrintingSweet(Sweet sweet) {
-        return "\n(Id:" + sweet.getId() + ")" +
-                " " + sweet.getSweetType().getName() +
-                " - quantity: " +
-                orderedSweets.get(sweet) +
-                " - price: " +
-                orderedSweets.get(sweet) +
-                "*" +
-                df.format(sweet.getTotalPrice()) +
-                "$=" +
-                df.format(orderedSweets.get(sweet) * sweet.getTotalPrice()) +
-                "$" +
-                "\nRecipe:" +
-                formatForPrintingIngredients(sweet.getIngredientsList()) +
-                "\nExtra:" +
-                sweet.getExtraIngredients() +
-                "\n";
-    }
-
-    private String formatForPrintingIngredients(List<Ingredient> ingredientsList) {
-        return ingredientsList
-                .stream()
-                .map(ingredient -> "(Id:" + ingredient.getId() + ") " + ingredient.getName())
-                .collect(Collectors.toList())
-                .toString();
-    }
-
 }
