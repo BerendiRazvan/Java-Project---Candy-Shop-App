@@ -119,7 +119,7 @@ class SweetServiceImplTest {
 
             sweetService.addIngredientToSweet(sweet.get(), ingredient, AMOUNT);
             assertEquals(sweet.get().getIngredientsList().size(), AMOUNT);
-            assertEquals(sweet.get().getOriginalPrice(), 2 + INGREDIENT_PRICE * AMOUNT);
+            assertEquals(sweet.get().getPrice(), 2 + INGREDIENT_PRICE * AMOUNT);
         } else fail("Sweet addIngredientToSweet failed");
     }
 

@@ -47,7 +47,7 @@ class OrderServiceImplTest {
         OrderBuilder orderBuilder = new OrderBuilder();
         LocationBuilder locationBuilder = new LocationBuilder();
 
-        shop = shopBuilder.build(SHOP_NAME, locationBuilder.build(COUNTRY, CITY, ADDRESS));
+        shop = shopBuilder.build(ID, SHOP_NAME, locationBuilder.build(COUNTRY, CITY, ADDRESS));
 
         customer = customerBuilder.build(ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, PHONE_NUMBER,
                 locationBuilder.build(COUNTRY, CITY, ADDRESS));

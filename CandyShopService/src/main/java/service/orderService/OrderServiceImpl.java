@@ -70,6 +70,9 @@ public class OrderServiceImpl implements OrderService {
             Optional<Order> updateOrder = orderRepository.findOrderById(order.getId());
             if (updateOrder.isPresent()) {
                 try {
+                    Optional<Sweet> optionalSweet = sweetRepository.findSweetById(newSweet.getId());
+                    if(optionalSweet.isPresent())
+                        newSweet = optionalSweet.get();
                     updateShopStockAfterAddToOrder(newSweet.getIngredientsList());
                     updateShopStockAfterAddToOrder(newSweet.getExtraIngredients());
                     addSweetToOrder(updateOrder.get(), newSweet);
@@ -170,13 +173,19 @@ public class OrderServiceImpl implements OrderService {
             throws ServiceException, ValidationException {
         LOGGER.info("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - started", amount);
         int ingredientAmount = convertStringToInt(amount);
+        Optional<Order> orderAfterUpdate = orderRepository.findOrderById(order.getId());
+        if (orderAfterUpdate.isPresent())
+            order = orderAfterUpdate.get();
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
 
         Optional<Long> id = sweetRepository.generateSweetId();
         if (id.isPresent()) {
             SweetBuilder sweetBuilder = new SweetBuilder();
-            Sweet customSweet = sweetBuilder.build(id.get(), sweet.getIngredientsList(), sweet.getSweetType(), sweet.getTotalPrice());
+            Sweet customSweet = sweetBuilder.build(id.get(),
+                    new ArrayList<>(sweet.getIngredientsList()),
+                    sweet.getSweetType(),
+                    sweet.getTotalPrice());
             customSweet.setExtraIngredients(new ArrayList<>(sweet.getExtraIngredients()));
 
             updateExtraIngredientFromSweet(customSweet, ingredient, ingredientAmount);
@@ -186,6 +195,7 @@ public class OrderServiceImpl implements OrderService {
 
             try {
                 sweetRepository.add(customSweet);
+                orderRepository.update(order.getId(), order);
             } catch (RepositoryException e) {
                 LOGGER.warn("AddExtraIngredientToOrderedSweet for order, sweet, ingredient and amount = {} - exception " +
                         "occurred -> {}", amount, e.getMessage());
@@ -204,12 +214,16 @@ public class OrderServiceImpl implements OrderService {
             throws ServiceException {
         LOGGER.info("UpdateExtraIngredientForOrderedSweet for order, sweet, ingredient and amount = {} - started", amount);
         int ingredientAmount = convertStringToInt(amount);
+        Optional<Order> orderAfterUpdate = orderRepository.findOrderById(order.getId());
+        if (orderAfterUpdate.isPresent())
+            order = orderAfterUpdate.get();
 
         extraIngredientValidationWithAmount(order, sweet, ingredient, ingredientAmount);
         updateExtraIngredientFromSweet(sweet, ingredient, ingredientAmount);
 
         try {
             sweetRepository.update(sweet.getId(), sweet);
+            orderRepository.update(order.getId(), order);
         } catch (RepositoryException e) {
             LOGGER.warn("UpdateExtraIngredientForOrderedSweet for order, sweet, ingredient and amount = {} - exception " +
                     "occurred -> {}", amount, e.getMessage());
@@ -222,13 +236,16 @@ public class OrderServiceImpl implements OrderService {
     public void deleteExtraIngredientForOrderedSweet(Order order, Sweet sweet, Ingredient ingredient)
             throws ServiceException {
         LOGGER.info("DeleteExtraIngredientForOrderedSweet for order, sweet and ingredient - started");
+        Optional<Order> orderAfterUpdate = orderRepository.findOrderById(order.getId());
+        if (orderAfterUpdate.isPresent())
+            order = orderAfterUpdate.get();
 
         extraIngredientValidation(order, sweet, ingredient);
-
         updateExtraIngredientFromSweet(sweet, ingredient, 0);
 
         try {
             sweetRepository.update(sweet.getId(), sweet);
+            orderRepository.update(order.getId(), order);
         } catch (RepositoryException e) {
             LOGGER.warn("DeleteExtraIngredientForOrderedSweet for order, sweet and ingredient - exception occurred -> {}",
                     e.getMessage());
@@ -281,7 +298,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("GetExtraIngredientAmountFromSweet for sweet and ingredient - called");
         return (int) sweet.getExtraIngredients()
                 .stream()
-                .filter(i -> i == ingredient)
+                .filter(i -> i.getId() == ingredient.getId())
                 .count();
     }
 

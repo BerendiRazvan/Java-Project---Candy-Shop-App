@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+             xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+    <persistence-unit name="JavaSummerPractice2022" transaction-type="RESOURCE_LOCAL">
+
+        <!-- Define the class for Hibernate which implements JPA -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Define the object that should be persisted in the database -->
+        <class>domain.location.Location</class>
+        <class>domain.Customer</class>
+        <class>domain.Shop</class>
+        <class>domain.sweet.Ingredient</class>
+        <class>domain.sweet.Sweet</class>
+        <class>domain.order.OrderType</class>
+
+        <properties>
+            <!-- Driver for DB database -->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <!-- URL for DB -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/CandyShopDB"/>
+            <!-- Username -->
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <!-- Password -->
+            <property name="javax.persistence.jdbc.password" value="postgres"/>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/> <!-- DB Dialect -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/> <!-- create / create-drop / update -->
+
+            <!--            <property name="hibernate.show_sql" value="true" /> &lt;!&ndash; Show SQL in console &ndash;&gt;-->
+            <!--            <property name="hibernate.format_sql" value="true" /> &lt;!&ndash; Show SQL formatted &ndash;&gt;-->
+        </properties>
+    </persistence-unit>
+</persistence>

@@ -3,6 +3,7 @@ package userInterface;
 import domain.Shop;
 import domain.sweet.Ingredient;
 import exception.CandyShopException;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.customerService.CustomerService;
@@ -28,19 +29,32 @@ public class UI {
     private OrderService orderService;
     private IngredientService ingredientService;
 
-    public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
-              IngredientService ingredientService) {
+    public UI(Shop shop) {
         this.shop = shop;
-        this.customerService = customerService;
-        this.sweetService = sweetService;
-        this.orderService = orderService;
-        this.ingredientService = ingredientService;
-
         menu = "\nOptions:\n" +
                 "1 - Order sweets\n" +
                 "2 - Print order details\n" +
                 "3 - View orders and profit for a day\n" +
                 "X - Exit";
+    }
+
+    public UI(Shop shop, CustomerService customerService, SweetService sweetService, OrderService orderService,
+              IngredientService ingredientService) {
+        this(shop);
+        this.customerService = customerService;
+        this.sweetService = sweetService;
+        this.orderService = orderService;
+        this.ingredientService = ingredientService;
+    }
+
+    public boolean persistenceOptionForDataBase() throws CandyShopException {
+        System.out.print("Enter persistence Memory/DataBase: ");
+        String option = SCANNER.nextLine();
+        if (option.equalsIgnoreCase("DataBase"))
+            return true;
+        if (option.equalsIgnoreCase("Memory"))
+            return false;
+        else throw new CandyShopException("Invalid option");
     }
 
 
