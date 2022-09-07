@@ -79,7 +79,6 @@ public class UI {
                     optionViewOrdersAndProfitForADay();
                     break;
                 case "X":
-                    System.out.println("Bye, see you next time!\n");
                     break label;
                 default:
                     System.out.println("This is an invalid option! Try again...\n");
@@ -152,15 +151,13 @@ public class UI {
         LOGGER.info("PrintShopSweets - started");
         System.out.println("\n" + "-".repeat(100) + "\n");
         System.out.print("Available sweets:");
-        for (var sweet : sweetService.getAvailableSweets()) {
+        for (var sweet : sweetService.getAvailableSweets())
             System.out.print("\n\n(Id:" + sweet.getId() + ") " + sweet.getSweetType() + " - " +
-                    df.format(sweet.getTotalPrice()) + "$\nRecipe: ");
-            sweet.getIngredientsList()
-                    .stream()
-                    .map(Ingredient::getName)
-                    .collect(Collectors.toList())
-                    .forEach(ingredient -> System.out.print(ingredient + ", "));
-        }
+                    df.format(sweet.getTotalPrice()) + "$\nRecipe: " +
+                    sweet.getIngredientsList().stream()
+                            .map(Ingredient::getName)
+                            .collect(Collectors.toList()));
+
         System.out.println("\n" + "-".repeat(100) + "\n");
         LOGGER.info("PrintShopSweets - finished");
     }
