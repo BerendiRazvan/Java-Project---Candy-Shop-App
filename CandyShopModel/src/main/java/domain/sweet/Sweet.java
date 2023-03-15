@@ -55,7 +55,7 @@ public class Sweet {
     @ManyToMany(targetEntity = Ingredient.class, fetch = FetchType.EAGER)
     @JoinTable(name = "EXTRA_INGREDIENTS")
     private List<Ingredient> extraIngredients;
-    @Column(name = "PRICE", length = 10, precision = 2)
+    @Column(name = "PRICE")
     private double price;
 
     public double getTotalPrice() {
